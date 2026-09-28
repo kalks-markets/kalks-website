@@ -1,4 +1,5 @@
 'use client';
+import { CRM_LOGIN } from '@/lib/crm';
 
 import { useEffect, useRef, useState, useLayoutEffect } from 'react';
 import { createPortal } from 'react-dom';
@@ -282,7 +283,7 @@ export function Navbar() {
 
             <div className="ml-auto hidden shrink-0 items-center gap-2 lg:flex">
               <Link
-                href="/auth/login"
+                href={CRM_LOGIN}
                 className="whitespace-nowrap rounded-full px-4 py-2.5 font-body text-[15px] font-medium text-foreground/70 transition-colors hover:text-foreground"
               >
                 Log in
@@ -341,7 +342,7 @@ export function Navbar() {
                 </motion.div>
               ))}
               <Link
-                href="/auth/login"
+                href={CRM_LOGIN}
                 onClick={() => setOpen(false)}
                 className="font-display uppercase text-2xl tracking-tight text-foreground/85 hover:text-foreground py-2 block mt-4"
               >

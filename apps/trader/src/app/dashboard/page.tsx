@@ -105,6 +105,8 @@ function BrokerHome() {
         setAccounts(list);
         if (list.length > 0) setActiveId((cur) => cur ?? list[0].id);
         setBanners(b.banners || []);
+      } catch {
+        // Accounts API unreachable: the cards fall back to their empty state.
       } finally {
         if (!cancelled) setLoading(false);
       }

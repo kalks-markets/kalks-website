@@ -120,13 +120,16 @@ async function proxy(req: NextRequest, segments: string[]): Promise<NextResponse
     });
   } catch (e) {
     const msg = e instanceof Error ? e.message : 'fetch failed';
-    console.error('[api/v1 proxy]', targetUrl, msg);
+    // The operator hint (docker compose, proxy target) goes to the server
+    // log only. It used to be returned as `detail`, which the API client
+    // shows verbatim, so visitors saw "Run: docker compose up -d" in the
+    // login error toast whenever the gateway was down.
+    console.error(
+      '[api/v1 proxy]', targetUrl, msg,
+      `— is the gateway running? Proxy target: ${gatewayOrigin()}`,
+    );
     return NextResponse.json(
-      {
-        detail:
-          'Cannot reach API gateway. Run: docker compose up -d (or start gateway on port 8000). ' +
-          `Proxy target: ${gatewayOrigin()}`,
-      },
+      { detail: 'Service temporarily unavailable. Please try again in a few minutes.' },
       { status: 502 },
     );
   }

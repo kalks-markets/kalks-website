@@ -2,28 +2,15 @@
   "name": "kalks-monorepo",
   "version": "0.1.0",
   "private": true,
-  "description": "KALKS trading platform: marketing site (apps/web), trader app (apps/trader) and back-office admin (apps/admin)",
+  "description": "KALKS website (apps/trader). Log in / sign up hand off to the Kalks Client Area.",
   "scripts": {
-    "dev": "npm run dev:trader",
-    "dev:web": "npm --prefix apps/web run dev",
-    "dev:trader": "npm --prefix apps/trader run dev",
-    "dev:admin": "npm --prefix apps/admin run dev",
-    "dev:all": "concurrently -n trader,admin,web -c green,magenta,blue \"npm run dev:trader\" \"npm run dev:admin\" \"npm run dev:web\"",
-    "build": "npm run build:web && npm run build:trader && npm run build:admin",
-    "build:web": "npm --prefix apps/web run build",
-    "build:trader": "npm --prefix apps/trader run build",
-    "build:admin": "npm --prefix apps/admin run build",
-    "start:web": "npm --prefix apps/web run start",
-    "start:trader": "npm --prefix apps/trader run start",
-    "start:admin": "npm --prefix apps/admin run start",
-    "lint": "npm run lint:web && npm run lint:trader && npm run lint:admin",
-    "lint:web": "npm --prefix apps/web run lint",
-    "lint:trader": "npm --prefix apps/trader run lint",
-    "lint:admin": "npm --prefix apps/admin run lint",
-    "install:all": "npm install && npm --prefix apps/web install && npm --prefix apps/trader ci && npm --prefix apps/admin ci"
+    "dev": "npm --prefix apps/trader run dev",
+    "build": "npm --prefix apps/trader run build",
+    "start": "npm --prefix apps/trader run start",
+    "lint": "npm --prefix apps/trader run lint",
+    "install:all": "npm install && npm --prefix apps/trader ci"
   },
   "devDependencies": {
-    "concurrently": "^9.1.2",
     "next": "15.5.14"
   },
   "engines": {

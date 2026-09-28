@@ -1,4 +1,5 @@
 import { NextResponse, type NextRequest } from 'next/server';
+import { CRM_LOGIN } from '@/lib/crm';
 
 /**
  * Domain split:
@@ -83,10 +84,8 @@ export function middleware(req: NextRequest) {
       !req.cookies.get(ACCESS_COOKIE)?.value &&
       !req.cookies.get(REFRESH_COOKIE)?.value
     ) {
-      const url = req.nextUrl.clone();
-      url.pathname = '/auth/login';
-      url.search = `?next=${encodeURIComponent(reqPath + reqSearch)}`;
-      return NextResponse.redirect(url);
+      // Signed-out visitors sign in on the Kalks Client Area (it owns accounts).
+      return NextResponse.redirect(CRM_LOGIN);
     }
   }
 

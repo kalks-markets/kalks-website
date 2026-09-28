@@ -1,4 +1,5 @@
 'use client';
+import { CRM_REGISTER } from '@/lib/crm';
 
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
@@ -14,7 +15,7 @@ import { BRAND_NAME } from '@/lib/brand';
  * over from the previous page untouched — only the presentation changed.
  */
 
-const SIGNUP_HREF = '/auth/register';
+const SIGNUP_HREF = CRM_REGISTER;
 
 /** Wire shape from /api/v1/referral/tiers — kept lean: only the fields
  *  the marketing page actually renders. Admin owns the data in

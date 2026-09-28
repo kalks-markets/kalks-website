@@ -1,3 +1,4 @@
+import { CRM_LOGIN, CRM_REGISTER } from '@/lib/crm';
 /**
  * Homepage content. Layout and copy follow the reference design 1:1;
  * only the brand name is ours. Links map onto the routes that already
@@ -54,8 +55,8 @@ export const NAV: NavItem[] = [
   { label: 'Contact', href: '/company/contact' },
 ];
 
-export const LOGIN_HREF = '/auth/login';
-export const SIGNUP_HREF = '/auth/register';
+export const LOGIN_HREF = CRM_LOGIN;
+export const SIGNUP_HREF = CRM_REGISTER;
 
 export const HERO = {
   title: ['Simplify your SaaS', 'solution with AI'],

@@ -3,10 +3,10 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "dev": "next dev --turbo --port 3000",
+    "dev": "next dev --turbo --port 3010",
     "dev:clean": "rm -rf .next && next dev --turbo --port 3000",
     "build": "next build",
-    "start": "next start",
+    "start": "next start --port 3010",
     "lint": "next lint",
     "test": "vitest",
     "test:coverage": "vitest run --coverage"

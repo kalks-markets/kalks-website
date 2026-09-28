@@ -1,4 +1,5 @@
 'use client';
+import { CRM_REGISTER } from '@/lib/crm';
 
 import Link from 'next/link';
 import {
@@ -15,7 +16,7 @@ import { BRAND_NAME } from '@/lib/brand';
  * previous page unchanged.
  */
 
-const SIGNUP_HREF = '/auth/register';
+const SIGNUP_HREF = CRM_REGISTER;
 
 export default function MarketResearchPage() {
   return (

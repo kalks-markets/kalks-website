@@ -1,3 +1,4 @@
+import { CRM_LOGIN, CRM_REGISTER } from '@/lib/crm';
 'use client'
 
 import { useState, useEffect, useRef } from 'react'
@@ -168,13 +169,13 @@ export default function Navbar() {
           {/* CTA + mobile toggle */}
           <div className="flex items-center gap-2 sm:gap-3">
             <Link
-              href="/auth/login"
+              href={CRM_LOGIN}
               className="hidden sm:inline-flex fx-btn-ghost text-sm py-2 px-4"
             >
               Login
             </Link>
             <Link
-              href="/auth/register"
+              href={CRM_REGISTER}
               className="hidden sm:inline-flex fx-btn-primary text-sm py-2 px-4"
             >
               Open Account
@@ -295,10 +296,10 @@ export default function Navbar() {
                 className="pt-3 mt-2 border-t flex flex-col gap-2"
                 style={{ borderColor: 'var(--fx-line)' }}
               >
-                <Link href="/auth/login" className="fx-btn-ghost justify-center text-sm py-3">
+                <Link href={CRM_LOGIN} className="fx-btn-ghost justify-center text-sm py-3">
                   Login
                 </Link>
-                <Link href="/auth/register" className="fx-btn-primary justify-center text-sm py-3">
+                <Link href={CRM_REGISTER} className="fx-btn-primary justify-center text-sm py-3">
                   Open Live Account
                   <ArrowRight size={14} />
                 </Link>

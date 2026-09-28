@@ -1,4 +1,5 @@
 'use client';
+import { CRM_REGISTER } from '@/lib/crm';
 
 import {
   Users, BarChart3, Wallet, ShieldCheck, Award, Layers, Headphones, FileText, Target,
@@ -15,7 +16,7 @@ import { BRAND_NAME } from '@/lib/brand';
  * verbatim; the investor quote band is reused as-is.
  */
 
-const SIGNUP_HREF = '/auth/register';
+const SIGNUP_HREF = CRM_REGISTER;
 
 const MAM_POINTS = [
   'Best for: investors who want a hands-off managed account',

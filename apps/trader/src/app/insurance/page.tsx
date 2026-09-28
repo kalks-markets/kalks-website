@@ -69,6 +69,10 @@ export default function InsurancePage() {
     (async () => {
       try {
         await load();
+      } catch (e: unknown) {
+        // Backend unreachable: show the empty state plus a notice instead of
+        // an unhandled rejection.
+        if (!cancelled) toast.error(e instanceof Error ? e.message : 'Could not load insurance data');
       } finally {
         if (!cancelled) setLoading(false);
       }

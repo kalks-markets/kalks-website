@@ -1,4 +1,5 @@
 'use client';
+import { CRM_REGISTER } from '@/lib/crm';
 
 import Link from 'next/link';
 import {
@@ -14,7 +15,7 @@ import { BRAND_NAME } from '@/lib/brand';
  * curriculum, resource counts, links and FAQ copy carried over verbatim.
  */
 
-const SIGNUP_HREF = '/auth/register';
+const SIGNUP_HREF = CRM_REGISTER;
 
 export default function EducationPage() {
   return (

@@ -1,8 +1,8 @@
 # Deploying the Kalks website
 
-The site that gets deployed is **`apps/trader`**. The other two apps in this
-repo (`apps/web`, `apps/admin`) are not part of the website deployment and are
-excluded from the upload by `.vercelignore`.
+The site that gets deployed is **`apps/trader`**, the only app in this repo.
+Set `NEXT_PUBLIC_CRM_URL` to the live Kalks Client Area so Log in / Sign up
+go there.
 
 ## Why this repo needs deployment config at all
 

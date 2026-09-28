@@ -1,3 +1,4 @@
+import { CRM_REGISTER } from '@/lib/crm';
 /**
  * Static content for the marketing home page.
  *
@@ -13,7 +14,7 @@ import {
   BRAND_COPYRIGHT,
 } from '@/lib/brand';
 
-export const SIGNUP_HREF = '/auth/register';
+export const SIGNUP_HREF = CRM_REGISTER;
 
 export const BRAND = {
   name: BRAND_NAME,

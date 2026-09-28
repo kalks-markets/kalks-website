@@ -12,6 +12,11 @@ const __dirname = path.dirname(__filename);
 
 const isDev = process.env.NODE_ENV !== 'production';
 
+/* Sign-in and registration live in the Kalks Client Area (see src/lib/crm.ts).
+   The website's own /auth/* screens forward there; query strings such as
+   ?ref=CODE are kept. */
+const CRM_URL = (process.env.NEXT_PUBLIC_CRM_URL || 'http://localhost:3000').replace(/\/$/, '');
+
 /* Vercel builds Next.js natively and does not consume a standalone bundle;
    emitting one there is wasted work and can confuse output detection. Keep
    it for Docker and any self-hosted target. */
@@ -54,6 +59,16 @@ const nextConfig = {
       { protocol: 'http', hostname: 'localhost' },
       { protocol: 'https', hostname: '**' },
     ],
+  },
+  async redirects() {
+    return [
+      { source: '/auth/login', destination: `${CRM_URL}/login`, permanent: false },
+      { source: '/auth/register', destination: `${CRM_URL}/register`, permanent: false },
+      { source: '/auth/reset-password', destination: `${CRM_URL}/forgot`, permanent: false },
+      { source: '/auth/check-email', destination: `${CRM_URL}/login`, permanent: false },
+      { source: '/auth/verify-email', destination: `${CRM_URL}/login`, permanent: false },
+      { source: '/auth/impersonate', destination: `${CRM_URL}/login`, permanent: false },
+    ];
   },
   async headers() {
     if (!isDev) return [];
