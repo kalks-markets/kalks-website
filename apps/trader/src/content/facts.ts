@@ -292,3 +292,14 @@ export const RISK_WARNING =
 
 export const OPTIONS_RISK =
   'Buying an option can lose 100% of the premium paid. Selling an option can lose more than the premium received and uses margin.';
+
+/** The Android app on the website (served by Caddy from /srv/kalks/downloads on the server). Update on each release. */
+export const ANDROID_APP = {
+  version: '1.0.0',
+  build: 2,
+  href: '/download/kalks-android.apk',
+  hrefUniversal: '/download/kalks-android-universal.apk',
+  sizeMb: 44,
+  sha256: '8798ed34393c2f8e9ce8ed5f702d7721c11753f57427f41b49432959ac8fe135',
+  minAndroid: 'Android 7.0',
+};

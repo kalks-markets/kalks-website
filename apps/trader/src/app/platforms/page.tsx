@@ -5,13 +5,13 @@ import { Button } from '@/components/ui/Button';
 import { BrowserFrame, PhoneFrame } from '@/components/ui/Frames';
 import { Art } from '@/components/ui/Art';
 import { CtaBand } from '@/components/ui/CtaBand';
-import { TRADER } from '@/content/facts';
+import { ANDROID_APP, TRADER } from '@/content/facts';
 import { CRM_URL, REGISTER_HREF, TRADER_URL } from '@/lib/crm';
 
 export const metadata: Metadata = {
   title: 'Platforms: Kalks Trader web terminal, Client Area and mobile',
   description:
-    'Kalks Trader is an MT5-style web terminal for CFDs and options: a big chart, 35 indicators, one-click trading, a depth ladder and full chart mode. The Client Area runs everything around it. Android app coming soon.',
+    'Kalks Trader is an MT5-style web terminal for CFDs and options: a big chart, 35 indicators, one-click trading, a depth ladder and full chart mode. The Client Area runs everything around it. Now also as an Android app.',
   alternates: { canonical: '/platforms' },
 };
 
@@ -138,22 +138,30 @@ export default function PlatformsPage() {
             <div className="grid items-center gap-12 p-6 sm:p-12 lg:grid-cols-[1.2fr_0.8fr] lg:p-16">
               <div>
                 <span className="chip chip-ember" data-reveal>
-                  Coming soon
+                  Android · v{ANDROID_APP.version}
                 </span>
                 <SectionHead
                   id="mob-title"
                   className="mt-6"
                   lines={['Kalks on Android.']}
-                  lead="A native Android app is on its way: the Client Area, Kalks Trader and Kalks FX Options in one app, in all 22 languages, with biometric sign-in. Until it lands, everything works in your phone’s browser."
+                  lead="The Client Area, Kalks Trader and Kalks FX Options in one app, in all 22 languages, with biometric sign-in. Download the APK below; the Play Store listing follows."
                 />
                 <div className="mt-8 flex flex-wrap gap-3" data-reveal>
-                  <Button href={TRADER_URL}>
+                  <Button href={ANDROID_APP.href} arrow={false}>
+                    Download for Android
+                  </Button>
+                  <Button href={TRADER_URL} variant="outline">
                     Open Kalks Trader
                   </Button>
-                  <Button href={CRM_URL} variant="outline" arrow={false}>
-                    Client Area
-                  </Button>
                 </div>
+                <p className="mt-4 max-w-md text-[13px] leading-relaxed text-fg-3" data-reveal>
+                  APK · {ANDROID_APP.minAndroid} or newer{ANDROID_APP.sizeMb ? ` · ${ANDROID_APP.sizeMb} MB` : ''}. Android asks once to allow installs from your browser.
+                  Older 32-bit phones:{' '}
+                  <a href={ANDROID_APP.hrefUniversal} className="underline decoration-fg-3/40 underline-offset-2 hover:text-fg">
+                    universal APK
+                  </a>
+                  .{ANDROID_APP.sha256 ? ` SHA-256 ${ANDROID_APP.sha256.slice(0, 16)}…` : ''}
+                </p>
               </div>
               <Reveal>
                 <PhoneFrame src="/images/product/phone-dashboard.webp" alt="The Kalks Client Area on a phone" />
