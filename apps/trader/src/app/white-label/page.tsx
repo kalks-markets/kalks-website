@@ -1,138 +1,134 @@
-import LandingHeader from '@/components/landing/LandingHeader'
-import LandingFooter from '@/components/landing/LandingFooter'
-import { Building2, Zap, Users, Shield, TrendingUp, Clock } from 'lucide-react'
-import { Section, SectionHeading, PageHero, FeatureGrid, CtaBanner } from '@/marketing/components'
-import { BRAND_NAME } from '@/lib/brand'
-import '@/marketing/tokens.css'
+import type { Metadata } from 'next';
+import { PageHero } from '@/components/ui/PageHero';
+import { SectionHead, Reveal } from '@/components/ui/Section';
+import { Button } from '@/components/ui/Button';
+import { BrowserFrame } from '@/components/ui/Frames';
+import { CtaBand } from '@/components/ui/CtaBand';
+import { ALGO } from '@/content/facts';
+import { BRAND_SUPPORT_EMAIL } from '@/lib/brand';
+import { REGISTER_HREF } from '@/lib/crm';
 
-/**
- * Standalone /white-label. Restyled onto the shared marketing design
- * system — the body is wrapped in `.mk` so it picks up the marketing
- * tokens (this route sits outside the (landing) group, which normally
- * applies them). All copy and links carried over unchanged.
- *
- * LandingHeader / LandingFooter keep their own existing styling; they are
- * shared chrome outside this restyle's scope.
- */
+export const metadata: Metadata = {
+  title: 'White-label brokerage and API & algo trading',
+  description:
+    'Launch your own brokerage on the Kalks platform with your brand and domains, or automate trading with webhooks, a REST API, a visual strategy builder and backtests.',
+  alternates: { canonical: '/white-label' },
+};
 
-export const metadata = { title: `White Label Solutions — ${BRAND_NAME}` }
+const WL = [
+  ['Your brand', 'Your name, logo, colours and support email across the website, Client Area, Kalks Trader and every email.'],
+  ['Your domains', 'Your own addresses for the website, the Client Area, the trading terminal and your Back Office.'],
+  ['Your product mix', 'Switch modules on per broker: options, prop, copy trading, PAMM and MAM, partners, academy, rewards.'],
+  ['Your data, isolated', 'Each broker’s clients, accounts and money are separated at the database level.'],
+  ['Your back office', 'Clients, KYC, deposits and withdrawals, dealing, risk, partners and content, with staff roles.'],
+  ['The whole platform', 'The same trading engine, option pricing, market data and 22 languages that run Kalks.'],
+];
 
-const TECH_STACK = [
-  'Trading Platform (Web, Desktop, Mobile)',
-  'CRM & Client Management',
-  'Payment Processing Gateway',
-  'Risk Management System',
-  'Reporting & Analytics Dashboard',
-  'Admin Back Office',
-]
-
-const BUSINESS_SERVICES = [
-  'Tier-1 Liquidity Access',
-  'Multi-Bank Payment Processing',
-  'Regulatory Documentation',
-  'Marketing Materials',
-  'Training & Onboarding',
-  'Ongoing Technical Support',
-]
-
-const PROCESS = [
-  { step: '1', title: 'Consultation',  desc: 'We discuss your requirements and business goals.' },
-  { step: '2', title: 'Customization', desc: 'Brand customization and feature configuration.' },
-  { step: '3', title: 'Integration',   desc: 'Technical setup and testing.' },
-  { step: '4', title: 'Launch',        desc: 'Go live with training and support.' },
-]
-
-function BulletList({ items }: { items: string[] }) {
-  return (
-    <ul className="flex flex-col gap-3">
-      {items.map((item) => (
-        <li key={item} className="flex items-center gap-3 mk-body">
-          <span className="h-2 w-2 rounded-full shrink-0" style={{ background: 'var(--mk-accent)' }} />
-          <span>{item}</span>
-        </li>
-      ))}
-    </ul>
-  )
-}
+const API = [
+  ['Webhook alerts', `Send alerts from your charting tool to a Kalks webhook URL. Each webhook can route to up to ${ALGO.webhookRoutes} accounts, each with its own size.`],
+  ['REST API', 'API keys with read and trade scopes, never withdrawals. Bearer or HMAC signing, and an IP allow-list required for live trading keys.'],
+  ['Visual strategy builder', 'Build rules with blocks, switch to code, or describe a strategy in plain words and let the assistant draft it.'],
+  ['Backtests', `Test a strategy on history on our servers, with ${ALGO.indicatorSeries} indicator series that match Kalks Trader.`],
+  ['24/7 deployments', 'Run strategies on our servers on demo or live accounts, with kill switches when you need to stop at once.'],
+  ['Marketplace', 'Publish a strategy for others to run, or start from one that someone else built.'],
+];
 
 export default function WhiteLabelPage() {
+  const mailto = `mailto:${BRAND_SUPPORT_EMAIL}?subject=${encodeURIComponent('White-label enquiry')}`;
   return (
-    <div className="min-h-screen">
-      <LandingHeader />
-
-      <div className="mk">
-        <PageHero
-          kicker="Enterprise Solutions"
-          title={<>Launch Your Brand<br /><span style={{ color: 'var(--mk-accent)' }}>in 72 Hours</span></>}
-          lead={`Build your own branded brokerage with ${BRAND_NAME}'s institutional-grade white-label solution. Full technology stack, liquidity, and 24/7 support included.`}
-          primary={{ label: 'Request Demo', href: '/auth/register' }}
-          secondary={{ label: 'Contact Sales', href: '/contact' }}
-        />
-
-        {/* Features */}
-        <Section raised>
-          <SectionHeading
-            kicker="What You Get"
-            title="Complete White-Label Solution"
-            lead="Everything you need to launch and scale your brokerage business."
+    <>
+      <PageHero
+        kicker="For business"
+        lines={['Your brokerage.', <span key="b" className="text-fg-3">Our platform.</span>]}
+        lead="Launch a broker on the Kalks platform under your own brand and domains, with forex options, CFDs, prop, copy trading and partners built in. Or plug your own systems into ours with the API."
+        actions={
+          <>
+            <Button href={mailto}>Talk to us</Button>
+            <Button href="#api" variant="outline" arrow={false}>
+              API & algo
+            </Button>
+          </>
+        }
+        visual={
+          <BrowserFrame
+            src="/images/product/focus-whitelabel.webp"
+            alt="The Kalks Client Area rebranded in a blue white-label theme"
+            url="app.yourbrand.com"
+            width={2940}
+            height={1040}
+            priority
+            tilt
+            caption="A white-label theme (illustrative data)"
+            sizes="(min-width: 1024px) 680px, 92vw"
           />
-          <FeatureGrid
-            className="mt-12"
-            columns={3}
-            items={[
-              { icon: Building2,  title: 'Custom Branding',        body: 'Your logo, colors, and domain. Fully customized client experience.' },
-              { icon: Zap,        title: 'Fast Launch',            body: 'Go live in 72 hours with our streamlined setup process.' },
-              { icon: Users,      title: 'Dedicated Support',      body: '24/7 technical support and account management for your business.' },
-              { icon: Shield,     title: 'Regulatory Compliance',  body: 'Built-in compliance tools and documentation for major jurisdictions.' },
-              { icon: TrendingUp, title: 'Revenue Sharing',        body: 'Competitive revenue split with transparent reporting.' },
-              { icon: Clock,      title: 'Real-time Reporting',    body: 'Comprehensive analytics and reporting dashboard.' },
-            ]}
+        }
+      />
+
+      <section className="section" aria-labelledby="wl-title">
+        <div className="container-site">
+          <SectionHead
+            id="wl-title"
+            kicker="White-label"
+            lines={['Everything Kalks runs,', 'under your name.']}
+            lead="Each broker on the platform gets its own website, Client Area, trading terminal and Back Office. Commercial terms combine a setup fee, a monthly licence and a revenue share; ask us for details."
           />
-        </Section>
-
-        {/* What's Included */}
-        <Section>
-          <SectionHeading kicker="Included" title="What's Included" />
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-5 mt-12">
-            <article className="mk-card flex flex-col gap-5">
-              <h3 className="mk-h3">Technology Stack</h3>
-              <BulletList items={TECH_STACK} />
-            </article>
-            <article className="mk-card flex flex-col gap-5">
-              <h3 className="mk-h3">Business Services</h3>
-              <BulletList items={BUSINESS_SERVICES} />
-            </article>
-          </div>
-        </Section>
-
-        {/* Process */}
-        <Section raised>
-          <SectionHeading kicker="Process" title="Launch Process" />
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 mt-12 max-w-4xl mx-auto">
-            {PROCESS.map(({ step, title, desc }) => (
-              <article key={title} className="mk-card mk-card--hover text-center flex flex-col items-center gap-3">
-                <span
-                  className="inline-flex h-12 w-12 items-center justify-center rounded-full font-extrabold"
-                  style={{ background: 'var(--mk-accent)', color: '#fff', fontSize: 'var(--mk-text-lead)' }}
-                >
-                  {step}
-                </span>
-                <h3 className="mk-h3">{title}</h3>
-                <p className="mk-body">{desc}</p>
-              </article>
+          <div className="mt-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            {WL.map(([t, d], i) => (
+              <Reveal key={t} delay={(i % 3) * 0.05} className="card card-hover p-7">
+                <span className="t-pixel text-[1.4rem] text-ember">{String(i + 1).padStart(2, '0')}</span>
+                <h3 className="mt-4 text-xl font-semibold tracking-tight">{t}</h3>
+                <p className="t-body mt-2">{d}</p>
+              </Reveal>
             ))}
           </div>
-        </Section>
+        </div>
+      </section>
 
-        <CtaBanner
-          title="Ready to Launch Your Brokerage?"
-          lead="Join successful brokers using our white-label solution. Schedule a consultation today."
-          primary={{ label: 'Schedule Consultation', href: '/auth/register' }}
-          secondary={{ label: 'Learn More', href: '/contact' }}
-        />
-      </div>
+      <section id="api" className="section scroll-mt-24 pt-0" aria-labelledby="api-title">
+        <div className="container-site grid items-start gap-14 lg:grid-cols-[1fr_1.1fr] lg:gap-20">
+          <div className="lg:sticky lg:top-28">
+            <SectionHead
+              id="api-title"
+              kicker="API & algo trading"
+              lines={['Automate', 'your trading.']}
+              lead="Everything runs on Kalks servers, around the clock, on demo or live accounts. Algo trading covers CFDs; options stay manual for now."
+            />
+            <Reveal className="mt-10">
+              <BrowserFrame
+                src="/images/product/focus-developer.webp"
+                alt="The strategy builder in the Kalks Client Area: rules as blocks, a strategy assistant and deployment"
+                url="app.kalkstrade.com · Developer"
+                width={2860}
+                height={1200}
+                caption="Illustrative data"
+              />
+            </Reveal>
+          </div>
+          <dl className="flex flex-col">
+            {API.map(([t, d], i) => (
+              <Reveal key={t} delay={i * 0.04} className="border-t border-white/[0.08] py-7 first:border-t-0 first:pt-0">
+                <dt className="flex items-baseline gap-4">
+                  <span className="t-pixel text-[1.3rem] text-ember">{String(i + 1).padStart(2, '0')}</span>
+                  <span className="t-h3">{t}</span>
+                </dt>
+                <dd className="t-body mt-3 pl-10">{d}</dd>
+              </Reveal>
+            ))}
+            <Reveal className="mt-4 rounded-2xl border border-white/[0.08] bg-white/[0.02] p-5 text-sm text-fg-2">
+              Base URL <span className="num text-fg">api.kalkstrade.com/algo/public/v1</span> with an OpenAPI description. Rate
+              limit {ALGO.rateLimit}.
+            </Reveal>
+          </dl>
+        </div>
+      </section>
 
-      <LandingFooter />
-    </div>
-  )
+      <CtaBand
+        lines={['Build on', 'Kalks.']}
+        lead="Brokers: tell us about your business and we will walk you through the platform. Builders: open an account and create an API key in the Client Area."
+        primary={{ label: 'Talk to us', href: mailto }}
+        secondary={{ label: 'Create an account', href: REGISTER_HREF }}
+        art="chart-wall"
+      />
+    </>
+  );
 }

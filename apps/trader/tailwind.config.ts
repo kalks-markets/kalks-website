@@ -1,185 +1,112 @@
-import type { Config } from 'tailwindcss'
+import type { Config } from 'tailwindcss';
 
+/**
+ * Kalks website design tokens. Colours mirror the platform tokens in the Kalks repo
+ * (packages/ui/src/styles.css): bg #07070a, ember #ff5a1f → #ff8a3d. The website is dark only.
+ */
 const config: Config = {
-  content: ['./src/**/*.{js,ts,jsx,tsx,mdx}'],
-  darkMode: ['class', '[data-theme="dark"]'],
+  content: ['./src/**/*.{ts,tsx,mdx}'],
   theme: {
+    screens: {
+      sm: '640px',
+      md: '768px',
+      lg: '1024px',
+      xl: '1280px',
+      '2xl': '1536px',
+    },
     extend: {
       colors: {
-        bg: {
-          primary: 'var(--bg-primary)',
-          secondary: 'var(--bg-secondary)',
-          tertiary: 'var(--bg-tertiary)',
-          hover: 'var(--bg-hover)',
-          active: 'var(--bg-active)',
-          input: 'var(--bg-input)',
-          glass: 'var(--bg-glass)',
-          'glass-light': 'var(--bg-glass-light)',
-          'glass-heavy': 'var(--bg-glass-heavy)',
-          base: 'var(--bg-base)',
+        ink: {
+          DEFAULT: '#07070a',
+          2: '#0c0c10',
+          3: '#111114',
+          4: '#17171c',
+          5: '#1e1e24',
         },
-        /* crucial-ui style surfaces */
-        card: {
-          DEFAULT: 'var(--bg-card)',
-          nested: 'var(--bg-card-nested)',
+        fg: {
+          DEFAULT: '#f5f5f7',
+          2: '#b4b4bd',
+          3: '#8d8d97',
         },
-        border: {
-          primary: 'var(--border-primary)',
-          secondary: 'var(--border-secondary)',
-          accent: 'var(--border-accent)',
-          glass: 'var(--border-glass)',
-          'glass-bright': 'var(--border-glass-bright)',
+        line: {
+          DEFAULT: 'rgba(255,255,255,0.08)',
+          2: 'rgba(255,255,255,0.14)',
         },
-        text: {
-          primary: 'var(--text-primary)',
-          secondary: 'var(--text-secondary)',
-          tertiary: 'var(--text-tertiary)',
-          inverse: 'var(--text-inverse)',
+        ember: {
+          DEFAULT: '#ff5a1f',
+          2: '#ff8a3d',
+          deep: '#c2370c',
+          soft: 'rgba(255,90,31,0.12)',
         },
-        /* Semantic, not brand. These were coral while bg/glow stayed
-           green — with the brand now red, a red BUY would be
-           indistinguishable from the red SELL below, so DEFAULT/light/dark
-           are back in line with the green bg/glow they always had. */
-        buy: {
-          DEFAULT: '#55A630',
-          light: '#6FBF44',
-          dark: '#3F7D22',
-          bg: 'rgba(85,166,48,0.1)',
-          glow: 'rgba(85,166,48,0.22)',
-        },
-        sell: {
-          DEFAULT: '#ef4444',
-          light: '#f87171',
-          dark: '#dc2626',
-          bg: 'rgba(239,68,68,0.1)',
-          glow: 'rgba(239,68,68,0.2)',
-        },
-        accent: { DEFAULT: '#E12019', light: '#EE4C45', dark: '#B31810' },
-        success: '#55A630',
-        warning: '#FFB300',
-        info: '#29B6F6',
-        danger: '#FF1744',
-        rainbow: {
-          red: '#FF6B6B',
-          orange: '#FFA94D',
-          yellow: '#FFD43B',
-          green: '#69DB7C',
-          blue: '#4DABF7',
-          purple: '#9775FA',
-          pink: '#F06595',
-        },
-        /* Landing-page palette — brand gold-on-black */
-        'primary': {
-          bg: '#08090b',
-          secondary: '#101114',
-          accent: '#E12019',
-          purple: '#B31810',
-        },
-      },
-      backgroundImage: {
-        'gradient-primary': 'linear-gradient(135deg, #EE4C45 0%, #E12019 50%, #B31810 100%)',
-        'gradient-hero': 'linear-gradient(135deg, #08090b 0%, #0e0d09 50%, #08090b 100%)',
-        'gradient-section': 'linear-gradient(180deg, #08090b 0%, #101114 100%)',
-        'gradient-section-alt': 'linear-gradient(180deg, #101114 0%, #08090b 100%)',
+        cream: '#f3ede4',
+        up: '#22c55e',
+        down: '#f04438',
       },
       fontFamily: {
-        sans: ['Montserrat', 'system-ui', '-apple-system', 'sans-serif'],
-        mono: ['JetBrains Mono', 'Menlo', 'monospace'],
+        sans: ['var(--font-geist)', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+        display: ['var(--font-display)', 'var(--font-geist)', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+        mono: ['var(--font-geist-mono)', 'ui-monospace', 'SFMono-Regular', 'monospace'],
+        pixel: ['var(--font-pixel)', 'var(--font-geist-mono)', 'monospace'],
       },
-      fontSize: {
-        'xxs': ['10px', { lineHeight: '14px' }],
-        'xs': ['11px', { lineHeight: '16px' }],
-        'sm': ['12px', { lineHeight: '16px' }],
-        'base': ['13px', { lineHeight: '20px' }],
-        'md': ['14px', { lineHeight: '20px' }],
-        'lg': ['16px', { lineHeight: '24px' }],
-        'xl': ['20px', { lineHeight: '28px' }],
-        '2xl': ['28px', { lineHeight: '36px' }],
-        '3xl': ['36px', { lineHeight: '44px' }],
+      letterSpacing: {
+        tightest: '-0.055em',
+        tighter: '-0.04em',
       },
-      borderRadius: { sm: '4px', DEFAULT: '4px', md: '6px', lg: '8px', xl: '12px', '2xl': '16px', '3xl': '24px' },
-      spacing: { '0.5': '2px', '1': '4px', '1.5': '6px', '2': '8px', '3': '12px', '4': '16px', '5': '20px', '6': '24px', '8': '32px', '10': '40px', '12': '48px' },
-      backdropBlur: { xs: '2px', glass: '16px', 'glass-heavy': '24px', 'glass-ultra': '40px' },
-      animation: {
-        'fade-in': 'fadeIn 0.2s ease-out',
-        'slide-up': 'slideUp 0.25s cubic-bezier(0.16, 1, 0.3, 1)',
-        'slide-down': 'slideDown 0.25s cubic-bezier(0.16, 1, 0.3, 1)',
-        'flash-blue': 'flashBlue 0.15s ease-out',
-        'flash-red': 'flashRed 0.15s ease-out',
-        'glow-pulse': 'glowPulse 2s ease-in-out infinite',
-        'float': 'float 6s ease-in-out infinite',
-        'shimmer': 'shimmer 2s linear infinite',
-        /** Wallet deposit/withdraw — Crucial-style neon tab + panel */
-        'wallet-neon-tab': 'walletNeonTabGlow 2.6s ease-in-out infinite',
-        'wallet-main-tab-glow': 'walletMainTabGlow 2.2s ease-in-out infinite',
-        'wallet-main-tab-text': 'walletMainTabText 0.55s cubic-bezier(0.34, 1.45, 0.64, 1) both',
-        'wallet-fund-enter': 'walletFundEnter 0.48s cubic-bezier(0.22, 1, 0.36, 1) both',
-        'wallet-fund-enter-lg': 'walletFundEnterLg 0.65s cubic-bezier(0.22, 1, 0.36, 1) both',
-        'wallet-sub-pill': 'walletSubPill 0.32s cubic-bezier(0.22, 1, 0.36, 1) both',
+      borderRadius: {
+        '4xl': '2rem',
+        '5xl': '2.5rem',
+      },
+      maxWidth: {
+        site: '1360px',
+      },
+      transitionTimingFunction: {
+        out: 'cubic-bezier(0.16, 1, 0.3, 1)',
+        expo: 'cubic-bezier(0.19, 1, 0.22, 1)',
       },
       keyframes: {
-        fadeIn: { '0%': { opacity: '0' }, '100%': { opacity: '1' } },
-        slideUp: { '0%': { opacity: '0', transform: 'translateY(8px)' }, '100%': { opacity: '1', transform: 'translateY(0)' } },
-        slideDown: { '0%': { opacity: '0', transform: 'translateY(-8px)' }, '100%': { opacity: '1', transform: 'translateY(0)' } },
-        flashBlue: { '0%': { backgroundColor: 'rgba(85,166,48,0.22)' }, '100%': { backgroundColor: 'transparent' } },
-        flashRed: { '0%': { backgroundColor: 'rgba(239,68,68,0.2)' }, '100%': { backgroundColor: 'transparent' } },
-        glowPulse: { '0%, 100%': { boxShadow: '0 0 20px rgba(85,166,48,0.18)' }, '50%': { boxShadow: '0 0 40px rgba(85,166,48,0.32)' } },
-        float: { '0%, 100%': { transform: 'translateY(0)' }, '50%': { transform: 'translateY(-10px)' } },
-        shimmer: { '0%': { backgroundPosition: '-200% 0' }, '100%': { backgroundPosition: '200% 0' } },
-        walletNeonTabGlow: {
-          '0%, 100%': {
-            boxShadow:
-              '0 -1px 20px rgba(85,166,48, 0.22), 0 0 32px rgba(85,166,48, 0.12), inset 0 0 24px rgba(85,166,48, 0.04)',
-          },
-          '50%': {
-            boxShadow:
-              '0 -1px 36px rgba(85,166,48, 0.45), 0 0 52px rgba(85,166,48, 0.22), inset 0 0 32px rgba(85,166,48, 0.08)',
-          },
+        marquee: {
+          from: { transform: 'translate3d(0,0,0)' },
+          to: { transform: 'translate3d(-50%,0,0)' },
         },
-        /** Deposit / Withdraw main tabs — stronger pulsing glow */
-        walletMainTabGlow: {
-          '0%, 100%': {
-            boxShadow:
-              '0 -6px 40px rgba(85,166,48, 0.38), 0 0 56px rgba(85,166,48, 0.2), inset 0 1px 0 rgba(85,166,48, 0.14)',
-          },
-          '50%': {
-            boxShadow:
-              '0 -10px 64px rgba(85,166,48, 0.62), 0 0 88px rgba(85,166,48, 0.32), inset 0 1px 0 rgba(85,166,48, 0.22)',
-          },
+        'glow-pulse': {
+          '0%, 100%': { opacity: '0.55', transform: 'scale(1)' },
+          '50%': { opacity: '0.9', transform: 'scale(1.06)' },
         },
-        walletMainTabText: {
-          '0%': { opacity: '0.5', transform: 'scale(0.92) translateY(4px)' },
-          '100%': { opacity: '1', transform: 'scale(1) translateY(0)' },
+        sweep: {
+          '0%': { transform: 'translateX(-60%) rotate(-12deg)', opacity: '0' },
+          '20%': { opacity: '1' },
+          '60%': { opacity: '1' },
+          '100%': { transform: 'translateX(160%) rotate(-12deg)', opacity: '0' },
         },
-        walletFundEnter: {
-          '0%': { opacity: '0', transform: 'translateY(14px)' },
-          '100%': { opacity: '1', transform: 'translateY(0)' },
+        'scroll-dot': {
+          '0%': { transform: 'translateY(0)', opacity: '0' },
+          '30%': { opacity: '1' },
+          '100%': { transform: 'translateY(18px)', opacity: '0' },
         },
-        walletFundEnterLg: {
-          '0%': { opacity: '0', transform: 'translateY(22px) scale(0.98)' },
-          '100%': { opacity: '1', transform: 'translateY(0) scale(1)' },
+        spin: {
+          to: { transform: 'rotate(360deg)' },
         },
-        walletSubPill: {
-          '0%': { opacity: '0.85', transform: 'scale(0.98)' },
-          '100%': { opacity: '1', transform: 'scale(1)' },
+        'pulse-ring': {
+          '0%': { boxShadow: '0 0 0 0 rgba(255,90,31,0.55)' },
+          '100%': { boxShadow: '0 0 0 10px rgba(255,90,31,0)' },
+        },
+        float: {
+          '0%, 100%': { transform: 'translateY(0)' },
+          '50%': { transform: 'translateY(-10px)' },
         },
       },
-      boxShadow: {
-        'modal': '0 8px 32px rgba(0,0,0,0.6)',
-        'dropdown': '0 4px 16px rgba(0,0,0,0.4)',
-        'glass': '0 8px 32px 0 rgba(0,0,0,0.37)',
-        'glass-sm': '0 4px 16px 0 rgba(0,0,0,0.25)',
-        'glass-lg': '0 16px 48px 0 rgba(0,0,0,0.5)',
-        'inner-light': 'inset 0 1px 0 0 rgba(255,255,255,0.05)',
-        'skeu': 'inset 0 1px 0 rgba(255,255,255,0.08), inset 0 -1px 0 rgba(0,0,0,0.2), 0 2px 8px rgba(0,0,0,0.3)',
-        'glow-blue': '0 0 20px rgba(85,166,48,0.28), 0 0 60px rgba(85,166,48,0.1)',
-        'glow-red': '0 0 20px rgba(239,68,68,0.3), 0 0 60px rgba(239,68,68,0.1)',
-        'neon-green-sm': '0 0 20px rgba(85,166,48, 0.25), 0 0 48px rgba(85,166,48, 0.08)',
-        'neon-green-lg': '0 0 28px rgba(85,166,48, 0.4), 0 0 64px rgba(85,166,48, 0.15)',
+      animation: {
+        marquee: 'marquee var(--marquee-duration, 60s) linear infinite',
+        'glow-pulse': 'glow-pulse 6s ease-in-out infinite',
+        sweep: 'sweep 7s cubic-bezier(0.65, 0, 0.35, 1) infinite',
+        'scroll-dot': 'scroll-dot 1.8s cubic-bezier(0.65, 0, 0.35, 1) infinite',
+        'spin-slow': 'spin 18s linear infinite',
+        'pulse-ring': 'pulse-ring 1.8s ease-out infinite',
+        float: 'float 7s ease-in-out infinite',
       },
     },
   },
   plugins: [],
-}
+};
 
-export default config
+export default config;

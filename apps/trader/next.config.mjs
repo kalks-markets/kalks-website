@@ -4,80 +4,134 @@ import path from 'path';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-/** @type {import('next').NextConfig} */
-// API proxying is handled by the route handler at src/app/api/v1/[...path]/route.ts.
-// Do NOT use rewrites() for /api/v1/* — in standalone mode, Next.js can leak the
-// internal gateway URL (http://gateway:8000) to the browser, causing mixed-content
-// blocks on HTTPS sites.
-
 const isDev = process.env.NODE_ENV !== 'production';
 
-/* Sign-in and registration live in the Kalks Client Area (see src/lib/crm.ts).
-   The website's own /auth/* screens forward there; query strings such as
-   ?ref=CODE are kept. */
-const CRM_URL = (process.env.NEXT_PUBLIC_CRM_URL || 'http://localhost:3000').replace(/\/$/, '');
+/* The website is marketing only. Accounts, sign-in and every signed-in page live in the Kalks Client Area;
+   trading lives in Kalks Trader. Query strings (?ref=CODE, utm_*) are kept on every redirect. */
+const CRM_URL = (process.env.NEXT_PUBLIC_CRM_URL || 'https://app.kalkstrade.com').replace(/\/$/, '');
+const TRADER_URL = (process.env.NEXT_PUBLIC_TRADER_URL || 'https://trade.kalkstrade.com').replace(/\/$/, '');
 
-/* Vercel builds Next.js natively and does not consume a standalone bundle;
-   emitting one there is wasted work and can confuse output detection. Keep
-   it for Docker and any self-hosted target. */
+/* Vercel builds Next.js natively and does not consume a standalone bundle. Keep it for Docker / self-hosting. */
 const isVercel = Boolean(process.env.VERCEL);
+
+const to = (source, destination) => ({ source, destination, permanent: false });
 
 const nextConfig = {
   ...(isVercel ? {} : { output: 'standalone' }),
   outputFileTracingRoot: __dirname,
+  /* Separate output folder for local check builds (NEXT_DIST_DIR=.next-check) so they never clobber a running dev server. */
+  distDir: process.env.NEXT_DIST_DIR || '.next',
   reactStrictMode: true,
+  poweredByHeader: false,
   ...(isDev && {
     experimental: {
       staleTimes: { dynamic: 0, static: 0 },
     },
   }),
-  webpack: (config) => {
-    config.resolve.alias['react-router-dom'] = path.resolve(__dirname, 'src/landing/router-shim.tsx');
-    return config;
-  },
-  /* Turbopack ignores the webpack hook above — duplicate the alias here so
-     `next dev --turbo` also resolves react-router-dom to our local shim. */
-  turbopack: {
-    root: __dirname,
-    resolveAlias: {
-      'react-router-dom': './src/landing/router-shim.tsx',
-    },
-  },
-  /** Set NEXT_PUBLIC_APP_VERSION at Docker build so each deploy gets new `_next/static` hashes. */
+  /** Set NEXT_PUBLIC_APP_VERSION at build so each deploy gets new `_next/static` hashes. */
   generateBuildId: async () => {
     const v = process.env.NEXT_PUBLIC_APP_VERSION?.trim();
     if (v) return v.replace(/[^a-zA-Z0-9._-]/g, '-').slice(0, 48) || 'release';
-    /* On Vercel the commit gives every deploy a fresh id. Without it each
-       build would reuse the literal 'development' id and browsers would
-       serve stale _next/static chunks after a deploy. */
     const sha = process.env.VERCEL_GIT_COMMIT_SHA?.trim();
     if (sha) return sha.slice(0, 12);
     return 'development';
   },
   images: {
-    remotePatterns: [
-      { protocol: 'http', hostname: 'localhost' },
-      { protocol: 'https', hostname: '**' },
-    ],
+    formats: ['image/avif', 'image/webp'],
+    deviceSizes: [390, 640, 828, 1080, 1280, 1600, 1920, 2400],
+    imageSizes: [64, 128, 256, 384],
+    minimumCacheTTL: 60 * 60 * 24 * 30,
   },
   async redirects() {
     return [
-      { source: '/auth/login', destination: `${CRM_URL}/login`, permanent: false },
-      { source: '/auth/register', destination: `${CRM_URL}/register`, permanent: false },
-      { source: '/auth/reset-password', destination: `${CRM_URL}/forgot`, permanent: false },
-      { source: '/auth/check-email', destination: `${CRM_URL}/login`, permanent: false },
-      { source: '/auth/verify-email', destination: `${CRM_URL}/login`, permanent: false },
-      { source: '/auth/impersonate', destination: `${CRM_URL}/login`, permanent: false },
+      /* Sign-in and registration: the Kalks Client Area. */
+      to('/auth/login', `${CRM_URL}/login`),
+      to('/auth/register', `${CRM_URL}/register`),
+      to('/auth/reset-password', `${CRM_URL}/forgot`),
+      to('/auth/check-email', `${CRM_URL}/login`),
+      to('/auth/verify-email', `${CRM_URL}/login`),
+      to('/auth/impersonate', `${CRM_URL}/login`),
+
+      /* Signed-in pages of the old website app: their Client Area equivalents. */
+      to('/dashboard', `${CRM_URL}/`),
+      to('/more', `${CRM_URL}/`),
+      to('/deposit', `${CRM_URL}/wallet/deposit`),
+      to('/wallet/deposit/:path*', `${CRM_URL}/wallet/deposit`),
+      to('/wallet', `${CRM_URL}/wallet`),
+      to('/wallet/:path*', `${CRM_URL}/wallet`),
+      to('/kyc', `${CRM_URL}/profile/verification`),
+      to('/portfolio', `${CRM_URL}/portfolio`),
+      to('/profile', `${CRM_URL}/profile`),
+      to('/transactions', `${CRM_URL}/wallet/history`),
+      to('/s/:code', `${CRM_URL}/s/:code`),
+      to('/news', `${CRM_URL}/news`),
+      to('/trading', `${CRM_URL}/accounts`),
+      to('/trading/open-account', `${CRM_URL}/accounts/new`),
+      to('/trading/terminal', TRADER_URL),
+      to('/trading/terminal/:path*', TRADER_URL),
+      to('/advanced-chart', TRADER_URL),
+
+      /* Old marketing addresses: the new pages. */
+      to('/trading/forex', '/markets?class=forex'),
+      to('/trading/indices', '/markets?class=indices'),
+      to('/trading/commodities', '/markets?class=metals'),
+      to('/trading/crypto', '/markets?class=crypto'),
+      to('/account-types', '/accounts'),
+      to('/accounts/standard', '/accounts#standard'),
+      to('/accounts/pro', '/accounts#pro'),
+      to('/accounts/demo', '/accounts#demo'),
+      to('/company/about', '/about'),
+      to('/company/why-bullza', '/about'),
+      to('/company/contact', '/contact'),
+      to('/careers', '/about'),
+      to('/support', '/contact'),
+      to('/download', '/platforms#mobile'),
+      to('/how-it-works', '/accounts#open'),
+      to('/education/:path*', '/academy'),
+      to('/academy/:path+', '/academy'),
+      to('/services/education', '/academy'),
+      to('/services/market-research', '/markets'),
+      to('/services/portfolio-management', '/copy-trading'),
+      to('/services/ico-coming-soon', '/'),
+      to('/platforms/web', '/platforms'),
+      to('/platforms/copy-trading', '/copy-trading'),
+      to('/platforms/prop-trading', '/prop'),
+      to('/platforms/ib-management', '/partners'),
+      to('/platforms/super-admin', '/white-label'),
+      to('/platforms/insurance', '/'),
+      to('/products/ib-referral', '/partners'),
+      to('/products/referral', '/partners'),
+      to('/products/insurance', '/'),
+      to('/insurance', '/'),
+      to('/social', '/copy-trading'),
+      to('/pamm', '/copy-trading#pamm'),
+      to('/referral', '/partners'),
+      to('/business', '/white-label'),
+      to('/risk-calculator', '/markets'),
     ];
   },
   async headers() {
-    if (!isDev) return [];
+    const security = [
+      { key: 'X-Content-Type-Options', value: 'nosniff' },
+      { key: 'Referrer-Policy', value: 'strict-origin-when-cross-origin' },
+      { key: 'X-Frame-Options', value: 'SAMEORIGIN' },
+      { key: 'Permissions-Policy', value: 'camera=(), microphone=(), geolocation=()' },
+    ];
+    if (!isDev) {
+      return [
+        { source: '/(.*)', headers: security },
+        {
+          source: '/images/:path*',
+          headers: [{ key: 'Cache-Control', value: 'public, max-age=2592000, stale-while-revalidate=86400' }],
+        },
+      ];
+    }
     return [
       {
         source: '/(.*)',
         headers: [
+          ...security,
           { key: 'Cache-Control', value: 'no-store, no-cache, must-revalidate' },
-          { key: 'Pragma', value: 'no-cache' },
         ],
       },
     ];

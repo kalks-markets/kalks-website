@@ -1,1192 +1,982 @@
-@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap');
-@import 'react-day-picker/style.css';
-@import 'flag-icons/css/flag-icons.min.css';
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-/* react-day-picker — themed to match brand green + the dark inline-CSS
-   used in ProfileCompleteGate. Only the DOBPicker mounts this widget so
-   any visual regression here is scoped to that one input. Client request
-   "show only current month days" is satisfied by showOutsideDays={false}
-   in the component; these rules just style what's visible. */
-.dob-popover .rdp-root {
-  --rdp-accent-color: #E12019;
-  --rdp-accent-background-color: rgba(225, 32, 25, 0.18);
-  --rdp-day-height: 36px;
-  --rdp-day-width: 36px;
-  --rdp-day_button-height: 36px;
-  --rdp-day_button-width: 36px;
-  --rdp-day_button-border-radius: 6px;
-  color: var(--text-primary, #f5f5f5);
-  font-family: inherit;
-  font-size: 13px;
-  --rdp-nav_button-height: 32px;
-  --rdp-nav_button-width: 32px;
-  --rdp-weekday-padding: 6px;
-}
-.dob-popover .rdp-month_caption,
-.dob-popover .rdp-caption_label {
-  font-weight: 600;
-  font-size: 13px;
-  color: var(--text-primary, #f5f5f5);
-}
-.dob-popover .rdp-dropdowns select {
-  background: var(--bg-secondary, #1a1a1a);
-  color: var(--text-primary, #f5f5f5);
-  border: 1px solid var(--border-primary, #2a2a2a);
-  border-radius: 6px;
-  font-size: 12px;
-  padding: 4px 6px;
-}
-.dob-popover .rdp-day_button {
-  color: var(--text-primary, #f5f5f5);
-}
-.dob-popover .rdp-day_button:hover:not(.rdp-day_disabled .rdp-day_button) {
-  background: rgba(225, 32, 25, 0.12);
-}
-.dob-popover .rdp-day_disabled {
-  opacity: 0.32;
-  pointer-events: none;
-}
-.dob-popover .rdp-today:not(.rdp-selected) .rdp-day_button {
-  color: #E12019;
-  font-weight: 700;
-}
-.dob-popover .rdp-selected .rdp-day_button {
-  background: #E12019 !important;
-  color: #0a0a0a !important;
-  font-weight: 700;
-}
-.dob-popover .rdp-weekday {
-  color: var(--text-tertiary, #9a9a9a);
-  font-size: 11px;
-  font-weight: 600;
-  text-transform: uppercase;
-}
+/* ─────────────────────────────────────────────────────────────────────────────
+   Kalks website. Dark only: near-black ink, one ember accent, warm rim light.
+   Tokens follow the platform (packages/ui/src/styles.css in the Kalks repo).
+   ───────────────────────────────────────────────────────────────────────────── */
 
-/* Fallback: before JS runs, use light (the app's default since the
-   2026-08-20 redesign). Script in <head> overrides immediately. */
 :root {
-  color-scheme: light;
-}
-
-/* ======================================= */
-/* CSS VARIABLES — DARK (Vantablack) THEME */
-/* ======================================= */
-
-/* Dark theme — vantablack: pure #000 canvas, near-black surfaces, coral accent */
-[data-theme="dark"], .theme-dark {
-  /* Page canvas is #3B3B3B (client request, 2026-09-05) — a mid charcoal
-     rather than the previous true-black. --bg-page and --bg-base are kept
-     identical: DashboardShell paints the canvas with bg-bg-base, body with
-     var(--bg-base), and --bg-page exists for the same role, so a split
-     value would leave one surface stale. Card/primary surfaces below stay
-     near-black on purpose so they still read as distinct planes. */
-  --bg-page: #3B3B3B;
-  --bg-base: #3B3B3B;
-  --bg-primary: #000000;
-  --bg-secondary: #060606;
-  --bg-tertiary: #030303;
-  --bg-hover: #121212;
-  --bg-active: #1c1c1c;
-  --bg-input: #070707;
-  --bg-card: #0a0a0a;
-  --bg-card-nested: #050505;
-  --bg-glass: rgba(10, 10, 10, 0.72);
-  --bg-glass-light: rgba(6, 6, 6, 0.55);
-  --bg-glass-heavy: rgba(0, 0, 0, 0.92);
-
-  /* Slightly brighter than the old greys: on pure black a #2a2a2a edge
-     nearly disappears, so borders do the structural work here. */
-  --border-primary: #232323;
-  --border-secondary: #161616;
-  --border-accent: #2e2e2e;
-  --border-glass: rgba(255, 255, 255, 0.07);
-  --border-glass-bright: rgba(255, 255, 255, 0.11);
-
-  --text-primary: #ffffff;
-  --text-secondary: #b0b0b0;
-  --text-tertiary: #8a8a8a;
-  --text-inverse: #000000;
-
-  --scrollbar-track: #000000;
-  --scrollbar-thumb: #232323;
-  --scrollbar-hover: #333333;
-
-  --input-bg: #070707;
-  --input-border: #1c1c1c;
-  --input-shadow: inset 0 2px 6px rgba(0,0,0,0.65), inset 0 0 0 1px rgba(0,0,0,0.3), 0 1px 0 rgba(255,255,255,0.02);
-  --input-focus-border: rgba(225, 32, 25, 0.55);
-  --input-focus-shadow: inset 0 2px 6px rgba(0,0,0,0.65), inset 0 0 0 1px rgba(225, 32, 25, 0.12), 0 0 0 3px rgba(225, 32, 25, 0.12);
-  --input-placeholder: #555555;
-
-  --selection-bg: rgba(225, 32, 25, 0.22);
-
-  --noise-opacity: 0.012;
-  --emboss-bg: rgba(0, 0, 0, 0.6);
-  --emboss-shadow: 0 1px 0 rgba(255, 255, 255, 0.03);
-
-  /* react-hot-toast — always dark surface (readable on charts + light UI) */
-  --toast-bg: #0a0a0a;
-  --toast-fg: #f0f0f0;
-  --toast-border: rgba(225, 32, 25, 0.28);
-
+  --ink: #07070a;
+  --ink-2: #0c0c10;
+  --ink-3: #111114;
+  --ink-4: #17171c;
+  --fg: #f5f5f7;
+  --fg-2: #b4b4bd;
+  --fg-3: #8d8d97;
+  --line: rgba(255, 255, 255, 0.08);
+  --line-2: rgba(255, 255, 255, 0.14);
+  --ember: #ff5a1f;
+  --ember-2: #ff8a3d;
+  --ember-grad: linear-gradient(120deg, #ff5a1f 0%, #ff8a3d 100%);
+  --glass-bg: rgba(18, 18, 22, 0.58);
+  --glass-line: rgba(255, 255, 255, 0.1);
+  --gutter: clamp(16px, 4vw, 40px);
+  --section-y: clamp(80px, 11vw, 168px);
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
   color-scheme: dark;
 }
 
-
-/* ======================================= */
-/* CSS VARIABLES — LIGHT (White-Black)     */
-/* Clean white bg, gray borders, black txt */
-/* ======================================= */
-
-[data-theme="light"] {
-  /* Warm neutral canvas behind white cards — the premium-fintech backdrop
-     from the 2026-08-20 redesign reference. Dark theme defines its own
-     --bg-page; this was previously missing here, leaving bg-bg-page
-     unresolved in light mode. */
-  --bg-page: #edece7;
-  --bg-base: #f4f3ef;
-  --bg-primary: #ffffff;
-  --bg-secondary: #faf9f7;
-  --bg-tertiary: #f3f4f6;
-  --bg-hover: #f3f4f6;
-  --bg-active: #e5e7eb;
-  --bg-input: #ffffff;
-  --bg-card: #ffffff;
-  --bg-card-nested: #f9fafb;
-  --bg-glass: rgba(255, 255, 255, 0.92);
-  --bg-glass-light: rgba(255, 255, 255, 0.85);
-  --bg-glass-heavy: rgba(249, 250, 251, 0.98);
-
-  --border-primary: #e5e7eb;
-  --border-secondary: #d1d5db;
-  --border-accent: #111827;
-  --border-glass: rgba(0, 0, 0, 0.06);
-  --border-glass-bright: rgba(0, 0, 0, 0.10);
-
-  --text-primary: #111827;
-  --text-secondary: #6b7280;
-  --text-tertiary: #9ca3af;
-  --text-inverse: #ffffff;
-
-  --scrollbar-track: #f3f4f6;
-  --scrollbar-thumb: #d1d5db;
-  --scrollbar-hover: #9ca3af;
-
-  --input-bg: #ffffff;
-  --input-border: #e5e7eb;
-  --input-shadow: 0 1px 2px rgba(0,0,0,0.05);
-  --input-focus-border: #111827;
-  --input-focus-shadow: 0 0 0 3px rgba(0, 0, 0, 0.08);
-  --input-placeholder: #9ca3af;
-
-  --selection-bg: rgba(0, 0, 0, 0.08);
-
-  --noise-opacity: 0;
-  --emboss-bg: rgba(0, 0, 0, 0.03);
-  --emboss-shadow: 0 1px 0 rgba(0, 0, 0, 0.05);
-
-  --toast-bg: #ffffff;
-  --toast-fg: #111827;
-  --toast-border: rgba(0, 0, 0, 0.1);
-
-  color-scheme: light;
+@layer base {
+  html {
+    background: var(--ink);
+    color: var(--fg);
+    -webkit-text-size-adjust: 100%;
+    text-rendering: optimizeLegibility;
+  }
+  body {
+    background: var(--ink);
+    color: var(--fg);
+    font-family: var(--font-geist), ui-sans-serif, system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    overflow-x: clip;
+    min-height: 100vh;
+  }
+  ::selection {
+    background: rgba(255, 90, 31, 0.35);
+    color: #fff;
+  }
+  :focus-visible {
+    outline: 2px solid var(--ember);
+    outline-offset: 3px;
+    border-radius: 6px;
+  }
+  img,
+  video,
+  canvas {
+    max-width: 100%;
+  }
+  /* Google Translate injects a banner and shifts the body; keep the layout still. */
+  body {
+    top: 0 !important;
+  }
+  .skiptranslate iframe,
+  .goog-te-banner-frame,
+  #goog-gt-tt,
+  .goog-te-balloon-frame {
+    display: none !important;
+  }
+  .goog-text-highlight {
+    background: none !important;
+    box-shadow: none !important;
+  }
 }
 
-/* ======================================= */
-/* THEME WRAPPER CLASSES — applied by      */
-/* ThemeProvider so ALL descendants get   */
-/* correct vars (header, sidebars, panels) */
-/* ======================================= */
-
-.theme-dark {
-  /* Mirrors the [data-theme="dark"] palette above. This wrapper class is
-     applied by ThemeProvider; it sits later in the file at equal
-     specificity, so any value it omits — or declares stale — wins. Keep the
-     two blocks in lockstep. (Canvas moved to #3B3B3B 2026-09-05 — this
-     block is exactly where a stale #000 would have reasserted itself.) */
-  --bg-page: #3B3B3B;
-  --bg-base: #3B3B3B;
-  --bg-primary: #000000;
-  --bg-secondary: #060606;
-  --bg-tertiary: #030303;
-  --bg-hover: #121212;
-  --bg-active: #1c1c1c;
-  --bg-input: #070707;
-  --bg-card: #0a0a0a;
-  --bg-card-nested: #050505;
-  --bg-glass: rgba(10, 10, 10, 0.72);
-  --bg-glass-light: rgba(6, 6, 6, 0.55);
-  --bg-glass-heavy: rgba(0, 0, 0, 0.92);
-  --border-primary: #232323;
-  --border-secondary: #161616;
-  --border-accent: #2e2e2e;
-  --border-glass: rgba(255, 255, 255, 0.07);
-  --border-glass-bright: rgba(255, 255, 255, 0.11);
-  --text-primary: #ffffff;
-  --text-secondary: #b0b0b0;
-  --text-tertiary: #8a8a8a;
-  --text-inverse: #000000;
-  --scrollbar-track: #000000;
-  --scrollbar-thumb: #232323;
-  --scrollbar-hover: #333333;
-  --input-bg: #070707;
-  --input-border: #1c1c1c;
-  --input-focus-border: rgba(225, 32, 25, 0.55);
-  --input-focus-shadow: inset 0 2px 6px rgba(0,0,0,0.65), 0 0 0 3px rgba(225, 32, 25, 0.12);
-  --selection-bg: rgba(225, 32, 25, 0.22);
-  --toast-bg: #0a0a0a;
-  --toast-fg: #f0f0f0;
-  --toast-border: rgba(225, 32, 25, 0.28);
-  color-scheme: dark;
+/* Lenis smooth scroll */
+html.lenis,
+html.lenis body {
+  height: auto;
 }
-
-
-.theme-light {
-  /* Mirrors the [data-theme="light"] palette above — this wrapper sits later
-     at equal specificity, so a stale value here wins. Keep both in lockstep.
-     (--bg-page/--bg-base were stale white and overrode the warm canvas.) */
-  --bg-page: #edece7;
-  --bg-base: #f4f3ef;
-  --bg-primary: #ffffff;
-  --bg-secondary: #faf9f7;
-  --bg-tertiary: #f3f4f6;
-  --bg-hover: #f3f4f6;
-  --bg-active: #e5e7eb;
-  --bg-input: #ffffff;
-  --bg-card: #ffffff;
-  --bg-card-nested: #f9fafb;
-  --bg-glass: rgba(255, 255, 255, 0.92);
-  --bg-glass-light: rgba(255, 255, 255, 0.85);
-  --bg-glass-heavy: rgba(249, 250, 251, 0.98);
-  --border-primary: #e5e7eb;
-  --border-secondary: #d1d5db;
-  --border-accent: #111827;
-  --border-glass: rgba(0, 0, 0, 0.06);
-  --border-glass-bright: rgba(0, 0, 0, 0.10);
-  --text-primary: #111827;
-  --text-secondary: #6b7280;
-  --text-tertiary: #9ca3af;
-  --text-inverse: #ffffff;
-  --scrollbar-track: #f3f4f6;
-  --scrollbar-thumb: #d1d5db;
-  --scrollbar-hover: #9ca3af;
-  --input-bg: #ffffff;
-  --input-border: #e5e7eb;
-  --input-shadow: 0 1px 2px rgba(0,0,0,0.05);
-  --input-focus-border: #111827;
-  --input-focus-shadow: 0 0 0 3px rgba(0, 0, 0, 0.08);
-  --input-placeholder: #9ca3af;
-  --selection-bg: rgba(0, 0, 0, 0.08);
-  --noise-opacity: 0;
-  --emboss-bg: rgba(0, 0, 0, 0.03);
-  --emboss-shadow: 0 1px 0 rgba(0, 0, 0, 0.05);
-  --toast-bg: #ffffff;
-  --toast-fg: #111827;
-  --toast-border: rgba(0, 0, 0, 0.1);
-  color-scheme: light;
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
 }
-
-/* ======================================= */
-/* BASE STYLES                             */
-/* ======================================= */
-
-* { margin: 0; padding: 0; box-sizing: border-box; }
-
-html, body {
-  height: 100%;
-  font-family: 'Montserrat', system-ui, -apple-system, sans-serif;
-  word-spacing: 0.14em;
-  background-color: var(--bg-base);
-  color: var(--text-primary);
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  transition: background-color 0.3s ease, color 0.3s ease;
-  /* Prevent any rogue element from triggering horizontal scroll on mobile —
-     keeps the page width clamped to the viewport even if a child overflows. */
-  overflow-x: hidden;
+.lenis.lenis-smooth [data-lenis-prevent] {
+  overscroll-behavior: contain;
 }
-
-/* ──────────────────────────────────────────────────────────────────────
-   Image placeholders — client direction: until a real image is dropped,
-   render every `image-placeholder` div as a plain black box. Hides any
-   decorative icon / illustration the markup currently nests inside the
-   placeholder. As soon as the real image is added (typically by
-   replacing the placeholder div with an <img>), this rule no longer
-   matches and the picture renders normally.
-   ────────────────────────────────────────────────────────────────────── */
-.image-placeholder {
-  background: #000 !important;
-  background-image: none !important;
-}
-.image-placeholder > * {
-  display: none !important;
-}
-
-.tabular-nums { font-variant-numeric: tabular-nums; }
-
-/* ──────────────────────────────────────────────────────────────────────
-   Splash / loading screen — shown on every full page load + refresh.
-   See src/components/SplashScreen.tsx (mounted in the root layout).
-   ────────────────────────────────────────────────────────────────────── */
-/* ── Brand logo tone swap ──────────────────────────────────────────
-   <BrandLogo tone="auto"> renders both marks; exactly one is shown,
-   chosen by the data-theme the inline script in app/layout.tsx stamps on
-   <html> before hydration. Doing it in CSS rather than JS means the right
-   mark is painted on the first frame, with no swap and no mismatch.
-
-   Only the light-theme mark is visible by default, so a surface that
-   somehow loses its data-theme still shows a readable logo rather than
-   none. The second copy is aria-hidden in the component, so screen
-   readers never hear the brand twice. */
-.brand-logo--reversed { display: none; }
-
-[data-theme='dark'] .brand-logo--ink { display: none; }
-[data-theme='dark'] .brand-logo--reversed { display: inline-block; }
-
-.brand-splash {
-  position: fixed;
-  inset: 0;
-  z-index: 99999;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: #08090b;
+.lenis.lenis-stopped {
   overflow: hidden;
-  transition: opacity 0.6s ease, visibility 0.6s ease;
 }
-.brand-splash--hidden {
-  opacity: 0;
-  visibility: hidden;
-  pointer-events: none;
-}
-/* Background aura — soft, blurred, low-opacity logo glow */
-.brand-splash__bg {
-  position: absolute;
-  width: min(640px, 120vw);
-  height: auto;
-  object-fit: contain;
-  opacity: 0.10;
-  filter: blur(36px) saturate(1.2);
-  animation: brand-splash-aura 3s ease-in-out infinite;
-  pointer-events: none;
-}
-.brand-splash__inner {
-  position: relative;
-  z-index: 1;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 28px;
-}
-.brand-splash__logo {
-  width: min(240px, 60vw);
-  height: auto;
-  animation:
-    brand-splash-pop 1s cubic-bezier(0.22, 1, 0.36, 1) both,
-    brand-splash-breathe 2.2s ease-in-out 1s infinite;
-}
-/* Text wordmark fallback — rendered when no BRAND_LOGO image is
-   configured so a fresh white-label build never ships old artwork. */
-.brand-splash__wordmark {
-  width: auto;
-  display: inline-block;
-  font-size: clamp(30px, 8vw, 48px);
-  font-weight: 900;
-  letter-spacing: -0.02em;
-  color: #ffffff;
-  white-space: nowrap;
-}
-.brand-splash__ring {
-  width: 34px;
-  height: 34px;
-  border-radius: 50%;
-  border: 3px solid rgba(225, 32, 25, 0.22);
-  border-top-color: #E12019;
-  animation: brand-splash-spin 0.8s linear infinite;
-}
-@keyframes brand-splash-pop {
-  0%   { opacity: 0; transform: scale(0.82); filter: blur(10px); }
-  100% { opacity: 1; transform: scale(1);    filter: blur(0); }
-}
-@keyframes brand-splash-breathe {
-  0%, 100% { transform: scale(1); }
-  50%      { transform: scale(1.04); }
-}
-@keyframes brand-splash-spin {
-  to { transform: rotate(360deg); }
-}
-@keyframes brand-splash-aura {
-  0%, 100% { opacity: 0.08; transform: scale(1); }
-  50%      { opacity: 0.16; transform: scale(1.08); }
-}
-/* Respect reduced-motion: skip the spin/breathe, keep a simple fade. */
-@media (prefers-reduced-motion: reduce) {
-  .brand-splash__logo,
-  .brand-splash__ring,
-  .brand-splash__bg { animation: none !important; }
-}
-
-/* Google Translate Element — hide all default UI (we drive it via our
-   own LanguageSwitcher component). Aggressive rules so neither the top
-   banner nor the floating "Show original" tooltip ever shows up, AND
-   nothing Google injects ever intercepts a click on the live page. */
-.goog-te-banner-frame,
-.goog-te-banner-frame.skiptranslate,
-iframe.goog-te-banner-frame,
-iframe.skiptranslate {
-  display: none !important;
-  visibility: hidden !important;
-  pointer-events: none !important;
-  height: 0 !important;
-  width: 0 !important;
-  position: absolute !important;
-  top: -9999px !important;
-  left: -9999px !important;
-}
-/* Stop Google from offsetting <body> downwards to make room for its banner. */
-html, body { top: 0 !important; position: static !important; }
-.goog-tooltip,
-.goog-tooltip:hover,
-#goog-gt-tt,
-.goog-te-balloon-frame { display: none !important; pointer-events: none !important; }
-.goog-text-highlight { background: transparent !important; box-shadow: none !important; }
-.skiptranslate iframe { display: none !important; visibility: hidden !important; pointer-events: none !important; }
-/* The hidden GT mount we render in our own GoogleTranslate.tsx — make
-   absolutely sure it can never block a click even if Google adds new
-   UI inside it in a future widget update. */
-#google_translate_element,
-#google_translate_element * { pointer-events: none !important; }
-
-/* Modern Google Translate widget (post-2023 redesign) uses obfuscated
-   class names prefixed with VIpgJd- and a shadow-DOM <isolated-frame>
-   to render the "Show original" floating chip. Hide all of them — the
-   site is driven by our own LanguageSwitcher, never by Google's UI. */
-isolated-frame,
-[class*='VIpgJd-'],
-.VIpgJd-ZVi9od-ORHb-OEVmcd,
-.VIpgJd-ZVi9od-aZ2wEe-wOHMyf,
-.VIpgJd-ZVi9od-aZ2wEe-OiiCO,
-.VIpgJd-ZVi9od-l4eHX-hSRGPd,
-.VIpgJd-yAWNEb-VIpgJd-fmcmS-sn54Q {
-  display: none !important;
-  visibility: hidden !important;
-  pointer-events: none !important;
-  width: 0 !important;
-  height: 0 !important;
-  position: fixed !important;
-  top: -9999px !important;
-  left: -9999px !important;
-}
-
-/* Google injects <font> wrappers around translated text — neutralise them
-   so they don't break inline-block layouts, gradients, or responsive
-   word-break behaviour. */
-font {
-  font: inherit !important;
-  color: inherit !important;
-  background: inherit !important;
-  display: inline !important;
-  white-space: inherit !important;
-  text-shadow: inherit !important;
-  letter-spacing: inherit !important;
-  word-spacing: inherit !important;
-  text-transform: inherit !important;
-  vertical-align: baseline !important;
-}
-
-::-webkit-scrollbar { width: 6px; height: 6px; }
-::-webkit-scrollbar-track { background: var(--scrollbar-track); }
-::-webkit-scrollbar-thumb { background: var(--scrollbar-thumb); border-radius: 4px; }
-::-webkit-scrollbar-thumb:hover { background: var(--scrollbar-hover); }
-/* Removes light “seam” where vertical + horizontal scrollbars meet */
-::-webkit-scrollbar-corner {
-  background: var(--bg-base);
-}
-
-html {
-  scrollbar-width: thin;
-  scrollbar-color: var(--scrollbar-thumb) var(--scrollbar-track);
-}
-
-/* Dashboard main scroll — track matches panel bg (avoids pale edge stripe next to scrollbar) */
-.dashboard-main-scroll {
-  scrollbar-width: thin;
-  scrollbar-color: var(--scrollbar-thumb) var(--bg-base);
-}
-.dashboard-main-scroll::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
-}
-.dashboard-main-scroll::-webkit-scrollbar-track {
-  background: var(--bg-base);
-}
-.dashboard-main-scroll::-webkit-scrollbar-thumb {
-  background: var(--scrollbar-thumb);
-  border-radius: 4px;
-}
-.dashboard-main-scroll::-webkit-scrollbar-thumb:hover {
-  background: var(--scrollbar-hover);
-}
-.dashboard-main-scroll::-webkit-scrollbar-corner {
-  background: var(--bg-base);
-}
-
-::selection { background-color: var(--selection-bg); color: var(--text-primary); }
-
-/* ======================================= */
-/* GLASSMORPHISM — adapts to theme         */
-/* ======================================= */
-
-.glass {
-  background: var(--bg-glass);
-  backdrop-filter: blur(16px) saturate(180%);
-  -webkit-backdrop-filter: blur(16px) saturate(180%);
-  border: 1px solid var(--border-glass);
-}
-
-.glass-light {
-  background: var(--bg-glass-light);
-  backdrop-filter: blur(12px) saturate(150%);
-  -webkit-backdrop-filter: blur(12px) saturate(150%);
-  border: 1px solid var(--border-glass-bright);
-}
-
-.glass-heavy {
-  background: var(--bg-glass-heavy);
-  backdrop-filter: blur(24px) saturate(200%);
-  -webkit-backdrop-filter: blur(24px) saturate(200%);
-  border: 1px solid var(--border-glass);
-}
-
-.glass-card {
-  background: var(--bg-glass);
-  backdrop-filter: blur(20px) saturate(180%);
-  -webkit-backdrop-filter: blur(20px) saturate(180%);
-  border: 1px solid var(--border-glass-bright);
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.04);
-}
-
-.glass-panel {
-  background: var(--bg-glass);
-  backdrop-filter: blur(20px) saturate(180%);
-  -webkit-backdrop-filter: blur(20px) saturate(180%);
-  border: 1px solid var(--border-glass);
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.03);
-}
-
-/* ======================================= */
-/* LIGHT THEME — White-Black glass &       */
-/* rainbow overrides                       */
-/* ======================================= */
-
-[data-theme="light"] .glass,
-[data-theme="light"] .glass-card,
-[data-theme="light"] .glass-panel,
-[data-theme="light"] .glass-light,
-[data-theme="light"] .glass-heavy,
-.theme-light .glass,
-.theme-light .glass-card,
-.theme-light .glass-panel,
-.theme-light .glass-light,
-.theme-light .glass-heavy {
-  border: 1px solid rgba(0,0,0,0.08);
-  box-shadow: 0 1px 3px rgba(0,0,0,0.04);
-}
-
-[data-theme="light"] .rainbow-card-1 { border-left: 3px solid #111827; }
-[data-theme="light"] .rainbow-card-2 { border-left: 3px solid #374151; }
-[data-theme="light"] .rainbow-card-3 { border-left: 3px solid #4b5563; }
-[data-theme="light"] .rainbow-card-4 { border-left: 3px solid #6b7280; }
-[data-theme="light"] .rainbow-card-5 { border-left: 3px solid #111827; }
-[data-theme="light"] .rainbow-card-6 { border-left: 3px solid #374151; }
-[data-theme="light"] .rainbow-card-7 { border-left: 3px solid #4b5563; }
-
-[data-theme="light"] .rainbow-bg {
-  background: transparent;
-}
-
-[data-theme="light"] .rainbow-border {
-  border: 1px solid #e5e7eb;
-}
-
-[data-theme="light"] .rainbow-text {
-  color: #111827;
-  -webkit-text-fill-color: #111827;
-  background: none;
-}
-
-/* ======================================= */
-/* SKEUOMORPHISM — adapts to theme         */
-/* ======================================= */
-
-.skeu-surface {
-  background: linear-gradient(180deg, var(--bg-tertiary) 0%, var(--bg-secondary) 100%);
-  border: 1px solid var(--border-glass);
-  box-shadow: inset 0 1px 0 rgba(255,255,255,0.04), 0 2px 8px rgba(0,0,0,0.15);
-}
-[data-theme="light"] .skeu-surface,
-.theme-light .skeu-surface {
-  border: 1px solid rgba(0,0,0,0.12);
-  box-shadow: none;
-}
-
-.skeu-raised {
-  background: linear-gradient(180deg, var(--bg-hover) 0%, var(--bg-tertiary) 100%);
-  border: 1px solid var(--border-glass-bright);
-  box-shadow: inset 0 1px 0 rgba(255,255,255,0.06), inset 0 -1px 0 rgba(0,0,0,0.12), 0 4px 12px rgba(0,0,0,0.15);
-}
-[data-theme="light"] .skeu-raised,
-.theme-light .skeu-raised {
-  border: 1px solid rgba(0,0,0,0.12);
-  box-shadow: none;
-}
-
-/* ── Stat tile ───────────────────────────────────────────
-   The dashboard P&L figures sit inside one shared panel, and each tile
-   now carries its own artwork, which is what separates it from the panel
-   and from its neighbours. The inner highlight and drop shadow this used
-   to add for that job are gone — over the artwork they only read as a
-   dark rim. */
-.stat-tile {
-  border-radius: 16px;
-  /* The tile carries a full-bleed artwork layer (see PnlTiles), so the
-     surface itself is just the frame. The red gradient tint that used to
-     live here is gone — it sat under the image and only muddied its
-     bottom edge where the two disagreed. A near-black ground stays behind
-     it so the tile reads correctly for the instant before the image
-     paints, and if the file ever goes missing. */
-  background: #14090a;
-  /* No border and no dark drop shadow: both drew a dark line around the
-     tile, which is the outline the artwork crop was fixing. The tiles sit
-     on a white panel, so their own colour is separation enough. */
-  border: 0;
-  box-shadow: none;
-  transition: transform 160ms ease;
-}
-.stat-tile:hover {
-  transform: translateY(-2px);
-}
-
-/* No light-theme variant any more: the artwork is the tile's surface in
-   both themes, and its own contrast is what the white type sits on. The
-   pale pink gradient that used to override this in light mode would have
-   shown through nowhere. */
-
-/* Respect a reduced-motion preference — the lift is decorative. */
-@media (prefers-reduced-motion: reduce) {
-  .stat-tile { transition: none; }
-  .stat-tile:hover { transform: none; }
-}
-
-.skeu-inset {
-  background: var(--bg-primary);
-  border: 1px solid var(--border-primary);
-  box-shadow: inset 0 2px 6px rgba(0,0,0,0.25), 0 1px 0 rgba(255,255,255,0.02);
-}
-[data-theme="light"] .skeu-inset,
-.theme-light .skeu-inset {
-  border: 1px solid rgba(0,0,0,0.12);
-  box-shadow: none;
-}
-
-.skeu-btn {
-  background: linear-gradient(180deg, rgba(255,255,255,0.06) 0%, rgba(255,255,255,0) 100%);
-  box-shadow: inset 0 1px 0 rgba(255,255,255,0.08), inset 0 -1px 0 rgba(0,0,0,0.1), 0 2px 8px rgba(0,0,0,0.15);
-  transition: all 150ms ease;
-}
-.skeu-btn:active { box-shadow: inset 0 2px 4px rgba(0,0,0,0.3); transform: translateY(1px); }
-[data-theme="light"] .skeu-btn,
-.theme-light .skeu-btn {
-  border: 1px solid #000000;
-  background: var(--bg-secondary);
-  color: #000000;
-  box-shadow: none;
-}
-[data-theme="light"] .skeu-btn:hover,
-.theme-light .skeu-btn:hover {
-  background: var(--bg-hover);
-}
-
-.skeu-btn-buy {
-  background: linear-gradient(180deg, #EE4C45 0%, #E12019 50%, #B31810 100%);
-  box-shadow: inset 0 1px 0 rgba(255,255,255,0.18), inset 0 -2px 0 rgba(0,0,0,0.15), 0 4px 16px rgba(225, 32, 25,0.28), 0 2px 4px rgba(0,0,0,0.15);
-  color: #ffffff;
-}
-.skeu-btn-buy:hover {
-  background: linear-gradient(180deg, #f5d984 0%, #EE4C45 50%, #E12019 100%);
-  box-shadow: inset 0 1px 0 rgba(255,255,255,0.22), inset 0 -2px 0 rgba(0,0,0,0.12), 0 6px 24px rgba(225, 32, 25,0.38);
-}
-.skeu-btn-buy:active {
-  background: linear-gradient(180deg, #E12019 0%, #B31810 100%);
-  box-shadow: inset 0 2px 6px rgba(0,0,0,0.35), 0 2px 8px rgba(225, 32, 25,0.2);
-  transform: translateY(1px);
-}
-[data-theme="light"] .skeu-btn-buy,
-.theme-light .skeu-btn-buy {
-  background: #E12019;
-  color: #ffffff;
-  border: none;
-  box-shadow: 0 2px 8px rgba(225, 32, 25, 0.3);
-}
-[data-theme="light"] .skeu-btn-buy:hover,
-.theme-light .skeu-btn-buy:hover {
-  background: #B31810;
-  box-shadow: 0 4px 12px rgba(225, 32, 25, 0.4);
-}
-
-.skeu-btn-sell {
-  background: linear-gradient(180deg, #FF4D5E 0%, #FF2440 50%, #E61A33 100%);
-  box-shadow: inset 0 1px 0 rgba(255,255,255,0.15), inset 0 -2px 0 rgba(0,0,0,0.12), 0 4px 16px rgba(255,36,64,0.3), 0 2px 4px rgba(0,0,0,0.15);
-}
-.skeu-btn-sell:hover {
-  background: linear-gradient(180deg, #FF5E6D 0%, #FF4D5E 50%, #FF2440 100%);
-  box-shadow: inset 0 1px 0 rgba(255,255,255,0.2), inset 0 -2px 0 rgba(0,0,0,0.12), 0 6px 24px rgba(255,36,64,0.4);
-}
-.skeu-btn-sell:active {
-  background: linear-gradient(180deg, #FF2440 0%, #E61A33 100%);
-  box-shadow: inset 0 2px 6px rgba(0,0,0,0.4), 0 2px 8px rgba(255,36,64,0.2);
-  transform: translateY(1px);
-}
-[data-theme="light"] .skeu-btn-sell,
-.theme-light .skeu-btn-sell {
-  background: #FF2440;
-  color: #FFFFFF;
-  border: none;
-  box-shadow: 0 2px 8px rgba(255, 36, 64, 0.25);
-}
-[data-theme="light"] .skeu-btn-sell:hover,
-.theme-light .skeu-btn-sell:hover {
-  background: #E61A33;
-  box-shadow: 0 4px 12px rgba(255, 36, 64, 0.35);
-}
-
-.skeu-input {
-  background: var(--input-bg);
-  border: 1px solid var(--input-border);
-  box-shadow: var(--input-shadow);
-  transition: all 150ms ease;
-}
-.skeu-input:focus {
-  border-color: var(--input-focus-border);
-  box-shadow: var(--input-focus-shadow);
-}
-[data-theme="light"] .skeu-input,
-.theme-light .skeu-input {
-  border: 1px solid rgba(0,0,0,0.2);
-  box-shadow: none;
-}
-[data-theme="light"] .skeu-input:focus,
-.theme-light .skeu-input:focus {
-  border-color: #000000;
-  box-shadow: 0 0 0 1px #000000;
-}
-
-.emboss-divider {
-  border: none;
-  height: 1px;
-  background: var(--emboss-bg);
-  box-shadow: var(--emboss-shadow);
-}
-[data-theme="light"] .emboss-divider {
-  background: #000000;
-  box-shadow: none;
-}
-
-.noise-texture::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  opacity: var(--noise-opacity);
-  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
-  pointer-events: none;
-  border-radius: inherit;
-}
-
-/* ======================================= */
-/* ANIMATIONS                              */
-/* ======================================= */
-
-.flash-blue { animation: flashAccent 0.15s ease-out; }
-.flash-red { animation: flashRed 0.15s ease-out; }
-@keyframes flashAccent { 0% { background-color: rgba(225, 32, 25,0.22); } 100% { background-color: transparent; } }
-@keyframes flashRed { 0% { background-color: rgba(239,68,68,0.2); } 100% { background-color: transparent; } }
-
-/* react-hot-toast — library defaults are washed-out white squares; reskin
- * to the app dark surface with proper padding, gap, and typography so
- * single-line errors don't wrap mid-word and the icon doesn't crash into
- * the text. */
-.brand-hot-toast {
-  background: var(--toast-bg) !important;
-  color: var(--toast-fg) !important;
-  border: 1px solid var(--toast-border) !important;
-  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.45), 0 2px 6px rgba(0, 0, 0, 0.3) !important;
-  border-radius: 12px !important;
-  padding: 12px 16px !important;
-  min-height: 44px;
-  min-width: 280px;
-  max-width: min(420px, calc(100vw - 32px));
-  font-size: 13.5px !important;
-  line-height: 1.45 !important;
-  font-weight: 500 !important;
-  letter-spacing: 0.1px;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
-/* The internal status icon (✓ / ✕) — give it a soft circular halo so it
- * reads as a status badge rather than a punched-out hole. */
-.brand-hot-toast > div[role="status"] {
-  flex-shrink: 0;
-  margin-right: 2px;
-}
-
-/* The text container — react-hot-toast wraps content in a child div; make
- * sure long error strings flow nicely instead of orphaning a single word. */
-.brand-hot-toast > div:not([role="status"]) {
-  flex: 1 1 auto;
-  margin: 0 !important;
-  word-break: break-word;
-}
-
-/* Tighten the close-button (×) for toasts that ship with one. */
-.brand-hot-toast button {
-  flex-shrink: 0;
-  color: var(--toast-fg) !important;
-  opacity: 0.55;
-  transition: opacity 0.15s ease;
-}
-.brand-hot-toast button:hover {
-  opacity: 1;
-}
-
-/* Page fade-in — applied to main content area on route change */
-@keyframes pageFadeIn {
-  from { opacity: 0; transform: translateY(6px); }
-  to   { opacity: 1; transform: translateY(0); }
-}
-/* `backwards` not `both`: the retained transform: translateY(0) on this
-   persistent content wrapper made it the containing block for every fixed
-   modal inside, so modals (KYC details, etc.) positioned to the wrapper and
-   jumped to the top of the page instead of centering in the viewport. Revert
-   the transform to none once the page-in finishes. */
-.page-fade-in { animation: pageFadeIn 0.18s ease-out backwards; }
-
-/* Sidebar icon glow pulse */
-@keyframes iconGlowPulse {
-  0%, 100% { filter: drop-shadow(0 0 4px rgba(225, 32, 25,0.15)); }
-  50%      { filter: drop-shadow(0 0 10px rgba(225, 32, 25,0.55)); }
-}
-.sidebar-icon-glow {
-  animation: iconGlowPulse 2.5s ease-in-out infinite;
-}
-
-@keyframes tradeSlideIn {
-  from { opacity: 0; transform: translateY(-4px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-.trade-panel-enter { animation: tradeSlideIn 0.12s ease-out; }
-
-.resize-handle-h { cursor: col-resize; }
-.resize-handle-v { cursor: row-resize; }
-.focus-ring:focus { outline: 1px solid #E12019; outline-offset: -1px; }
-.no-drag { -webkit-user-drag: none; user-select: none; }
 
 @layer components {
-  /* Shared scroll area: safe-area + aligned horizontal rhythm on phones */
-  .page-main {
-    @apply flex-1 overflow-y-auto overflow-x-hidden min-h-0;
-    @apply px-3 pt-3 sm:px-4 md:px-6 md:pt-4;
-    padding-bottom: max(1.25rem, env(safe-area-inset-bottom, 0px));
-  }
-}
-
-@layer utilities {
-  /* Dashboard sidebar nav — dark track/thumb (avoids default light scrollbar rails) */
-  .sidebar-scroll {
-    scrollbar-width: thin;
-    scrollbar-color: var(--scrollbar-thumb) var(--scrollbar-track);
-  }
-  .sidebar-scroll::-webkit-scrollbar {
-    width: 6px;
-  }
-  .sidebar-scroll::-webkit-scrollbar-track {
-    background: var(--scrollbar-track);
-  }
-  .sidebar-scroll::-webkit-scrollbar-thumb {
-    background: var(--scrollbar-thumb);
-    border-radius: 4px;
-  }
-  .sidebar-scroll::-webkit-scrollbar-thumb:hover {
-    background: var(--scrollbar-hover);
+  .container-site {
+    width: 100%;
+    max-width: 1360px;
+    margin-inline: auto;
+    padding-inline: var(--gutter);
   }
 
-  .transition-fast { transition: all 150ms ease; }
-  .scrollbar-none,
-  .scrollbar-hide {
-    -ms-overflow-style: none;
+  .section {
+    padding-block: var(--section-y);
+    position: relative;
+  }
+
+  /* ── Type ─────────────────────────────────────────────────────────────── */
+  .t-mega {
+    font-family: var(--font-display), var(--font-geist), sans-serif;
+    font-weight: 600;
+    letter-spacing: -0.055em;
+    line-height: 0.88;
+    font-size: clamp(3.4rem, 11.5vw, 11.5rem);
+  }
+  .t-hero {
+    font-family: var(--font-display), var(--font-geist), sans-serif;
+    font-weight: 600;
+    letter-spacing: -0.052em;
+    line-height: 0.9;
+    font-size: clamp(3.3rem, 8vw, 8.2rem);
+  }
+  .t-display {
+    font-family: var(--font-display), var(--font-geist), sans-serif;
+    font-weight: 600;
+    letter-spacing: -0.05em;
+    line-height: 0.92;
+    font-size: clamp(2.75rem, 7.4vw, 7.25rem);
+  }
+  .t-h1 {
+    font-family: var(--font-display), var(--font-geist), sans-serif;
+    font-weight: 600;
+    letter-spacing: -0.048em;
+    line-height: 0.95;
+    font-size: clamp(2.6rem, 6.2vw, 6rem);
+  }
+  .t-h2 {
+    font-family: var(--font-display), var(--font-geist), sans-serif;
+    font-weight: 600;
+    letter-spacing: -0.042em;
+    line-height: 0.98;
+    font-size: clamp(2.1rem, 4.6vw, 4.25rem);
+  }
+  .t-h3 {
+    font-family: var(--font-display), var(--font-geist), sans-serif;
+    font-weight: 600;
+    letter-spacing: -0.032em;
+    line-height: 1.05;
+    font-size: clamp(1.4rem, 2.1vw, 1.9rem);
+  }
+  .t-lead {
+    font-size: clamp(1.02rem, 1.25vw, 1.2rem);
+    line-height: 1.6;
+    color: var(--fg-2);
+  }
+  .t-body {
+    font-size: 0.975rem;
+    line-height: 1.65;
+    color: var(--fg-2);
+  }
+  .t-pixel {
+    font-family: var(--font-pixel), var(--font-geist-mono), monospace;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    line-height: 0.9;
+    font-variant-numeric: tabular-nums;
+  }
+  .kicker {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    font-size: 0.75rem;
+    font-weight: 500;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--fg-2);
+  }
+  .kicker::before {
+    content: '';
+    width: 1.6rem;
+    height: 1px;
+    background: var(--ember);
+  }
+  .text-ember-grad {
+    background: var(--ember-grad);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+  /* ── Surfaces ─────────────────────────────────────────────────────────── */
+  .glass {
+    background: var(--glass-bg);
+    border: 1px solid var(--glass-line);
+    -webkit-backdrop-filter: blur(22px) saturate(140%);
+    backdrop-filter: blur(22px) saturate(140%);
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.08),
+      0 24px 60px -24px rgba(0, 0, 0, 0.7);
+  }
+  .glass-strong {
+    background: rgba(14, 14, 18, 0.78);
+    border: 1px solid var(--glass-line);
+    -webkit-backdrop-filter: blur(28px) saturate(150%);
+    backdrop-filter: blur(28px) saturate(150%);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.07);
+  }
+  .card {
+    position: relative;
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.045), rgba(255, 255, 255, 0.012));
+    border: 1px solid var(--line);
+    border-radius: 28px;
+    overflow: hidden;
+  }
+  .card-hover {
+    transition:
+      border-color 0.4s var(--ease-out),
+      transform 0.6s var(--ease-out),
+      background 0.4s var(--ease-out);
+  }
+  .card-hover:hover {
+    border-color: rgba(255, 138, 61, 0.35);
+  }
+  .hairline {
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--line-2), transparent);
+  }
+
+  /* ── Buttons ──────────────────────────────────────────────────────────── */
+  .btn {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.6rem;
+    height: 48px;
+    padding: 0 1.4rem;
+    border-radius: 999px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    white-space: nowrap;
+    transition:
+      background 0.35s var(--ease-out),
+      color 0.35s var(--ease-out),
+      border-color 0.35s var(--ease-out),
+      box-shadow 0.35s var(--ease-out),
+      transform 0.35s var(--ease-out);
+    -webkit-tap-highlight-color: transparent;
+  }
+  .btn-sm {
+    height: 40px;
+    padding: 0 1.05rem;
+    font-size: 0.875rem;
+  }
+  .btn-ember {
+    background: var(--ember-grad);
+    color: #120804;
+    box-shadow:
+      0 0 0 1px rgba(255, 138, 61, 0.3),
+      0 12px 36px -12px rgba(255, 90, 31, 0.75);
+  }
+  .btn-ember:hover {
+    box-shadow:
+      0 0 0 1px rgba(255, 138, 61, 0.55),
+      0 16px 48px -10px rgba(255, 90, 31, 0.9);
+  }
+  .btn-outline {
+    color: var(--fg);
+    border: 1px solid rgba(255, 255, 255, 0.22);
+    background: rgba(255, 255, 255, 0.02);
+  }
+  .btn-outline:hover {
+    border-color: rgba(255, 138, 61, 0.7);
+    background: rgba(255, 90, 31, 0.08);
+  }
+  .btn-light {
+    background: var(--fg);
+    color: #0b0b0e;
+  }
+  .btn-light:hover {
+    background: #fff;
+  }
+  .btn .arrow {
+    display: inline-grid;
+    place-items: center;
+    width: 30px;
+    height: 30px;
+    margin-right: -0.85rem;
+    border-radius: 999px;
+    background: rgba(0, 0, 0, 0.85);
+    color: var(--ember-2);
+    transition: transform 0.45s var(--ease-out);
+  }
+  .btn-outline .arrow,
+  .btn-light .arrow {
+    background: var(--ember);
+    color: #120804;
+  }
+  .btn:hover .arrow {
+    transform: rotate(45deg);
+  }
+  .btn-sm .arrow {
+    width: 26px;
+    height: 26px;
+    margin-right: -0.7rem;
+  }
+
+  .arrow-circle {
+    display: inline-grid;
+    place-items: center;
+    flex: none;
+    width: 44px;
+    height: 44px;
+    border-radius: 999px;
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    color: var(--fg);
+    transition:
+      background 0.4s var(--ease-out),
+      border-color 0.4s var(--ease-out),
+      color 0.4s var(--ease-out),
+      transform 0.5s var(--ease-out);
+  }
+  .group:hover .arrow-circle,
+  .arrow-circle:hover {
+    background: var(--ember);
+    border-color: var(--ember);
+    color: #120804;
+    transform: rotate(45deg);
+  }
+
+  .chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    height: 28px;
+    padding: 0 0.75rem;
+    border-radius: 999px;
+    font-size: 0.75rem;
+    font-weight: 500;
+    color: var(--fg-2);
+    border: 1px solid var(--line-2);
+    background: rgba(255, 255, 255, 0.03);
+    white-space: nowrap;
+  }
+  .chip-ember {
+    color: #ffb48a;
+    border-color: rgba(255, 90, 31, 0.4);
+    background: rgba(255, 90, 31, 0.1);
+  }
+
+  /* ── Atmosphere ───────────────────────────────────────────────────────── */
+  .grain {
+    pointer-events: none;
+    position: fixed;
+    inset: -50%;
+    z-index: 60;
+    opacity: 0.07;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0.9 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    mix-blend-mode: overlay;
+  }
+  .gridlines {
+    pointer-events: none;
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+  }
+  .gridlines > div {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 1px;
+    background-image: linear-gradient(to bottom, rgba(255, 255, 255, 0.11) 50%, transparent 50%);
+    background-size: 1px 8px;
+    opacity: 0.55;
+  }
+  .glow-ember {
+    pointer-events: none;
+    position: absolute;
+    border-radius: 999px;
+    background: radial-gradient(closest-side, rgba(255, 90, 31, 0.55), rgba(255, 90, 31, 0.12) 55%, transparent 75%);
+    filter: blur(20px);
+  }
+  .rim {
+    box-shadow:
+      0 0 0 1px rgba(255, 255, 255, 0.06),
+      0 -1px 0 0 rgba(255, 138, 61, 0.35),
+      0 40px 120px -40px rgba(255, 90, 31, 0.45);
+  }
+
+  .underline-ember {
+    position: relative;
+  }
+  .underline-ember::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: -2px;
+    height: 1px;
+    background: var(--ember);
+    transform: scaleX(0);
+    transform-origin: right;
+    transition: transform 0.5s var(--ease-out);
+  }
+  .underline-ember:hover::after,
+  .underline-ember[aria-current='page']::after {
+    transform: scaleX(1);
+    transform-origin: left;
+  }
+
+  /* Link inside prose */
+  .prose-link {
+    color: #ffb48a;
+    text-decoration: underline;
+    text-decoration-color: rgba(255, 138, 61, 0.45);
+    text-underline-offset: 3px;
+  }
+  .prose-link:hover {
+    text-decoration-color: var(--ember-2);
+  }
+
+  .skip-link {
+    position: fixed;
+    left: 16px;
+    top: -60px;
+    z-index: 200;
+    padding: 10px 16px;
+    border-radius: 999px;
+    background: var(--fg);
+    color: var(--ink);
+    font-weight: 600;
+    transition: top 0.2s;
+  }
+  .skip-link:focus {
+    top: 16px;
+  }
+
+  /* Reveal (CSS first: content is visible without JS; JS adds .reveal-armed only when it will animate). */
+  .reveal-armed [data-reveal] {
+    opacity: 0;
+    transform: translate3d(0, 28px, 0);
+  }
+  .reveal-armed [data-reveal].is-in {
+    opacity: 1;
+    transform: none;
+    transition:
+      opacity 1s var(--ease-out),
+      transform 1.1s var(--ease-out);
+    transition-delay: var(--reveal-delay, 0s);
+  }
+
+  /* Pixel stat underline */
+  .stat-line {
+    height: 1px;
+    background: linear-gradient(90deg, var(--ember), rgba(255, 90, 31, 0.15));
+    transform-origin: left;
+  }
+
+  /* Tables */
+  .table-clean th {
+    font-size: 0.7rem;
+    font-weight: 500;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--fg-3);
+    text-align: left;
+  }
+  .num {
+    font-family: var(--font-geist-mono), ui-monospace, monospace;
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* Hide scrollbars on horizontal rails while keeping them scrollable */
+  .no-scrollbar {
     scrollbar-width: none;
   }
-  .scrollbar-none::-webkit-scrollbar,
-  .scrollbar-hide::-webkit-scrollbar {
+  .no-scrollbar::-webkit-scrollbar {
     display: none;
   }
 }
 
-@layer base {
-  .auth-page { overflow: auto; }
-  .trading-page {
-    overflow: hidden;
-    height: 100dvh;
-    max-height: 100dvh;
-    width: 100%;
-    max-width: 100vw;
-  }
-
-  input, select, textarea {
-    background: var(--input-bg);
-    border: 1px solid var(--input-border);
-    color: var(--text-primary);
-    border-radius: 8px;
-    padding: 10px 14px;
-    font-size: 13px;
-    font-family: inherit;
-    outline: none;
-    box-shadow: var(--input-shadow);
-    transition: all 150ms ease;
-    width: 100%;
-  }
-  input:focus, select:focus, textarea:focus {
-    border-color: var(--input-focus-border);
-    box-shadow: var(--input-focus-shadow);
-  }
-  [data-theme="light"] input,
-  [data-theme="light"] select,
-  [data-theme="light"] textarea {
-    border: 1px solid #000000;
-    box-shadow: none;
-    color: #000000;
-  }
-  [data-theme="light"] input::placeholder,
-  [data-theme="light"] textarea::placeholder {
-    color: #666666;
-  }
-  [data-theme="light"] input:focus,
-  [data-theme="light"] select:focus,
-  [data-theme="light"] textarea:focus {
-    border-color: #000000;
-    box-shadow: 0 0 0 1px #000000;
-  }
-
-  /*
-   * Nested dark shell (e.g. DashboardShell) lives inside root theme-light wrapper.
-   * Without this, [data-theme="light"] input { color: #000 } wins for all inputs and
-   * text becomes invisible on dark dashboard fields.
-   */
-  [data-theme="dark"] input,
-  [data-theme="dark"] select,
-  [data-theme="dark"] textarea,
-  .theme-dark input,
-  .theme-dark select,
-  .theme-dark textarea {
-    color: var(--text-primary);
-    background: var(--input-bg);
-    border-color: var(--input-border);
-    box-shadow: var(--input-shadow);
-  }
-  [data-theme="dark"] input::placeholder,
-  [data-theme="dark"] textarea::placeholder,
-  .theme-dark input::placeholder,
-  .theme-dark textarea::placeholder {
-    color: var(--input-placeholder);
-  }
-  [data-theme="dark"] input:focus,
-  [data-theme="dark"] select:focus,
-  [data-theme="dark"] textarea:focus,
-  .theme-dark input:focus,
-  .theme-dark select:focus,
-  .theme-dark textarea:focus {
-    border-color: var(--input-focus-border);
-    box-shadow: var(--input-focus-shadow);
-  }
-
-  /* Chrome autofill: avoid dark text on dark dashboard inputs */
-  [data-theme="dark"] input:-webkit-autofill,
-  [data-theme="dark"] input:-webkit-autofill:hover,
-  [data-theme="dark"] input:-webkit-autofill:focus,
-  .theme-dark input:-webkit-autofill,
-  .theme-dark input:-webkit-autofill:hover,
-  .theme-dark input:-webkit-autofill:focus {
-    -webkit-text-fill-color: var(--text-primary);
-    caret-color: var(--text-primary);
-    box-shadow: inset 0 0 0 100px var(--input-bg);
-    transition: background-color 9999s ease-out;
-  }
-
-  input:disabled, select:disabled, textarea:disabled { opacity: 0.5; cursor: not-allowed; }
-  [data-theme="dark"] input:disabled,
-  [data-theme="dark"] select:disabled,
-  [data-theme="dark"] textarea:disabled,
-  .theme-dark input:disabled,
-  .theme-dark select:disabled,
-  .theme-dark textarea:disabled {
-    color: var(--text-primary);
-    opacity: 0.72;
-  }
-  input[type="number"] { font-variant-numeric: tabular-nums; font-family: 'JetBrains Mono', monospace; }
-  input::placeholder, textarea::placeholder { color: var(--input-placeholder); }
-}
-
-/* Accounts / Internal Transfer: native <select> readable on Windows (dark text on dark fix) */
-@layer components {
-  .accounts-native-select {
-    background-color: var(--bg-secondary) !important;
-    color: var(--text-primary) !important;
-    border: 1px solid var(--border-primary) !important;
-    box-shadow: none !important;
-  }
-  .accounts-native-select:focus {
-    border-color: rgba(225, 32, 25, 0.55) !important;
-    box-shadow: 0 0 0 2px rgba(225, 32, 25, 0.2) !important;
-  }
-  .accounts-native-select option {
-    background-color: var(--bg-secondary);
-    color: var(--text-primary);
-  }
-}
-
-/* ───────────────────────────────────────────────────────────── */
-/* Accounts page — flatten AppHeader frame to match Crucial Markets.
-   The default header is a rounded-xl glowing green box. On /accounts,
-   strip that frame so the only framed element is the tabs panel below. */
-/* ───────────────────────────────────────────────────────────── */
-html[data-page="accounts"] header.h-\[65px\] {
-  border: 0 !important;
-  border-radius: 0 !important;
-  box-shadow: none !important;
-  background: transparent !important;
-}
-html[data-page="accounts"] header.h-\[65px\] + div,
-html[data-page="accounts"] div:has(> header.h-\[65px\]) {
-  background: transparent !important;
-}
-
-/* (The old `.brand-logo-chip` dark-plate hack was removed: the brand now
-   ships a black mark for light surfaces and a white mark for dark ones,
-   toggled by the .brand-logo--ink / --reversed rules above.) */
-
-/* ── Accounts page ────────────────────────────────────────────
-   Tab cards, the transfer panel and its fields. Surfaces resolve from
-   theme tokens so one rule set serves light and dark; only the red
-   gradients are literal, since the brand colour is identical in both. */
-.accounts-tab {
-  transition: transform 160ms ease, box-shadow 160ms ease, background-color 160ms ease;
-}
-.accounts-tab--idle {
-  background: var(--bg-card);
-  border: 1px solid var(--border-glass-bright);
-}
-.accounts-tab--idle:hover { background: var(--bg-hover); transform: translateY(-1px); }
-.accounts-tab--idle .accounts-tab__chip {
-  background: rgba(225, 32, 25, 0.10);
-  color: #E12019;
-}
-/* On the near-black canvas the tinted chip reads as a muddy patch, so the
-   idle chip goes neutral there — matching the dark reference. */
-[data-theme="dark"] .accounts-tab--idle .accounts-tab__chip,
-.theme-dark .accounts-tab--idle .accounts-tab__chip {
-  background: rgba(255, 255, 255, 0.07);
-  color: #ffffff;
-}
-.accounts-tab--active {
-  background: linear-gradient(105deg, #F0342C 0%, #E12019 42%, #8d1009 100%);
-  border: 1px solid rgba(255, 255, 255, 0.18);
-  box-shadow: 0 12px 34px rgba(225, 32, 25, 0.34);
-}
-.accounts-tab--active .accounts-tab__chip {
-  background: rgba(255, 255, 255, 0.18);
-  color: #ffffff;
-}
-
-.accounts-panel {
-  background: var(--bg-card);
-  border: 1px solid var(--border-glass-bright);
-  box-shadow: 0 1px 2px rgba(11, 11, 12, 0.05);
-}
-.accounts-panel__mark {
-  background: rgba(225, 32, 25, 0.12);
-  border: 1px solid rgba(225, 32, 25, 0.30);
-  color: #E12019;
-}
-
-/* From / To field. The --from tint is what makes the direction readable
-   at a glance, before you read either label. */
-.accounts-field {
-  background: var(--bg-base);
-  border: 1px solid var(--border-primary);
-  transition: border-color 160ms ease, background-color 160ms ease;
-}
-.accounts-field:hover { border-color: rgba(225, 32, 25, 0.45); }
-.accounts-field:focus-within { border-color: rgba(225, 32, 25, 0.65); }
-.accounts-field--from {
-  background: rgba(225, 32, 25, 0.06);
-  border-color: rgba(225, 32, 25, 0.32);
-}
-
-.accounts-swap {
-  background: var(--bg-card);
-  border: 1px solid rgba(225, 32, 25, 0.35);
-  color: #E12019;
-  transition: background-color 160ms ease, transform 160ms ease;
-}
-.accounts-swap:hover { background: rgba(225, 32, 25, 0.10); }
-.accounts-swap:active { transform: scale(0.94); }
-
-.accounts-amount {
-  background: var(--bg-base);
-  border: 1px solid var(--border-primary);
-  transition: border-color 160ms ease;
-}
-.accounts-amount:focus-within { border-color: rgba(225, 32, 25, 0.55); }
-.accounts-amount__sigil {
-  background: rgba(225, 32, 25, 0.10);
-  color: #E12019;
-}
-
-.accounts-pct {
-  background: var(--bg-hover);
-  border: 1px solid transparent;
-  color: var(--text-primary);
-  transition: background-color 140ms ease, border-color 140ms ease;
-}
-.accounts-pct:hover {
-  background: rgba(225, 32, 25, 0.10);
-  border-color: rgba(225, 32, 25, 0.35);
-}
-
-.accounts-note {
-  background: rgba(225, 32, 25, 0.06);
-  border: 1px solid rgba(225, 32, 25, 0.18);
-}
-.accounts-note__chip { background: rgba(225, 32, 25, 0.12); color: #E12019; }
-
-.accounts-submit {
-  background: linear-gradient(100deg, #F0342C 0%, #E12019 50%, #B3160F 100%);
-  box-shadow: 0 10px 26px rgba(225, 32, 25, 0.30);
-  transition: filter 160ms ease, box-shadow 160ms ease;
-}
-.accounts-submit:hover:not(:disabled) {
-  filter: brightness(1.07);
-  box-shadow: 0 12px 32px rgba(225, 32, 25, 0.42);
-}
-.accounts-submit:disabled { opacity: 0.45; box-shadow: none; }
-
 @media (prefers-reduced-motion: reduce) {
-  .accounts-tab, .accounts-swap, .accounts-submit { transition: none; }
-  .accounts-tab--idle:hover { transform: none; }
-  .accounts-swap:active { transform: none; }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+  .reveal-armed [data-reveal] {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* ── Headline line reveal (components/motion/Headline.tsx) ───────────────── */
+.headline .hl-line {
+  display: block;
+  overflow: hidden;
+  /* room for descenders (g, y, p) inside the reveal mask */
+  padding-bottom: 0.2em;
+  margin-bottom: -0.2em;
+}
+.headline .hl-in {
+  display: inline-block;
+  /* extend the box over descenders so gradient (background-clip: text) fills paint them; layout unchanged */
+  padding-bottom: 0.2em;
+  margin-bottom: -0.2em;
+}
+.reveal-armed [data-split=''] .hl-in {
+  transform: translate3d(0, 110%, 0) rotate(2.5deg);
+  transform-origin: 0 100%;
+}
+.reveal-armed [data-split=''].is-in .hl-in {
+  transform: none;
+  transition: transform 1.15s cubic-bezier(0.16, 1, 0.3, 1);
+  transition-delay: calc(var(--d, 0s) + var(--i) * 0.09s);
+}
+@keyframes hl-up {
+  from {
+    transform: translate3d(0, 110%, 0) rotate(2.5deg);
+  }
+  to {
+    transform: none;
+  }
+}
+[data-split='now'] .hl-in {
+  transform-origin: 0 100%;
+  animation: hl-up 1.25s cubic-bezier(0.16, 1, 0.3, 1) both;
+  animation-delay: calc(var(--d, 0s) + var(--i) * 0.11s);
+}
+@keyframes fade-up {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 18px, 0);
+  }
+}
+.fade-up-now {
+  animation: fade-up 1.1s cubic-bezier(0.16, 1, 0.3, 1) both;
+  animation-delay: var(--d, 0.3s);
+}
+.gt-on [data-split] .hl-in,
+.gt-on .fade-up-now {
+  transform: none !important;
+  animation: none !important;
+}
+
+/* Product frames */
+@media (min-width: 1024px) {
+  .frame-tilt {
+    transform: perspective(1800px) rotateY(-9deg) rotateX(5deg) rotateZ(1deg);
+    transition: transform 1.2s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .frame-tilt:hover {
+    transform: perspective(1800px) rotateY(-4deg) rotateX(2deg);
+  }
+}
+
+/* Home hero portal: a radial feather (the portal is round), so the carved wall dissolves into the crimson black */
+.hero-portal-mask {
+  -webkit-mask-image: radial-gradient(ellipse 50% 50% at 50% 42%, #000 52%, rgba(0, 0, 0, 0.6) 72%, transparent 100%);
+  mask-image: radial-gradient(ellipse 50% 50% at 50% 42%, #000 52%, rgba(0, 0, 0, 0.6) 72%, transparent 100%);
+}
+.text-crimson-grad {
+  background: linear-gradient(120deg, #e3192f 0%, #ff4a3f 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+.kicker-crimson::before {
+  background: #e3192f;
+}
+
+/* Footer beam: soft left and right edges so the image never shows a box on the black */
+.beam-mask {
+  -webkit-mask-image: linear-gradient(to right, transparent 0%, #000 18%, #000 82%, transparent 100%);
+  mask-image: linear-gradient(to right, transparent 0%, #000 18%, #000 82%, transparent 100%);
+}
+
+/* ── Platform showcase (components/motion/HorizontalShowcase.tsx) ─────────────
+   Default (phones, short screens, reduced motion): a swipeable snap carousel, caption under each screenshot.
+   Pinned (≥1024 wide and ≥700 tall): screenshot height follows the viewport, caption beside it. */
+.sc-track {
+  display: flex;
+  gap: 16px;
+  margin-top: 40px;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  overscroll-behavior-x: contain;
+  padding-inline: var(--gutter);
+  scroll-padding-inline: var(--gutter);
+}
+.sc-slide {
+  flex: none;
+  width: min(88vw, 760px);
+  scroll-snap-align: start;
+}
+.sc-frame img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+.sc-bar {
+  display: none;
+}
+.sc .arrow-circle:hover:not(:disabled) {
+  transform: none;
+}
+.sc .arrow-circle:disabled {
+  background: transparent;
+  border-color: rgba(255, 255, 255, 0.18);
+  color: var(--fg);
+}
+@media (min-width: 1024px) and (min-height: 700px) and (prefers-reduced-motion: no-preference) {
+  .sc {
+    --sc-h: min(64svh, calc(100svh - 280px));
+    height: 100svh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 92px 0 28px;
+  }
+  .sc-intro .sc-title {
+    font-size: clamp(2.4rem, 3.4vw, 3.4rem);
+  }
+  .sc-track {
+    width: max-content;
+    margin-top: 28px;
+    gap: 64px;
+    overflow: visible;
+    scroll-snap-type: none;
+    align-items: flex-end;
+    padding-left: max(var(--gutter), calc((100vw - 1360px) / 2 + var(--gutter)));
+    padding-right: 10vw;
+  }
+  .sc-slide {
+    width: auto;
+    display: flex;
+    flex-direction: row-reverse;
+    align-items: flex-end;
+    gap: 28px;
+  }
+  /* As tall as the screen allows, but never wider than the screen minus the caption column. */
+  .sc-frame {
+    flex: none;
+    width: min(
+      calc((var(--sc-h) - 36px) * var(--ar) + 2px),
+      calc(100vw - max(var(--gutter), (100vw - 1360px) / 2 + var(--gutter)) - 278px - 32px)
+    );
+  }
+  .sc-cap {
+    width: 250px;
+    flex: none;
+    margin: 0 0 6px;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .sc-nav {
+    display: none;
+  }
+  .sc-bar {
+    display: block;
+    margin-top: 24px;
+  }
+}
+
+/* Options band model: the left edge (where the crossed leg meets the frame) melts into the band's orange */
+.band-model-mask {
+  -webkit-mask-image:
+    linear-gradient(to bottom, transparent 0%, #000 10%),
+    linear-gradient(to right, transparent 0%, #000 14%, #000 88%, transparent 100%);
+  -webkit-mask-composite: source-in;
+  mask-image:
+    linear-gradient(to bottom, transparent 0%, #000 10%),
+    linear-gradient(to right, transparent 0%, #000 14%, #000 88%, transparent 100%);
+  mask-composite: intersect;
+}
+/* Short, wide screens (not pinned): keep the carousel, but caption beside a screenshot that fits the height */
+@media (min-width: 1024px) and (max-height: 699px) {
+  .sc-slide {
+    width: auto;
+    display: flex;
+    flex-direction: row-reverse;
+    align-items: flex-end;
+    gap: 28px;
+  }
+  .sc-frame {
+    flex: none;
+    width: min(calc((100svh - 150px) * var(--ar)), calc(100vw - 2 * var(--gutter) - 320px));
+  }
+  .sc-cap {
+    width: 250px;
+    flex: none;
+    margin: 0 0 6px;
+    flex-direction: column;
+    gap: 10px;
+  }
+}
+
+/* ── Home hero: the founder's robot artwork ─────────────────────────────────
+   --cap: the largest crisp width (native px / screen density). --want: the width that would cover the frame.
+   The core box is min(want, cap) wide; at full size it covers the frame, otherwise it sits centre-right (landscape)
+   or centred (portrait) and the blurred backdrop, 3x the core box and centred on it, continues the scene. */
+.hero-robot {
+  --dpr: 1;
+  --fh: max(520px, min(100svh, 56.28vw));
+  height: var(--fh);
+}
+@media (min-resolution: 1.25dppx) {
+  .hero-robot {
+    --dpr: 1.5;
+  }
+}
+@media (min-resolution: 1.75dppx) {
+  .hero-robot {
+    --dpr: 2;
+  }
+}
+@media (min-resolution: 2.5dppx) {
+  .hero-robot {
+    --dpr: 3;
+  }
+}
+.hero-robot-stage {
+  --cap: calc(var(--native) * 1px / var(--dpr));
+  --want: max(100vw, calc(var(--fh) / var(--ratio)));
+  --cw: min(var(--want), var(--cap));
+  --ch: calc(var(--cw) * var(--ratio));
+  --tx: 0.64;
+  background: #0a0203;
+}
+.hero-robot-core {
+  position: absolute;
+  width: var(--cw);
+  height: var(--ch);
+  /* helmet centre (57.7%) at --tx of the frame, clamped so a full-size core always covers the frame */
+  left: clamp(min(0px, 100vw - var(--cw)), calc(var(--tx) * 100vw - 0.577 * var(--cw)), max(0px, 100vw - var(--cw)));
+  /* landscape: bottom-anchored (the jacket runs off the frame); at full size, crop mostly from the bottom */
+  top: max(calc(0.22 * (var(--fh) - var(--ch))), calc(var(--fh) - 0.96 * var(--ch)));
+}
+.hero-robot-backdrop {
+  position: absolute;
+  left: -100%;
+  top: -100%;
+  width: 300%;
+  height: 300%;
+  max-width: none;
+  pointer-events: none;
+}
+.hero-robot-art {
+  position: absolute;
+  inset: 0;
+  display: block;
+  -webkit-mask-image: linear-gradient(to right, transparent 0%, #000 11%, #000 91%, transparent 100%),
+    linear-gradient(to bottom, transparent 0%, #000 12%, #000 100%);
+  -webkit-mask-composite: source-in;
+  mask-image: linear-gradient(to right, transparent 0%, #000 11%, #000 91%, transparent 100%),
+    linear-gradient(to bottom, transparent 0%, #000 12%, #000 100%);
+  mask-composite: intersect;
+}
+.hero-robot-art img {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+.hero-copy {
+  justify-content: center;
+  padding-top: 88px;
+  padding-bottom: 40px;
+}
+.hero-copy-inner {
+  max-width: min(46vw, 640px);
+}
+/* Sized so the headline always ends well left of the helmet (which starts at 45% of the picture). */
+.t-hero-robot {
+  font-family: var(--font-display), var(--font-geist), sans-serif;
+  font-weight: 600;
+  letter-spacing: -0.05em;
+  line-height: 0.92;
+  font-size: clamp(3.1rem, 5.2vw, 6rem);
+}
+.hero-text-scrim {
+  background: linear-gradient(90deg, rgba(5, 1, 2, 0.62) 0%, rgba(5, 1, 2, 0.42) 26%, rgba(5, 1, 2, 0.12) 40%, transparent 48%);
+}
+@media (orientation: portrait) and (max-width: 1023px) {
+  .hero-copy {
+    justify-content: flex-end;
+    padding-bottom: max(40px, 5svh);
+  }
+  .hero-copy-inner {
+    max-width: none;
+  }
+  .hero-text-scrim {
+    background: linear-gradient(180deg, transparent 38%, rgba(5, 1, 2, 0.5) 55%, rgba(5, 1, 2, 0.82) 75%);
+  }
+  .hero-robot {
+    --fh: max(560px, 100svh);
+  }
+  .hero-robot-stage {
+    --tx: 0.5;
+  }
+  .hero-robot-core {
+    /* the picture sits high, just under the nav; the text stacks below the helmet */
+    top: 56px;
+  }
+  .hero-robot-art {
+    -webkit-mask-image: linear-gradient(to right, transparent 0%, #000 8%, #000 92%, transparent 100%),
+      linear-gradient(to bottom, transparent 0%, #000 14%, #000 84%, transparent 100%);
+    mask-image: linear-gradient(to right, transparent 0%, #000 8%, #000 92%, transparent 100%),
+      linear-gradient(to bottom, transparent 0%, #000 14%, #000 84%, transparent 100%);
+  }
+}
+
+/* ── Hero robot: motion (transform / opacity only) ─────────────────────────────
+   Intro (once): the scene fades up from black, settling from 1.08 to 1; the eye ignites; the button rises.
+   Idle: the eye breathes (3.5 s) with a rare inner flicker, a highlight runs along the visor (5 s), and a streak of
+   light travels round the big circle's rim (6.5 s). Phones skip the rim. Reduced motion: a still with the eye lit. */
+.hero-robot-core {
+  animation: hr-in 1.6s cubic-bezier(0.16, 1, 0.3, 1) both;
+  transform-origin: 58% 40%;
+}
+@keyframes hr-in {
+  from {
+    opacity: 0;
+    transform: scale(1.08);
+  }
+}
+.hr-fx {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+.hr-eye-bloom,
+.hr-eye-core {
+  position: absolute;
+  aspect-ratio: 1;
+  border-radius: 999px;
+  mix-blend-mode: screen;
+  transform: translate(-50%, -50%);
+}
+.hr-eye-bloom {
+  width: 9%;
+  opacity: 0.55;
+  background: radial-gradient(closest-side, rgba(255, 92, 48, 0.6), rgba(255, 40, 20, 0.2) 45%, transparent 72%);
+  animation:
+    hr-ignite 0.45s cubic-bezier(0.2, 0.8, 0.2, 1) 1.45s both,
+    hr-breathe 3.5s ease-in-out 1.9s infinite;
+}
+.hr-eye-core {
+  width: 2.4%;
+  opacity: 0.7;
+  background: radial-gradient(closest-side, rgba(255, 214, 170, 0.85), rgba(255, 110, 60, 0.35) 55%, transparent 80%);
+  animation:
+    hr-ignite-core 0.45s cubic-bezier(0.2, 0.8, 0.2, 1) 1.45s both,
+    hr-flicker 7.3s steps(1, end) 3s infinite;
+}
+@keyframes hr-ignite {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.3);
+  }
+}
+@keyframes hr-ignite-core {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.2);
+  }
+}
+@keyframes hr-breathe {
+  0%,
+  100% {
+    opacity: 0.55;
+    transform: translate(-50%, -50%) scale(1);
+  }
+  50% {
+    opacity: 0.9;
+    transform: translate(-50%, -50%) scale(1.08);
+  }
+}
+@keyframes hr-flicker {
+  0%,
+  90%,
+  93%,
+  96%,
+  100% {
+    opacity: 0.7;
+  }
+  91.5% {
+    opacity: 0.35;
+  }
+  94.5% {
+    opacity: 0.85;
+  }
+}
+.hr-masked {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  -webkit-mask-image: var(--mask);
+  mask-image: var(--mask);
+  -webkit-mask-size: 100% 100%;
+  mask-size: 100% 100%;
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+}
+.hr-band {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 60%;
+  width: 6%;
+  opacity: 0;
+  background: linear-gradient(90deg, transparent, rgba(255, 236, 214, 0.95), transparent);
+  mix-blend-mode: screen;
+  animation: hr-visor 5s cubic-bezier(0.45, 0, 0.55, 1) 2.6s infinite;
+}
+@keyframes hr-visor {
+  0% {
+    opacity: 0;
+    transform: translateX(0);
+  }
+  3% {
+    opacity: 1;
+  }
+  19% {
+    opacity: 1;
+  }
+  22%,
+  100% {
+    opacity: 0;
+    transform: translateX(260%);
+  }
+}
+.hr-wedge {
+  position: absolute;
+  aspect-ratio: 1;
+  opacity: 0;
+  transform: translate(-50%, -50%) rotate(115deg);
+  /* a narrow bright wedge at 0deg (up); rotated round the circle's centre, the rim mask turns it into a streak */
+  background: conic-gradient(
+    from -10deg,
+    transparent 0deg,
+    rgba(255, 196, 150, 0.15) 4deg,
+    rgba(255, 238, 220, 0.95) 9deg,
+    rgba(255, 196, 150, 0.15) 13deg,
+    transparent 16deg,
+    transparent 360deg
+  );
+  mix-blend-mode: screen;
+  animation: hr-rim 6.5s cubic-bezier(0.55, 0, 0.45, 1) 3.4s infinite;
+}
+@keyframes hr-rim {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, -50%) rotate(112deg);
+  }
+  6% {
+    opacity: 1;
+  }
+  42% {
+    opacity: 1;
+  }
+  48%,
+  100% {
+    opacity: 0;
+    transform: translate(-50%, -50%) rotate(282deg);
+  }
+}
+.hero-robot[data-paused] .hr-fx *,
+.hero-robot[data-paused] .hr-fx {
+  animation-play-state: paused !important;
+}
+@media (max-width: 767px) {
+  .hr-rim {
+    display: none;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .hr-band,
+  .hr-wedge {
+    display: none;
+  }
 }

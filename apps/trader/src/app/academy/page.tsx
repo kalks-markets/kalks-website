@@ -1,146 +1,119 @@
-'use client';
+import type { Metadata } from 'next';
+import { PageHero } from '@/components/ui/PageHero';
+import { SectionHead, Reveal } from '@/components/ui/Section';
+import { Button } from '@/components/ui/Button';
+import { CtaBand } from '@/components/ui/CtaBand';
+import { PixelStat } from '@/components/motion/PixelStat';
+import { ACADEMY } from '@/content/facts';
+import { REGISTER_HREF } from '@/lib/crm';
+import { cn } from '@/lib/cn';
 
-import Link from 'next/link';
-import { clsx } from 'clsx';
-import { ArrowRight } from 'lucide-react';
-import DashboardShell from '@/components/layout/DashboardShell';
-import { phases } from '@/data/academy';
-import { BRAND_NAME } from '@/lib/brand';
+export const metadata: Metadata = {
+  title: 'Kalks Academy: 118 lessons in 9 phases',
+  description:
+    'Learn to trade with Kalks Academy: 118 lessons from markets and instruments to macro regimes and FX options, a quiz after every lesson, phase exams and verifiable certificates.',
+  alternates: { canonical: '/academy' },
+};
 
-const phaseMeta = [
-  { icon: '◆', border: 'border-[#E12019]/30', bg: 'bg-[#E12019]/10' },
-  { icon: '●', border: 'border-[#E12019]/30', bg: 'bg-[#E12019]/10' },
-  { icon: '◉', border: 'border-[#E12019]/30', bg: 'bg-[#E12019]/10' },
-  { icon: '■', border: 'border-teal-400/30', bg: 'bg-teal-500/10' },
-  { icon: '◆', border: 'border-amber-500/30', bg: 'bg-amber-500/10' },
-  { icon: '▲', border: 'border-blue-500/30', bg: 'bg-blue-500/10' },
-  { icon: '◇', border: 'border-purple-500/30', bg: 'bg-purple-500/10' },
-  { icon: '★', border: 'border-yellow-500/30', bg: 'bg-yellow-500/10' },
-];
-
-const displayModuleCount = (i: number) => {
-  const n = phases[i]?.modules.length ?? 0;
-  return n > 0 ? n : 5;
+const LEVEL_TONE: Record<string, string> = {
+  Beginner: 'text-[#7ee2a1] border-up/30 bg-up/10',
+  Intermediate: 'text-[#ffc7a6] border-ember/35 bg-ember/10',
+  Advanced: 'text-[#ffd98a] border-[#e9b949]/35 bg-[#e9b949]/10',
+  Professional: 'text-fg border-white/25 bg-white/[0.06]',
 };
 
 export default function AcademyPage() {
-  const done = 0;
-  const pct = 0;
-  const studyTime = '21h';
-
   return (
-    <DashboardShell>
-      <div className="page-main max-w-6xl mx-auto w-full pb-8">
-        <div className="text-center mb-8">
-          <div className="inline-block px-4 py-1.5 rounded-full border border-[#E12019]/30 text-[#E12019] text-xs font-medium tracking-wider uppercase mb-4">
-            ● CURRICULUM
-          </div>
-          <h1 className="text-3xl font-light text-text-primary tracking-wider mb-1">
-            {BRAND_NAME.toUpperCase()} <span className="font-bold italic">FOREX</span> ACADEMY
-          </h1>
-          <p className="text-[#E12019] text-sm tracking-widest uppercase">MASTER FOREX TRADING FROM BEGINNER TO PROFESSIONAL</p>
+    <>
+      <PageHero
+        kicker="Kalks Academy"
+        lines={['Learn it properly.', <span key="b" className="text-fg-3">Then trade it.</span>]}
+        lead="118 lessons in 9 phases, from how markets work to macro regimes and FX options. A quiz after every lesson, an exam for every phase, and certificates anyone can verify."
+        art="study"
+        artPosition="70% 30%"
+        actions={
+          <>
+            <Button href={REGISTER_HREF}>Start learning</Button>
+            <Button href="#phases" variant="outline" arrow={false}>
+              See the phases
+            </Button>
+          </>
+        }
+      />
 
-          <div className="flex items-center justify-center gap-8 mt-6 mb-4">
+      <section className="pb-8 pt-16 lg:pt-24" aria-label="Academy in numbers">
+        <div className="container-site">
+          <dl className="grid grid-cols-2 gap-x-6 gap-y-10 border-y border-white/[0.08] py-10 lg:grid-cols-4">
             {[
-              { value: String(phases.length), label: 'PHASES' },
-              { value: '44', label: 'MODULES' },
-              { value: String(done), label: 'DONE' },
-              { value: studyTime, label: 'STUDY TIME' },
+              { v: ACADEMY.phases, l: 'Phases, beginner to professional' },
+              { v: ACADEMY.lessons, l: 'Lessons, each with its own quiz' },
+              { v: ACADEMY.quizQuestions, l: 'Quiz questions' },
+              { v: ACADEMY.glossary, l: 'Terms in the glossary' },
             ].map((s) => (
-              <div key={s.label} className="text-center">
-                <p className="text-2xl font-bold text-text-primary">{s.value}</p>
-                <p className="text-[10px] uppercase tracking-wider text-text-tertiary">{s.label}</p>
+              <div key={s.l} data-reveal>
+                <dt className="sr-only">{s.l}</dt>
+                <dd>
+                  <PixelStat value={s.v} className="t-pixel block text-[3rem] sm:text-[4rem]" />
+                  <p className="mt-3 text-[13px] text-fg-2">{s.l}</p>
+                </dd>
               </div>
             ))}
-          </div>
-
-          <div className="text-center mb-4">
-            <p className="text-[10px] uppercase tracking-widest text-text-tertiary mb-1">Overall Progress</p>
-            <p className="text-sm text-[#E12019] font-medium">
-              {pct}% Complete ({done}/44)
-            </p>
-            <div className="h-2 max-w-md mx-auto mt-3 rounded-full bg-bg-secondary overflow-hidden border border-border-primary">
-              <div className="h-full bg-[#E12019] rounded-full transition-all" style={{ width: `${pct}%` }} />
-            </div>
-          </div>
-
-          <div className="flex items-center justify-center gap-3 mb-8 flex-wrap">
-            {phases.map((phase, i) => (
-              <div key={phase.id} className="text-center">
-                <div
-                  className={clsx(
-                    'w-8 h-8 rounded-full border flex items-center justify-center text-xs font-bold mb-1',
-                    i === 0 ? 'border-[#E12019] text-[#E12019]' : 'border-border-secondary text-text-tertiary',
-                  )}
-                >
-                  {i + 1}
-                </div>
-                <p className="text-[9px] text-text-tertiary">
-                  0/{displayModuleCount(i)}
-                </p>
-              </div>
-            ))}
-          </div>
+          </dl>
         </div>
+      </section>
 
-        <div className="space-y-3">
-          {phases.map((phase, i) => {
-            const meta = phaseMeta[i] ?? phaseMeta[0];
-            const locked = i > 0;
-            const modCount = phase.modules.length || displayModuleCount(i);
-            return (
-              <Link
-                key={phase.id}
-                href={`/academy/phase-${i + 1}`}
-                className={clsx(
-                  'block rounded-xl p-5 hover:border-text-tertiary transition-colors group border bg-bg-secondary',
-                  i === phases.length - 2 ? clsx(meta.border, 'bg-purple-500/5') : i === phases.length - 1 ? clsx(meta.border, 'bg-yellow-500/5') : 'border-border-glass',
-                )}
+      <section id="phases" className="section scroll-mt-24" aria-labelledby="phases-title">
+        <div className="container-site">
+          <SectionHead
+            id="phases-title"
+            kicker="The path"
+            lines={['Nine phases,', 'one direction.']}
+            lead="Phases 1 to 8 each have a fundamental and a technical track. Phase 9 is an elective on Kalks FX Options. Pass a phase exam with 70% to earn its certificate."
+          />
+          <ol className="mt-12 flex flex-col">
+            {ACADEMY.list.map((p, i) => (
+              <Reveal
+                as="li"
+                key={p.n}
+                delay={(i % 3) * 0.04}
+                className="group grid grid-cols-[auto_1fr] items-center gap-x-6 gap-y-2 border-t border-white/[0.08] py-6 sm:grid-cols-[auto_1fr_auto_auto] lg:py-8"
               >
-                <div className="flex items-center justify-between gap-3">
-                  <div className="flex items-center gap-4 min-w-0">
-                    <div
-                      className={clsx('w-10 h-10 rounded-xl flex items-center justify-center text-lg shrink-0', meta.bg)}
-                      style={{ color: phase.color }}
-                    >
-                      {meta.icon}
-                    </div>
-                    <div className="min-w-0">
-                      <div className="flex items-center gap-2 mb-0.5 flex-wrap">
-                        <span className="text-xs font-bold tracking-wider" style={{ color: phase.color }}>
-                          PHASE {phase.num}
-                        </span>
-                        <span className="text-[10px] text-text-tertiary">{phase.duration}</span>
-                        {locked && (
-                          <span className="text-[9px] px-1.5 py-0.5 rounded bg-bg-tertiary border border-border-glass text-text-tertiary uppercase tracking-wider">
-                            Locked
-                          </span>
-                        )}
-                      </div>
-                      <h3 className="text-text-primary font-bold text-lg">{phase.title}</h3>
-                      <p className="text-xs text-text-secondary italic">{phase.subtitle}</p>
-                    </div>
-                  </div>
-                  <div className="flex items-center gap-3 shrink-0">
-                    <span className="text-sm text-text-tertiary">
-                      0/{modCount}
-                    </span>
-                    <ArrowRight size={16} className="text-text-tertiary group-hover:text-[#E12019] transition-colors" />
-                  </div>
-                </div>
-                <div className="flex items-center gap-1 mt-2 ml-14">
-                  <span className="text-[10px] text-text-tertiary">0%</span>
-                </div>
-              </Link>
-            );
-          })}
+                <span className="t-pixel w-16 text-[2.2rem] text-fg-3 transition-colors duration-500 group-hover:text-ember sm:text-[3rem]">
+                  {String(p.n).padStart(2, '0')}
+                </span>
+                <h3 className="font-display text-[1.35rem] font-semibold tracking-[-0.03em] sm:text-[1.9rem]">{p.title}</h3>
+                <span className={cn('chip col-start-2 justify-self-start sm:col-start-auto', LEVEL_TONE[p.level])}>{p.level}</span>
+                <span className="num col-start-2 text-sm text-fg-2 sm:col-start-auto sm:w-24 sm:text-right">{p.lessons} lessons</span>
+              </Reveal>
+            ))}
+          </ol>
         </div>
+      </section>
 
-        <div className="flex items-center justify-between mt-8 text-[10px] uppercase tracking-widest text-text-tertiary">
-          <span>{BRAND_NAME.toUpperCase()} FOREX ACADEMY</span>
-          <span>8 PHASES · 44 MODULES</span>
+      <section className="section pt-0" aria-labelledby="how-ac">
+        <div className="container-site grid gap-4 lg:grid-cols-3">
+          {[
+            ['Lessons that fit a coffee break', 'Short, focused lessons with examples from real markets, each followed by a quiz that checks you understood it.'],
+            ['Exams with a pass mark', 'Every phase ends with an exam of 15 questions. Score 70% and the phase certificate is yours, with a code anyone can verify.'],
+            ['A glossary for every term', `${ACADEMY.glossary} trading terms explained in plain language, linked from the lessons that use them.`],
+          ].map(([t, d], i) => (
+            <Reveal key={t} delay={i * 0.06} className="card p-7">
+              <h3 id={i === 0 ? 'how-ac' : undefined} className="t-h3">
+                {t}
+              </h3>
+              <p className="t-body mt-3">{d}</p>
+            </Reveal>
+          ))}
         </div>
-      </div>
-    </DashboardShell>
+      </section>
+
+      <CtaBand
+        lines={['Your first lesson', 'is one click away.']}
+        lead="The Academy is part of the Client Area. Create your account and start with phase 1."
+        primary={{ label: 'Start learning', href: REGISTER_HREF }}
+        secondary={null}
+        art="desk-streaks"
+      />
+    </>
   );
 }

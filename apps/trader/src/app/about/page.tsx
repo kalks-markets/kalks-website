@@ -1,148 +1,125 @@
-import LandingHeader from '@/components/landing/LandingHeader'
-import LandingFooter from '@/components/landing/LandingFooter'
-import { Users, Target, Shield, Globe } from 'lucide-react'
-import { Section, SectionHeading, PageHero, FeatureGrid, CtaBanner } from '@/marketing/components'
-import { BRAND_NAME } from '@/lib/brand'
-import '@/marketing/tokens.css'
+import type { Metadata } from 'next';
+import Link from 'next/link';
+import { CandlestickChart, Globe2, Layers, LineChart, ShieldCheck, Users } from 'lucide-react';
+import { PageHero } from '@/components/ui/PageHero';
+import { SectionHead, Reveal } from '@/components/ui/Section';
+import { Button, ArrowCircle } from '@/components/ui/Button';
+import { Picture } from '@/components/ui/Picture';
+import { CtaBand } from '@/components/ui/CtaBand';
+import { INSTRUMENTS, OPTIONS } from '@/content/facts';
+import { REGISTER_HREF } from '@/lib/crm';
 
-/**
- * Standalone /about. Restyled onto the shared marketing design system —
- * the page body is wrapped in `.mk` so it picks up the marketing tokens
- * (this route sits outside the (landing) group, which normally applies
- * them). Every line of copy is carried over unchanged.
- *
- * LandingHeader / LandingFooter keep their own existing styling; they are
- * shared chrome outside this restyle's scope.
- */
+export const metadata: Metadata = {
+  title: 'About Kalks',
+  description:
+    'Kalks is a global multi-asset trading platform: Kalks FX Options, CFDs on 1,389 instruments, prop challenges, copy trading and PAMM, built on our own technology and translated into 22 languages.',
+  alternates: { canonical: '/about' },
+};
 
-export const metadata = { title: `About Us — ${BRAND_NAME}` }
+const PRODUCTS = [
+  { Icon: LineChart, t: 'Kalks FX Options', d: `Option chains on ${OPTIONS.fxPairs - 1} FX pairs, gold, silver and oil, with daily, weekly and monthly expiries.`, href: '/options' },
+  { Icon: CandlestickChart, t: 'CFDs', d: `${INSTRUMENTS.total.toLocaleString('en-US')} instruments across forex, metals, energies, indices and crypto, with stocks coming soon.`, href: '/markets' },
+  { Icon: ShieldCheck, t: 'Prop challenges', d: 'Classic 2-Step, Rapid 1-Step and Instant Funding, with rules checked live on the server.', href: '/prop' },
+  { Icon: Users, t: 'Copy trading, PAMM, MAM', d: 'Follow verified masters with your own limits, invest in managed funds, or become a master.', href: '/copy-trading' },
+  { Icon: Layers, t: 'Partners and white-label', d: 'A five-level partner programme, and the whole platform for brokers under their own brand.', href: '/partners' },
+  { Icon: Globe2, t: 'Academy', d: '118 lessons in 9 phases, from how markets work to macro regimes and FX options.', href: '/academy' },
+];
 
-const STATS = [
-  { value: '150+', label: 'Countries Served' },
-  { value: '50,000+', label: 'Active Traders' },
-  { value: '$500M+', label: 'Daily Volume' },
-  { value: '99.9%', label: 'Uptime' },
-]
-
-const TEAM = [
-  { name: 'Alex Chen', role: 'CEO & Co-Founder', desc: 'Former Goldman Sachs trader with 15+ years in institutional trading.' },
-  { name: 'Sarah Johnson', role: 'CTO & Co-Founder', desc: 'Tech lead at Bloomberg, expert in low-latency trading systems.' },
-  { name: 'Michael Roberts', role: 'Head of Compliance', desc: 'Former SEC regulator, ensures full regulatory compliance globally.' },
-]
+const PRINCIPLES = [
+  {
+    t: 'One account, one wallet',
+    d: 'Options sit in the same trading account as CFDs. Prop, copy trading, PAMM and partner earnings live beside them in the Client Area, all funded from one USDT wallet.',
+  },
+  {
+    t: 'Plain language',
+    d: 'Every account states its pricing in one line, and every options ticket ends with a card that says what you pay, the most you can lose and how it settles.',
+  },
+  {
+    t: 'Built in-house',
+    d: 'Kalks runs on its own technology: the trading engine, the market-data service and its candles, the option pricing, Kalks Trader and the Client Area are all ours.',
+  },
+  {
+    t: 'Made for every market',
+    d: 'Kalks Trader and the Client Area are translated into 22 languages, right-to-left included, and run in any modern browser on desktop and phone.',
+  },
+];
 
 export default function AboutPage() {
   return (
-    <div className="min-h-screen">
-      <LandingHeader />
-
-      <div className="mk">
-        <PageHero
-          kicker={`About ${BRAND_NAME}`}
-          title={<>About {BRAND_NAME}<br /><span style={{ color: 'var(--mk-accent)' }}>Revolutionizing Global Trading</span></>}
-          lead={`${BRAND_NAME} is a decentralized exchange paired with a regulated broker — combining on-chain insured trades, non-custodial wallets, institutional-grade tools, and transparent pricing for complete financial freedom.`}
-          primary={{ label: 'Open Account', href: '/auth/register' }}
-          secondary={{ label: 'Contact Us', href: '/contact' }}
-        />
-
-        {/* Our Story */}
-        <Section raised>
-          <SectionHeading kicker="Our Story" title="Our Story" />
-          <div className="flex flex-col gap-5 mx-auto max-w-4xl mt-12">
-            <p className="mk-lead">
-              {BRAND_NAME} was founded with a simple belief: trading should be accessible, transparent, and fair for everyone. We saw traders struggling with high fees, slow withdrawals, and limited access to global markets. We decided to change that.
-            </p>
-            <p className="mk-lead">
-              Today, {BRAND_NAME} serves thousands of traders across 150+ countries, providing them with the tools and freedom they deserve. We&apos;re not just a broker—we&apos;re a movement toward financial independence.
-            </p>
-            <p className="mk-lead">
-              Our commitment is simple: provide the best trading experience with zero compromises on security, speed, or transparency.
-            </p>
+    <>
+      <PageHero
+        kicker="About Kalks"
+        lines={['A trading platform', <span key="b" className="text-fg-3">built for every market.</span>]}
+        lead="Kalks brings forex options, CFDs, prop challenges, copy trading and a partner programme together on one account, on technology we build ourselves."
+        actions={
+          <>
+            <Button href={REGISTER_HREF}>Open account</Button>
+            <Button href="/contact" variant="outline" arrow={false}>
+              Contact us
+            </Button>
+          </>
+        }
+        visual={
+          <div className="relative mx-auto w-full max-w-[640px] overflow-hidden rounded-[28px] border border-white/10 rim">
+            <Picture
+              name="/images/brand/hero-crimson"
+              widths={[1672, 960]}
+              height={941}
+              alt="Kalks: a woman in a long black coat between two black great danes, in front of giant black Kalks letters on a glowing red wall"
+              sizes="(min-width: 1024px) 640px, 92vw"
+              priority
+            />
           </div>
-        </Section>
+        }
+      />
 
-        {/* Our Vision */}
-        <Section>
-          <SectionHeading
-            kicker="Our Vision"
-            title="Our Vision"
-            lead="To become the world's most trusted trading platform by putting traders first."
+      <section className="section" aria-labelledby="what-title">
+        <div className="container-site">
+          <SectionHead
+            id="what-title"
+            kicker="What we do"
+            lines={['Six products.', 'One platform.']}
+            lead="Everything a trader needs, from the first demo trade to running a fund or a brokerage."
           />
-          <FeatureGrid
-            className="mt-12"
-            columns={4}
-            items={[
-              { icon: Users,  title: 'Trader-First',  body: "Every decision we make starts with what's best for our traders." },
-              { icon: Target, title: 'Innovation',    body: 'Continuously pushing boundaries with cutting-edge technology.' },
-              { icon: Shield, title: 'Trust',         body: 'Building long-term relationships through transparency and reliability.' },
-              { icon: Globe,  title: 'Global Access', body: 'Making institutional-grade trading available to everyone, everywhere.' },
-            ]}
-          />
-        </Section>
-
-        {/* Stats */}
-        <Section raised>
-          <SectionHeading kicker="By the Numbers" title="By the Numbers" />
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-5 mt-12">
-            {STATS.map(({ value, label }) => (
-              <div key={label} className="mk-card text-center">
-                <div
-                  className="font-extrabold"
-                  style={{ fontSize: 'var(--mk-text-h2)', color: 'var(--mk-accent)', lineHeight: 1.1 }}
-                >
-                  {value}
-                </div>
-                <div
-                  className="mt-2"
-                  style={{
-                    fontSize: 'var(--mk-text-label)',
-                    letterSpacing: 'var(--mk-tracking-label)',
-                    textTransform: 'uppercase',
-                    color: 'var(--mk-text-faint)',
-                  }}
-                >
-                  {label}
-                </div>
-              </div>
+          <div className="mt-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            {PRODUCTS.map(({ Icon, t, d, href }, i) => (
+              <Reveal key={t} delay={(i % 3) * 0.05}>
+                <Link href={href} className="group card card-hover flex h-full flex-col p-6 sm:p-7">
+                  <div className="flex items-start justify-between">
+                    <span className="grid h-11 w-11 place-items-center rounded-2xl bg-ember/15 text-ember-2">
+                      <Icon size={20} aria-hidden />
+                    </span>
+                    <ArrowCircle />
+                  </div>
+                  <h3 className="mt-6 text-xl font-semibold tracking-tight">{t}</h3>
+                  <p className="t-body mt-2">{d}</p>
+                </Link>
+              </Reveal>
             ))}
           </div>
-        </Section>
+        </div>
+      </section>
 
-        {/* Team */}
-        <Section>
-          <SectionHeading
-            kicker="Leadership"
-            title="Leadership Team"
-            lead="Led by industry veterans from top financial institutions and technology companies."
-          />
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-5 mt-12">
-            {TEAM.map(({ name, role, desc }) => (
-              <article key={name} className="mk-card mk-card--hover text-center flex flex-col items-center gap-3">
-                <div
-                  className="h-16 w-16 rounded-full"
-                  style={{ background: 'var(--mk-surface-2)', border: '1px solid var(--mk-line)' }}
-                />
-                <h3 className="mk-h3">{name}</h3>
-                <p
-                  className="font-bold"
-                  style={{ color: 'var(--mk-accent)', fontSize: 'var(--mk-text-sm)' }}
-                >
-                  {role}
-                </p>
-                <p className="mk-body">{desc}</p>
-              </article>
+      <section className="section pt-0" aria-labelledby="how-title">
+        <div className="container-site grid gap-12 lg:grid-cols-[0.9fr_1.1fr] lg:gap-20">
+          <SectionHead id="how-title" kicker="How we build" lines={['Clear, fast,', 'and our own.']} />
+          <ol className="flex flex-col">
+            {PRINCIPLES.map((p, i) => (
+              <Reveal as="li" key={p.t} delay={i * 0.05} className="border-t border-white/[0.09] py-8 first:border-t-0 first:pt-0">
+                <div className="flex items-start gap-6">
+                  <span className="t-pixel w-12 flex-none text-[2.2rem] text-ember">{String(i + 1).padStart(2, '0')}</span>
+                  <div>
+                    <h3 className="t-h3">{p.t}</h3>
+                    <p className="t-body mt-3 max-w-xl">{p.d}</p>
+                  </div>
+                </div>
+              </Reveal>
             ))}
-          </div>
-        </Section>
+          </ol>
+        </div>
+      </section>
 
-        <CtaBanner
-          title={`Trade With ${BRAND_NAME}`}
-          lead="Open an account and get the tools and freedom you deserve — transparent pricing, fast withdrawals, global market access."
-          primary={{ label: 'Open Account', href: '/auth/register' }}
-          secondary={{ label: 'Contact Us', href: '/contact' }}
-        />
-      </div>
-
-      <LandingFooter />
-    </div>
-  )
+      <CtaBand lines={['Trade with', 'Kalks.']} lead="Open an account in a minute, start on demo, and fund with USDT when you are ready." />
+    </>
+  );
 }
