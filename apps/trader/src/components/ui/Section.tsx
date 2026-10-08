@@ -1,88 +1,99 @@
 import type { ReactNode } from 'react';
 import { cn } from '@/lib/cn';
-import { Headline } from '@/components/motion/Headline';
 
-/** Kicker + split headline + lead, the opening of most sections. */
-export function SectionHead({
-  kicker,
-  lines,
-  lead,
-  align = 'left',
-  className,
-  as = 'h2',
-  size = 'h2',
+/** A page section on the canvas: 1440 max, page gutters, the standard top rhythm. */
+export function Section({
   id,
-}: {
-  kicker?: string;
-  lines: ReactNode[];
-  lead?: ReactNode;
-  align?: 'left' | 'center';
-  className?: string;
-  as?: 'h1' | 'h2' | 'h3';
-  size?: 'h1' | 'h2' | 'display';
-  id?: string;
-}) {
-  const sizeCls = size === 'display' ? 't-display' : size === 'h1' ? 't-h1' : 't-h2';
-  return (
-    <div className={cn('flex flex-col gap-6', align === 'center' && 'items-center text-center', className)}>
-      {kicker && (
-        <span className="kicker" data-reveal>
-          {kicker}
-        </span>
-      )}
-      <Headline as={as} id={id} lines={lines} className={cn(sizeCls, 'text-balance')} />
-      {lead && (
-        <p
-          className={cn('t-lead max-w-2xl', align === 'center' && 'mx-auto')}
-          data-reveal
-          style={{ ['--reveal-delay' as string]: '0.15s' }}
-        >
-          {lead}
-        </p>
-      )}
-    </div>
-  );
-}
-
-/** Thin dashed vertical guides, as in the references. Positions are percentages of the container width. */
-export function GridLines({ at = [0, 33.333, 66.666, 100], className }: { at?: number[]; className?: string }) {
-  return (
-    <div aria-hidden className={cn('gridlines container-site !absolute inset-x-0 mx-auto', className)}>
-      {at.map((p) => (
-        <div key={p} style={{ left: `calc(var(--gutter) + (100% - 2 * var(--gutter)) * ${p / 100})` }} />
-      ))}
-    </div>
-  );
-}
-
-export function Reveal({
   children,
-  delay = 0,
   className,
-  as: Tag = 'div',
+  label,
+  labelledBy,
 }: {
+  id?: string;
   children: ReactNode;
-  delay?: number;
   className?: string;
-  as?: 'div' | 'li' | 'section' | 'article' | 'p' | 'span';
+  label?: string;
+  labelledBy?: string;
 }) {
   return (
-    <Tag data-reveal className={className} style={{ ['--reveal-delay' as string]: `${delay}s` }}>
-      {children}
-    </Tag>
+    <section id={id} className={cn('sec scroll-mt-28', className)} aria-label={label} aria-labelledby={labelledBy}>
+      <div className="wrap">{children}</div>
+    </section>
   );
 }
 
-/** A labelled list of facts (dt/dd), used in cards and tables. */
-export function FactList({ items, className }: { items: [string, ReactNode][]; className?: string }) {
+/** Mono kicker in red, a wide display headline (ends with a full stop), an optional one-line lede on the right. */
+export function SectionHead({
+  id,
+  kicker,
+  title,
+  lede,
+  action,
+  className,
+}: {
+  id?: string;
+  kicker?: string;
+  title: ReactNode;
+  lede?: ReactNode;
+  action?: ReactNode;
+  className?: string;
+}) {
   return (
-    <dl className={cn('divide-y divide-white/[0.07]', className)}>
-      {items.map(([k, v]) => (
-        <div key={k} className="flex items-baseline justify-between gap-6 py-3">
-          <dt className="text-sm text-fg-3">{k}</dt>
-          <dd className="text-right text-sm font-medium text-fg">{v}</dd>
+    <div className={cn('sec-h', className)}>
+      <div>
+        {kicker && <span className="kicker">{kicker}</span>}
+        <h2 id={id} className="d t-h2">
+          {title}
+        </h2>
+      </div>
+      {(lede || action) && (
+        <div className="flex flex-col items-start gap-5">
+          {lede && <p>{lede}</p>}
+          {action}
+        </div>
+      )}
+    </div>
+  );
+}
+
+/** Label / value rows. */
+export function FactList({ items, className }: { items: [ReactNode, ReactNode][]; className?: string }) {
+  return (
+    <dl className={cn('facts', className)}>
+      {items.map(([k, v], i) => (
+        <div key={i}>
+          <dt>{k}</dt>
+          <dd>{v}</dd>
         </div>
       ))}
     </dl>
+  );
+}
+
+/** Numbered steps in cards. */
+export function Steps({ steps, className }: { steps: { t: string; d: ReactNode }[]; className?: string }) {
+  return (
+    <ol className={cn('grid gap-4 md:grid-cols-2 xl:grid-cols-4', className)}>
+      {steps.map((s, i) => (
+        <li key={s.t} className="card flex flex-col gap-4 p-6">
+          <span className="step-n">{String(i + 1).padStart(2, '0')}</span>
+          <div>
+            <h3 className="t-h3">{s.t}</h3>
+            <p className="body mt-2">{s.d}</p>
+          </div>
+        </li>
+      ))}
+    </ol>
+  );
+}
+
+/** Small feature card: title + one or two sentences. */
+export function Feature({ t, d, icon, className }: { t: string; d: ReactNode; icon?: ReactNode; className?: string }) {
+  return (
+    <div className={cn('card flex flex-col gap-3 p-6', className)}>
+      {icon && <span className="grid h-10 w-10 place-items-center rounded-xl bg-s3 text-tx2 [&_svg]:h-5 [&_svg]:w-5">{icon}</span>}
+      <h3 className="t-h3 !text-[18px]">{t}</h3>
+      <p className="body !text-[14.5px]">{d}</p>
+    </div>
   );
 }

@@ -1,25 +1,28 @@
 'use client';
 
+import { Badges } from '@/components/ui/Flag';
 import { useLiveQuotes } from '@/lib/useLiveQuotes';
+import { useFlash } from '@/lib/useFlash';
 import { changePct, formatPct, formatPrice, mid, type QuoteMap } from '@/lib/quotes';
 import { cn } from '@/lib/cn';
 
-export type LiveRow = { s: string; name: string; digits: number; group?: string; soon?: boolean };
+export type LiveRow = { s: string; name: string; digits: number; group?: string; soon?: boolean; cls?: string };
 
-/** Compact live price list (options underlyings, market highlights). */
+/** Compact live price list in a card (options underlyings). */
 export function LiveList({ rows, initial, className }: { rows: LiveRow[]; initial: QuoteMap; className?: string }) {
   const { quotes, live } = useLiveQuotes(
     rows.filter((r) => !r.soon).map((r) => r.s),
     initial,
   );
+  const flash = useFlash(quotes);
   let lastGroup: string | undefined;
   return (
-    <div className={cn('rounded-[28px] border border-white/[0.09] bg-white/[0.02] p-2', className)}>
-      <div className="flex items-center justify-between px-4 pb-2 pt-3 text-[11px] font-medium uppercase tracking-[0.14em] text-fg-3">
+    <div className={cn('card p-2', className)}>
+      <div className="flex items-center justify-between px-4 pb-1 pt-3 text-[11px] font-semibold uppercase tracking-[0.07em] text-tx3">
         <span>Underlying</span>
-        <span className="flex items-center gap-1.5 normal-case tracking-normal">
-          <span className={cn('h-1.5 w-1.5 rounded-full', live ? 'bg-up' : 'bg-fg-3')} />
-          {live ? 'Live prices' : 'Latest prices'}
+        <span className="flex items-center gap-2 font-mono normal-case tracking-normal">
+          <i className={cn('live-dot', live && 'on')} />
+          {live ? 'Streaming' : 'Latest prices'}
         </span>
       </div>
       <ul>
@@ -30,20 +33,19 @@ export function LiveList({ rows, initial, className }: { rows: LiveRow[]; initia
           const ch = changePct(q);
           return (
             <li key={r.s}>
-              {header && <p className="px-4 pb-1 pt-4 text-[11px] font-medium uppercase tracking-[0.14em] text-fg-3">{header}</p>}
-              <div className="flex items-center gap-4 rounded-2xl px-4 py-2.5 transition-colors hover:bg-white/[0.04]">
+              {header && <p className="px-4 pb-1 pt-4 font-mono text-[11.5px] font-semibold text-red-tx">{header}</p>}
+              <div className="flex items-center gap-3 rounded-[14px] px-4 py-2.5 transition-colors hover:bg-s3">
+                <Badges symbol={r.s} cls={r.cls} />
                 <div className="min-w-0 flex-1">
                   <p className="text-[14px] font-semibold">{r.s}</p>
-                  <p className="truncate text-[12px] text-fg-3">{r.name}</p>
+                  <p className="truncate text-[12.5px] text-tx3">{r.name}</p>
                 </div>
                 {r.soon ? (
-                  <span className="chip !h-6 text-[10px]">Coming soon</span>
+                  <span className="tag">Soon</span>
                 ) : (
                   <>
-                    <span className="num text-[14px]">{formatPrice(mid(q), r.digits)}</span>
-                    <span className={cn('num w-16 text-right text-[12px]', ch === undefined ? 'text-fg-3' : ch >= 0 ? 'text-up' : 'text-down')}>
-                      {formatPct(ch)}
-                    </span>
+                    <span className={cn('px', flash[r.s] && `flash-${flash[r.s]}`)}>{formatPrice(mid(q), r.digits)}</span>
+                    <span className={cn('chg w-[72px] justify-center', ch !== undefined && (ch >= 0 ? 'up' : 'dn'))}>{formatPct(ch)}</span>
                   </>
                 )}
               </div>

@@ -114,10 +114,10 @@ export default function RestrictedCountriesPage() {
       </Section>
 
       <CtaBanner
-        title="Eligible to Trade?"
+        title="Eligible to trade?"
         lead={`If your jurisdiction isn't on the restricted list, open a ${BRAND_NAME} account in minutes.`}
-        primary={{ label: 'Open Account', href: '/auth/register' }}
-        secondary={{ label: 'Contact Compliance', href: `mailto:${BRAND_SUPPORT_EMAIL}` }}
+        primary={{ label: 'Open account', href: '/auth/register' }}
+        secondary={{ label: 'Contact compliance', href: `mailto:${BRAND_SUPPORT_EMAIL}` }}
       />
     </div>
   );

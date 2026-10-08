@@ -255,10 +255,10 @@ export default function DepositWithdrawalPage() {
       </Section>
 
       <CtaBanner
-        title="Fund Your Account"
+        title="Fund your account."
         lead={`Open a ${BRAND_NAME} account and deposit via supported cryptocurrencies in minutes.`}
-        primary={{ label: 'Open Account', href: '/auth/register' }}
-        secondary={{ label: 'Contact Support', href: '/contact' }}
+        primary={{ label: 'Open account', href: '/auth/register' }}
+        secondary={{ label: 'Contact support', href: '/contact' }}
       />
     </div>
   );

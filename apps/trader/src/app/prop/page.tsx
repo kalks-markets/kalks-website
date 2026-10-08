@@ -1,11 +1,10 @@
 import type { Metadata } from 'next';
-import { PageHero } from '@/components/ui/PageHero';
-import { SectionHead, Reveal, FactList } from '@/components/ui/Section';
-import { Button } from '@/components/ui/Button';
-import { CtaBand } from '@/components/ui/CtaBand';
+import { Hero } from '@/components/ui/Hero';
+import { Btn } from '@/components/ui/Button';
+import { Section, SectionHead, FactList, Steps } from '@/components/ui/Section';
 import { Faq } from '@/components/ui/Faq';
 import { RiskNote } from '@/components/ui/RiskNote';
-import { PixelStat } from '@/components/motion/PixelStat';
+import { PropArt } from '@/components/art/HeroArt';
 import { PROP } from '@/content/facts';
 import { REGISTER_HREF } from '@/lib/crm';
 import { cn } from '@/lib/cn';
@@ -13,23 +12,16 @@ import { cn } from '@/lib/cn';
 export const metadata: Metadata = {
   title: 'Prop challenges: Classic 2-Step, Rapid 1-Step and Instant Funding',
   description:
-    'Kalks prop challenges: simulated accounts from $5k to $200k, fees from $49, profit split from 70–80% scaling to 90%, payouts every two weeks, rules checked live on the server.',
+    'Get funded and keep up to 90%: simulated accounts from $5k to $200k, fees from $49, a 1-step or 2-step evaluation or instant funding, rules checked live on the server, payouts in USDT.',
   alternates: { canonical: '/prop' },
 };
 
 const SIZES = ['$5k', '$10k', '$25k', '$50k', '$100k', '$200k'];
 
-const STEPS = [
-  { t: 'Choose a challenge', d: 'Pick a plan and an account size, and pay the fee from your USDT wallet.' },
-  { t: 'Hit the target', d: 'Trade within the rules. Every limit is checked about once a second, with warnings at 50%, 75% and 90% of your daily loss.' },
-  { t: 'Get funded', d: 'Pass and your funded account opens, with a certificate anyone can verify online.' },
-  { t: 'Get paid', d: 'Request payouts on schedule once your identity is verified. Grow the account by 25% every four months at 10% profit.' },
-];
-
 const FAQ = [
   {
     q: 'Is the capital real?',
-    a: 'Challenge and funded accounts trade simulated funds. Your profit split on a funded account is paid in real money to your Kalks wallet, on the payout schedule of your plan.',
+    a: 'Challenge and funded accounts trade simulated funds. Your share of the profit on a funded account is paid in real money to your Kalks wallet, on your plan’s payout schedule.',
   },
   {
     q: 'When does the trading day reset?',
@@ -41,107 +33,95 @@ const FAQ = [
   },
   {
     q: 'What can I trade?',
-    a: 'CFDs on the instruments available to your prop account. Prop accounts cannot trade options and do not count towards partner commissions.',
+    a: 'CFDs on the markets available to your prop account. Prop accounts cannot trade options and do not count towards partner commission.',
   },
   {
     q: 'What is the consistency rule?',
-    a: 'On Rapid (40%) and Instant (30%) plans, no single day may make up more than that share of your total profit. Classic has no consistency rule.',
+    a: 'On Rapid (40%) and Instant (30%), no single day may make up more than that share of your total profit. Classic has no consistency rule.',
   },
   {
     q: 'Do I get the fee back?',
-    a: 'On Classic and Rapid, yes: the challenge fee is refunded with your first payout. Instant Funding fees are not refunded.',
+    a: 'On Classic and Rapid, yes: the fee is refunded with your first payout. Instant Funding fees are not refunded.',
   },
 ];
 
 export default function PropPage() {
   return (
     <>
-      <PageHero
-        kicker="Prop challenges"
-        lines={['Prove your edge.', <span key="b" className="text-ember-grad">Keep up to 90%.</span>]}
-        lead="Pass a 1-Step or 2-Step evaluation, or start funded instantly. Simulated accounts from $5k to $200k, rules checked live on the server, payouts in USDT."
-        art="burst"
-        artPosition="75% center"
+      <Hero
+        tone="red"
+        kicker="PROP CHALLENGES"
+        title="Get funded. Keep up to 90%."
+        lede="Pass a 1-step or 2-step evaluation, or start funded today. Simulated accounts from $5k to $200k, rules checked live, payouts in USDT."
         actions={
           <>
-            <Button href={REGISTER_HREF}>Start a challenge</Button>
-            <Button href="#plans" variant="outline" arrow={false}>
+            <Btn href={REGISTER_HREF} v="wht" s={56} arrow>
+              Start a challenge
+            </Btn>
+            <Btn href="#plans" v="ghost" s={56}>
               Compare plans
-            </Button>
+            </Btn>
           </>
         }
-        footer={
-          <dl className="grid max-w-xl grid-cols-3 gap-6 border-t border-white/10 pt-6">
-            {[
-              { v: 90, s: '%', l: 'Top profit split' },
-              { v: 200, p: '$', s: 'k', l: 'Largest account' },
-              { v: 49, p: '$', l: 'Fees from' },
-            ].map((x) => (
-              <div key={x.l}>
-                <dt className="sr-only">{x.l}</dt>
-                <dd>
-                  <PixelStat value={x.v} prefix={x.p} suffix={x.s} className="t-pixel block text-[2.2rem] sm:text-[2.8rem]" />
-                  <p className="mt-1 text-[12px] text-fg-2">{x.l}</p>
-                </dd>
-              </div>
-            ))}
-          </dl>
-        }
+        facts="Fee from $49 · paid once from your USDT wallet"
+        art={<PropArt />}
+        strip={[
+          { v: '90%', l: 'Top profit split, with scaling' },
+          { v: '$200k', l: 'Largest simulated account' },
+          { v: '$49', l: 'Lowest challenge fee' },
+          { v: '14 days', l: 'To your first payout on Classic and Rapid' },
+        ]}
       />
 
-      <section id="plans" className="section scroll-mt-24" aria-labelledby="plans-title">
-        <div className="container-site">
-          <SectionHead
-            id="plans-title"
-            kicker="Plans"
-            lines={['Three ways', 'to get funded.']}
-            lead="The rules below are the plan defaults shown in the Client Area when you buy."
-          />
-          <div className="mt-12 grid gap-4 lg:grid-cols-3">
-            {PROP.map((p, i) => (
-              <Reveal
-                key={p.id}
-                delay={i * 0.06}
-                className={cn(
-                  'flex flex-col rounded-[28px] border p-7',
-                  i === 0 ? 'border-ember/50 bg-[linear-gradient(180deg,rgba(255,90,31,0.16),rgba(255,90,31,0.02)_60%)]' : 'border-white/[0.09] bg-[linear-gradient(180deg,#131317,#0d0d10)]',
-                )}
-              >
-                <div className="flex items-center justify-between">
-                  <h3 className="font-display text-[1.9rem] font-semibold tracking-[-0.045em]">{p.name}</h3>
-                  {i === 0 && <span className="chip chip-ember">Most popular</span>}
-                </div>
-                <p className="mt-2 text-fg-2">{p.summary}</p>
-                <FactList
-                  className="mt-6"
-                  items={[
-                    ['Targets', p.phases],
-                    ['Minimum days', p.minDays],
-                    ['Daily loss limit', p.dailyLoss],
-                    ['Maximum drawdown', p.maxDrawdown],
-                    ['Profit split', p.split],
-                    ['Payouts', p.payouts],
-                    ['Leverage', p.leverage],
-                    ['Challenge fee', p.refund],
-                    ['Style', p.news],
-                  ]}
-                />
-              </Reveal>
-            ))}
-          </div>
+      <Section id="plans" labelledBy="plans-title">
+        <SectionHead
+          id="plans-title"
+          kicker="01 — PLANS"
+          title="Three ways to get funded."
+          lede="The rules below are the plan defaults shown in the Client Area when you buy."
+        />
+        <div className="grid gap-4 lg:grid-cols-3">
+          {PROP.map((p, i) => (
+            <div key={p.id} className={cn('card flex flex-col p-6 sm:p-7', i === 0 && 'shadow-[var(--sh1),inset_0_0_0_2px_var(--red)]')}>
+              <div className="flex items-center justify-between gap-3">
+                <h3 className="d-wide text-[24px]">{p.name}</h3>
+                {i === 0 && <span className="tag new">Popular</span>}
+              </div>
+              <p className="body mt-2">{p.summary}</p>
+              <FactList
+                className="mt-5"
+                items={[
+                  ['Targets', p.phases],
+                  ['Minimum days', p.minDays],
+                  ['Daily loss limit', p.dailyLoss],
+                  ['Maximum drawdown', p.maxDrawdown],
+                  ['Profit split', p.split],
+                  ['Payouts', p.payouts],
+                  ['Leverage', p.leverage],
+                  ['Challenge fee', p.refund],
+                  ['Style', p.news],
+                ]}
+              />
+              <div className="mt-auto pt-6">
+                <Btn href={REGISTER_HREF} v={i === 0 ? 'red' : 'ink'}>
+                  Start {p.name}
+                </Btn>
+              </div>
+            </div>
+          ))}
         </div>
-      </section>
+      </Section>
 
-      <section className="section pt-0" aria-labelledby="price-title">
-        <div className="container-site">
-          <SectionHead id="price-title" kicker="Fees" lines={['One-time fee,', 'by account size.']} />
-          <div className="no-scrollbar -mx-[var(--gutter)] mt-12 overflow-x-auto px-[var(--gutter)]" data-reveal>
-            <table className="table-clean w-full min-w-[720px] text-sm">
+      <Section labelledBy="price-title">
+        <SectionHead id="price-title" kicker="02 — FEES" title="One fee, by account size." lede="Paid once, in USDT from your Kalks wallet. Instant Funding goes up to $100k." />
+        <div className="card overflow-hidden p-2">
+          <div className="overflow-x-auto">
+            <table className="tb min-w-[620px]">
               <thead>
-                <tr className="border-b border-white/[0.08]">
-                  <th scope="col" className="py-4 pr-4">Account size</th>
+                <tr>
+                  <th scope="col">Account size</th>
                   {PROP.map((p) => (
-                    <th key={p.id} scope="col" className="px-4 py-4 !text-right !text-[0.9rem] !normal-case !tracking-tight !text-fg">
+                    <th key={p.id} scope="col" className="r">
                       {p.name}
                     </th>
                   ))}
@@ -149,15 +129,15 @@ export default function PropPage() {
               </thead>
               <tbody>
                 {SIZES.map((size) => (
-                  <tr key={size} className="border-b border-white/[0.06]">
-                    <th scope="row" className="py-4 pr-4 !text-base !font-semibold !normal-case !tracking-tight !text-fg">
+                  <tr key={size}>
+                    <th scope="row" className="money !text-[18px]">
                       {size}
                     </th>
                     {PROP.map((p) => {
                       const hit = p.sizes.find(([s]) => s === size);
                       return (
-                        <td key={p.id} className="num px-4 py-4 text-right text-[0.95rem]">
-                          {hit ? hit[1] : <span className="text-fg-3">—</span>}
+                        <td key={p.id} className="r m">
+                          {hit ? hit[1] : <span className="text-tx3">—</span>}
                         </td>
                       );
                     })}
@@ -166,40 +146,34 @@ export default function PropPage() {
               </tbody>
             </table>
           </div>
-          <p className="mt-4 text-xs text-fg-3">Fees are paid once, in USDT from your Kalks wallet. Instant Funding is available up to $100k.</p>
         </div>
-      </section>
+      </Section>
 
-      <section className="section pt-0" aria-labelledby="how-prop">
-        <div className="container-site">
-          <SectionHead id="how-prop" kicker="How it works" lines={['From challenge', 'to payout.']} />
-          <ol className="mt-12 grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-            {STEPS.map((s, i) => (
-              <Reveal as="li" key={s.t} delay={i * 0.06} className="card p-6">
-                <span className="t-pixel text-[2.4rem] text-ember">{String(i + 1).padStart(2, '0')}</span>
-                <h3 className="mt-5 text-xl font-semibold tracking-tight">{s.t}</h3>
-                <p className="t-body mt-2">{s.d}</p>
-              </Reveal>
-            ))}
-          </ol>
-        </div>
-      </section>
+      <Section labelledBy="how-prop">
+        <SectionHead id="how-prop" kicker="03 — HOW IT WORKS" title="From challenge to payout." />
+        <Steps
+          steps={[
+            { t: 'Choose a challenge', d: 'Pick a plan and an account size, and pay the fee from your USDT wallet.' },
+            { t: 'Hit the target', d: 'Trade within the rules. Every limit is checked about once a second, with warnings at 50%, 75% and 90% of your daily loss.' },
+            { t: 'Get funded', d: 'Pass and your funded account opens, with a certificate anyone can verify online.' },
+            { t: 'Get paid', d: 'Request payouts on schedule once your identity is verified. The account grows 25% every four months at 10% profit.' },
+          ]}
+        />
+      </Section>
 
-      <section className="section pt-0" aria-labelledby="pfaq-title">
-        <div className="container-site grid gap-12 lg:grid-cols-[0.8fr_1.2fr]">
-          <SectionHead id="pfaq-title" kicker="Questions" lines={['Prop,', 'answered.']} />
+      <Section labelledBy="pfaq-title" className="sec-last">
+        <div className="grid gap-10 lg:grid-cols-[0.8fr_1.2fr] lg:gap-16">
+          <SectionHead id="pfaq-title" kicker="04 — QUESTIONS" title="Prop, answered." />
           <div>
             <Faq items={FAQ} schema />
-            <p className="mt-8 max-w-2xl text-[0.78rem] leading-relaxed text-fg-3">
-              Prop challenge and funded accounts use simulated funds; the fee pays for the evaluation. Payouts follow your plan’s
-              rules and require a verified identity.
+            <p className="mt-8 max-w-[110ch] text-[12.5px] leading-relaxed text-tx3">
+              Challenge and funded accounts use simulated funds; the fee pays for the evaluation. Payouts follow your plan’s rules and
+              need a verified identity.
             </p>
             <RiskNote className="mt-3" />
           </div>
         </div>
-      </section>
-
-      <CtaBand lines={['Your challenge', 'starts today.']} primary={{ label: 'Start a challenge', href: REGISTER_HREF }} art="chart-wall" />
+      </Section>
     </>
   );
 }

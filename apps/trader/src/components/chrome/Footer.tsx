@@ -1,77 +1,73 @@
 import Link from 'next/link';
-import { KalksLogo } from '@/components/brand/Logo';
-import { FOOTER_COLUMNS, LEGAL_LINKS } from '@/content/site';
-import { RISK_WARNING, OPTIONS_RISK } from '@/content/facts';
-import { BRAND_COPYRIGHT, BRAND_SUPPORT_EMAIL } from '@/lib/brand';
-import { CRM_URL, REGISTER_HREF, TRADER_URL } from '@/lib/crm';
-import { Button } from '@/components/ui/Button';
+import { Wordmark } from '@/components/brand/Logo';
+import { Btn } from '@/components/ui/Button';
 import { Picture } from '@/components/ui/Picture';
+import { ThemeSwitch } from '@/components/chrome/ThemeSwitch';
+import { LanguagePicker } from '@/components/chrome/LanguagePicker';
+import { FOOTER_COLUMNS, LEGAL_LINKS } from '@/content/site';
+import { DEMO, OPTIONS_RISK, RISK_WARNING } from '@/content/facts';
+import { BRAND_COPYRIGHT, BRAND_SUPPORT_EMAIL } from '@/lib/brand';
+import { CRM_URL, DEMO_HREF, REGISTER_HREF, TRADER_URL } from '@/lib/crm';
 
+/**
+ * Footer: ink in both themes (like the Client Area rail). A closing band with the founder's red light beam
+ * (image brief W-12), the site map, the risk warning in the platform's own words, legal links, theme and language.
+ */
 export default function Footer() {
   return (
-    <footer className="relative overflow-hidden bg-black">
-      {/* Closing band: a single red beam on black (the image is pure black, so it sits on the footer seamlessly) */}
-      <section className="relative isolate min-h-[780px] overflow-hidden lg:min-h-[min(92svh,860px)]" aria-labelledby="closing-title">
-        <div className="pointer-events-none absolute inset-y-0 left-1/2 -z-10 flex w-[min(100vw,480px)] -translate-x-1/2 items-end justify-center lg:w-auto">
+    <footer className="foot theme-dark">
+      <section className="relative isolate overflow-hidden bg-k-ink" aria-labelledby="closing-title">
+        <div aria-hidden className="pointer-events-none absolute inset-y-0 right-[8%] -z-10 flex items-end max-md:right-[-18%]">
           <Picture
             name="/images/brand/footer-beam"
             widths={[736, 490]}
-            height={1308}
+            w={736}
+            h={1308}
             alt=""
-            sizes="(min-width: 1024px) 484px, min(100vw, 480px)"
-            className="beam-mask block h-full w-auto max-w-none [&_img]:h-full [&_img]:w-auto"
+            sizes="(max-width: 760px) 300px, 420px"
+            className="block h-full"
+            imgClassName="h-full w-auto object-contain mix-blend-lighten"
           />
         </div>
-        <div className="pointer-events-none absolute inset-x-0 bottom-0 -z-10 h-[30%] bg-[radial-gradient(60%_80%_at_50%_100%,rgba(200,10,20,0.16),transparent_70%)]" />
-        <div className="container-site flex min-h-[inherit] flex-col justify-start gap-8 py-20 lg:flex-row lg:items-center lg:justify-between lg:gap-10 lg:py-24">
-          <div className="flex max-w-[30rem] flex-col gap-6">
-            <p className="kicker kicker-crimson">Kalks</p>
-            <h2 id="closing-title" className="t-display">
-              Make your
-              <br />
-              move.
-            </h2>
-          </div>
-          <div className="flex max-w-[22rem] flex-col gap-6 lg:items-end lg:text-right">
-            <p className="t-lead">One account for FX options, CFDs, prop and copy trading. Open it in a minute; start on demo.</p>
-            <div className="flex flex-wrap gap-3 lg:justify-end">
-              <Button href={REGISTER_HREF}>Open account</Button>
-              <Button href={TRADER_URL} variant="outline" arrow={false}>
-                Kalks Trader
-              </Button>
-            </div>
+        <div className="mx-auto flex min-h-[460px] max-w-[1440px] flex-col justify-center gap-7 px-[44px] py-16 max-md:min-h-[420px] max-md:px-[22px] max-md:py-12">
+          <span className="kicker !text-k-yel">KALKS</span>
+          <h2 id="closing-title" className="d max-w-[12ch] text-[clamp(40px,5vw,72px)] leading-[0.9] tracking-[-0.045em]">
+            Start on demo. Trade when ready.
+          </h2>
+          <p className="max-w-[40ch] text-[17px] leading-[1.45] text-tx2">
+            Practise free with {DEMO.defaultBalance} in virtual funds on live prices. Fund with USDT when you are ready.
+          </p>
+          <div className="flex flex-wrap items-center gap-3">
+            <Btn href={REGISTER_HREF} v="red" s={48} arrow>
+              Open account
+            </Btn>
+            <Btn href={DEMO_HREF} v="ghost" s={48}>
+              Try the demo
+            </Btn>
           </div>
         </div>
       </section>
 
-      <div className="container-site relative border-t border-white/[0.08] pb-10 pt-20 lg:pt-24">
-        <div className="grid gap-14 lg:grid-cols-[1.1fr_2fr]">
-          <div className="flex flex-col gap-6">
-            <KalksLogo className="h-7 w-auto self-start text-fg" />
-            <p className="max-w-sm text-[0.95rem] leading-relaxed text-fg-2">
-              A global multi-asset trading platform: Kalks FX Options, CFDs on forex, metals, energies, indices and crypto,
-              prop challenges, copy trading and PAMM, on one account.
+      <div className="mx-auto max-w-[1440px] border-t border-line px-[44px] pb-8 pt-14 max-md:px-[22px]">
+        <div className="grid gap-12 lg:grid-cols-[1.1fr_2fr]">
+          <div className="flex flex-col gap-5">
+            <Wordmark className="h-[34px] w-auto self-start" />
+            <p className="max-w-sm text-[14.5px] leading-relaxed text-tx2">
+              Kalks FX Options, CFDs on forex, metals, energies, indices and crypto, prop challenges, copy trading and PAMM.
+              One wallet funds them all.
             </p>
-            <div className="flex flex-wrap gap-3">
-              <Button href={REGISTER_HREF} size="sm">
-                Open account
-              </Button>
-              <Button href={TRADER_URL} size="sm" variant="outline" arrow={false}>
-                Kalks Trader
-              </Button>
-            </div>
-            <a href={`mailto:${BRAND_SUPPORT_EMAIL}`} className="prose-link self-start text-sm">
+            <a href={`mailto:${BRAND_SUPPORT_EMAIL}`} className="link self-start text-[14px]">
               {BRAND_SUPPORT_EMAIL}
             </a>
           </div>
           <nav aria-label="Footer" className="grid grid-cols-2 gap-10 sm:grid-cols-4">
             {FOOTER_COLUMNS.map((col) => (
               <div key={col.title}>
-                <h2 className="mb-4 text-[0.72rem] font-medium uppercase tracking-[0.16em] text-fg-3">{col.title}</h2>
+                <h2 className="mb-4 font-mono text-[11.5px] font-semibold uppercase tracking-[0.08em] text-tx3">{col.title}</h2>
                 <ul className="flex flex-col gap-2.5">
                   {col.links.map((l) => (
                     <li key={l.href}>
-                      <Link href={l.href} className="underline-ember text-[0.92rem] text-fg-2 transition-colors hover:text-fg">
+                      <Link href={l.href} className="text-[14px] text-tx2 transition-colors">
                         {l.label}
                       </Link>
                     </li>
@@ -82,49 +78,44 @@ export default function Footer() {
           </nav>
         </div>
 
-        <div className="mt-16 grid gap-6 rounded-[28px] border border-white/[0.08] bg-white/[0.02] p-6 sm:p-8 lg:grid-cols-2 lg:gap-10">
+        <div className="mt-14 grid gap-6 rounded-[22px] bg-s1 p-6 shadow-[inset_0_0_0_1px_var(--line)] sm:p-7 lg:grid-cols-2 lg:gap-10">
           <div>
-            <h2 className="mb-2 text-sm font-semibold text-fg">Risk warning</h2>
-            <p className="text-[0.8rem] leading-relaxed text-fg-3">
+            <h2 className="mb-2 text-[13px] font-semibold">Risk warning</h2>
+            <p className="text-[12.5px] leading-relaxed text-tx3">
               {RISK_WARNING} {OPTIONS_RISK} Past performance is not a reliable indicator of future results. Nothing on this
               website is investment advice.
             </p>
           </div>
           <div>
-            <h2 className="mb-2 text-sm font-semibold text-fg">Restricted regions</h2>
-            <p className="text-[0.8rem] leading-relaxed text-fg-3">
+            <h2 className="mb-2 text-[13px] font-semibold">Restricted regions</h2>
+            <p className="text-[12.5px] leading-relaxed text-tx3">
               Kalks does not provide services to citizens or residents of the USA, Cuba, Iraq, Myanmar, North Korea and Sudan.
-              Our services are not intended for distribution to, or use by, any person in any country or jurisdiction where
-              such distribution or use would be contrary to local law or regulation.{' '}
-              <Link href="/restricted-countries" className="prose-link">
+              Our services are not intended for distribution to, or use by, any person in any country or jurisdiction where such
+              distribution or use would be contrary to local law or regulation.{' '}
+              <Link href="/restricted-countries" className="link !font-medium text-tx2">
                 Full list
               </Link>
             </p>
           </div>
         </div>
 
-        <nav aria-label="Legal" className="mt-8 flex flex-wrap gap-x-6 gap-y-2.5">
+        <nav aria-label="Legal" className="mt-7 flex flex-wrap gap-x-6 gap-y-2.5">
           {LEGAL_LINKS.map((l) => (
-            <Link key={l.href} href={l.href} className="text-[0.82rem] text-fg-2 transition-colors hover:text-fg">
+            <Link key={l.href} href={l.href} className="text-[13px] text-tx2">
               {l.label}
             </Link>
           ))}
         </nav>
 
-        <div className="mt-8 flex flex-col gap-3 border-t border-white/[0.07] pt-6 text-[0.8rem] text-fg-3 sm:flex-row sm:items-center sm:justify-between">
+        <div className="mt-7 flex flex-col gap-4 border-t border-line pt-6 text-[13px] text-tx3 lg:flex-row lg:items-center lg:justify-between">
           <p>{BRAND_COPYRIGHT}</p>
-          <p className="flex gap-5">
-            <a href={CRM_URL} className="transition-colors hover:text-fg">
-              Client Area
-            </a>
-            <a href={TRADER_URL} className="transition-colors hover:text-fg">
-              Kalks Trader
-            </a>
-          </p>
+          <div className="flex flex-wrap items-center gap-x-5 gap-y-3">
+            <a href={CRM_URL}>Client Area</a>
+            <a href={TRADER_URL}>Kalks Trader</a>
+            <LanguagePicker className="[&_.pop]:bottom-[calc(100%+10px)] [&_.pop]:top-auto [&_.pop]:max-w-[calc(100vw-48px)]" />
+            <ThemeSwitch />
+          </div>
         </div>
-      </div>
-      <div aria-hidden className="pointer-events-none relative -mb-[3.2vw] select-none px-[var(--gutter)]">
-        <KalksLogo className="h-auto w-full text-white/[0.035]" title="" />
       </div>
     </footer>
   );

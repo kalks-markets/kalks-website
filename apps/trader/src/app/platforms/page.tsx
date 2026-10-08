@@ -1,197 +1,175 @@
 import type { Metadata } from 'next';
-import { PageHero } from '@/components/ui/PageHero';
-import { SectionHead, Reveal } from '@/components/ui/Section';
-import { Button } from '@/components/ui/Button';
-import { BrowserFrame, PhoneFrame } from '@/components/ui/Frames';
-import { Art } from '@/components/ui/Art';
-import { CtaBand } from '@/components/ui/CtaBand';
-import { ANDROID_APP, TRADER } from '@/content/facts';
-import { CRM_URL, REGISTER_HREF, TRADER_URL } from '@/lib/crm';
+import { Download } from 'lucide-react';
+import { Hero } from '@/components/ui/Hero';
+import { Btn } from '@/components/ui/Button';
+import { Section, SectionHead, Feature } from '@/components/ui/Section';
+import { HeroImage } from '@/components/art/HeroArt';
+import { TraderMock } from '@/components/mock/TraderMock';
+import { KMark } from '@/components/brand/Logo';
+import { ACADEMY, ANDROID_APP, TRADER } from '@/content/facts';
+import { CRM_URL, DEMO_HREF, TRADER_URL } from '@/lib/crm';
 
 export const metadata: Metadata = {
-  title: 'Platforms: Kalks Trader web terminal, Client Area and mobile',
+  title: 'Platforms: Kalks Trader, the Client Area and the Android app',
   description:
-    'Kalks Trader is an MT5-style web terminal for CFDs and options: a big chart, 35 indicators, one-click trading, a depth ladder and full chart mode. The Client Area runs everything around it. Now also as an Android app.',
+    'Kalks Trader is a web terminal for CFDs and options: a big chart, 35 indicators, one-click trading, a depth ladder and full chart mode. The Client Area runs everything around it. Also as an Android app.',
   alternates: { canonical: '/platforms' },
 };
 
-const TRADER_FEATURES = [
-  ['Charts', `${TRADER.chartTypes} chart types, ${TRADER.timeframes.length} timeframes from M1 to MN, ${TRADER.indicators} indicators in 5 groups and ${TRADER.drawingTools} drawing tools.`],
-  ['Orders', 'Market, limit, stop and stop-limit. Stop loss and take profit, a server-side trailing stop, OCO, and expiry by date.'],
-  ['One-click trading', 'Sell and buy straight from the chart, or switch it off to confirm every trade in the order ticket.'],
-  ['Trade on the chart', 'Drag stop loss, take profit, pending orders and alerts right on the price axis.'],
-  ['Depth ladder', 'The order book beside the chart, with limit orders placed in one click.'],
-  ['Position tools', 'Partial close, close by, and bulk close: all, profitable, losing, buys or sells.'],
+const TRADER_FEATURES: [string, string][] = [
+  ['Charts', `${TRADER.chartTypes} chart types, ${TRADER.timeframes.length} timeframes from M1 to MN, ${TRADER.indicators} indicators and ${TRADER.drawingTools} drawing tools.`],
+  ['Orders', 'Market, limit, stop and stop-limit. Stop loss, take profit, a server-side trailing stop, OCO and expiry by date.'],
+  ['One-click trading', 'Sell and buy straight from the chart, or switch it off and confirm every trade.'],
+  ['Trade on the chart', 'Drag stop loss, take profit, pending orders and alerts along the price axis.'],
+  ['Depth ladder', 'The order book beside the chart, with limit orders in one click.'],
+  ['Position tools', 'Partial close, close by, and bulk close: all, winners, losers, buys or sells.'],
   ['Full chart mode', 'Hide everything but the chart when you want to focus.'],
-  ['Options tab', 'Switch between CFD and Options at the top. Same account, same balance.'],
+  ['Options', 'Option chains, quick trade and the strategy builder for your Options account.'],
 ];
 
-const CLIENT_FEATURES = [
-  ['Accounts', 'Open live and demo accounts, change leverage, set investor (read-only) passwords.'],
-  ['Wallet', 'Deposit and withdraw USDT; move money between wallet and accounts instantly and free.'],
-  ['Copy trading, PAMM, MAM', 'Follow masters, invest in funds, or apply to become a master yourself.'],
-  ['Prop challenges', 'Buy a challenge, track every rule in real time, request payouts, download certificates.'],
-  ['Partner dashboard', 'Referral links, clients, your network, commissions and weekly payouts.'],
-  ['Academy', '118 lessons in 9 phases, quizzes, exams and verifiable certificates.'],
+const CLIENT_FEATURES: [string, string][] = [
+  ['Accounts', 'Open CFD and Options accounts, live and demo; change leverage; set read-only investor passwords.'],
+  ['Wallet', 'Deposit and withdraw USDT; move money between wallet and accounts, instantly and free.'],
+  ['Copy trading, PAMM, MAM', 'Follow masters, invest in funds, or apply to become a master.'],
+  ['Prop challenges', 'Buy a challenge, track every rule live, request payouts, download certificates.'],
+  ['Partner dashboard', 'Referral links, clients, your network, commission and weekly payouts.'],
+  ['Academy', `${ACADEMY.lessons} lessons in ${ACADEMY.phases} phases, quizzes, exams and certificates.`],
   ['Developer', 'API keys, webhooks, a visual strategy builder, backtests and 24/7 deployments.'],
-  ['Support', 'Chat with support from any page, with an instant help assistant and our team behind it.'],
+  ['Support', 'Chat from any page: an instant help assistant, with our team behind it.'],
 ];
 
 export default function PlatformsPage() {
   return (
     <>
-      <PageHero
-        kicker="Platforms"
-        lines={['Kalks Trader.', <span key="b" className="text-fg-3">Nothing to install.</span>]}
-        lead="An MT5-style web terminal for CFDs and options with a big, clean chart. The Client Area handles everything around your trading. Both run in any modern browser, on desktop and phone."
+      <Hero
+        tone="ink"
+        kicker="PLATFORMS"
+        title="Kalks Trader. Nothing to install."
+        lede="A big, clean chart for CFDs and options, in your browser and on Android. The Client Area runs everything around it."
         actions={
           <>
-            <Button href={TRADER_URL}>
+            <Btn href={TRADER_URL} v="red" s={56} arrow>
               Open Kalks Trader
-            </Button>
-            <Button href={REGISTER_HREF} variant="outline" arrow={false}>
-              Create an account
-            </Button>
+            </Btn>
+            <Btn href="#mobile" v="ghost" s={56}>
+              Get the app
+            </Btn>
           </>
         }
-        visual={
-          <BrowserFrame
-            src="/images/product/trader-cfd.webp"
-            alt="Kalks Trader: XAUUSD chart with moving averages, stop loss and take profit lines, and the instruments list"
-            priority
-            tilt
-            sizes="(min-width: 1024px) 680px, 92vw"
+        facts="Desktop and phone browsers · Android · 22 languages"
+        art={
+          <HeroImage
+            name="/images/k2/robot"
+            widths={[1672, 1200, 800]}
+            w={1672}
+            h={941}
+            sizes="(max-width: 1100px) 92vw, 700px"
+            alt="The Kalks robot: a glossy black helmet in profile with a glowing red eye, in a black leather collar, on red light and black waves"
+            mask="radial-gradient(72% 78% at 58% 46%, #000 52%, transparent 100%)"
           />
         }
+        strip={[
+          { v: TRADER.indicators, l: 'Indicators, plus drawing tools' },
+          { v: TRADER.timeframes.length, l: 'Timeframes, from one minute to a month' },
+          { v: '1 click', l: 'Trading from the chart, or confirm every order' },
+          { v: 22, l: 'Languages, right to left included' },
+        ]}
       />
 
-      <section id="trader" className="section scroll-mt-24" aria-labelledby="trader-title">
-        <div className="container-site">
-          <SectionHead
-            id="trader-title"
-            kicker="Kalks Trader"
-            lines={['Built like the', 'terminals pros use.']}
-            lead="The layout traders know from MT5 and the big exchanges: the chart first, the watchlist on the side, positions below. Designed to be fast, compact and calm."
-          />
-          <div className="mt-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-            {TRADER_FEATURES.map(([t, d], i) => (
-              <Reveal key={t} delay={(i % 4) * 0.05} className="card card-hover p-6">
-                <span className="t-pixel text-[1.4rem] text-ember">{String(i + 1).padStart(2, '0')}</span>
-                <h3 className="mt-4 text-lg font-semibold tracking-tight">{t}</h3>
-                <p className="t-body mt-2 text-[0.92rem]">{d}</p>
-              </Reveal>
-            ))}
+      <Section id="trader" labelledBy="trader-title">
+        <SectionHead
+          id="trader-title"
+          kicker="01 — KALKS TRADER"
+          title="Built like the terminals pros use."
+          lede="Chart first, watchlist on the side, positions below. Compact and calm. Up is blue, down is red."
+        />
+        <TraderMock className="h-[600px] max-lg:h-[460px] max-sm:h-[360px]" />
+        <p className="mt-3 font-mono text-[11.5px] text-tx3">Illustrative chart and prices.</p>
+        <div className="mt-8 grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+          {TRADER_FEATURES.map(([t, d]) => (
+            <Feature key={t} t={t} d={d} />
+          ))}
+        </div>
+      </Section>
+
+      <Section id="client-area" labelledBy="ca-title">
+        <SectionHead
+          id="ca-title"
+          kicker="02 — CLIENT AREA"
+          title="Everything around your trading."
+          lede="Accounts, money, copy trading, prop, partner earnings and learning in one place, in 22 languages, light or dark."
+          action={
+            <Btn href={CRM_URL} v="ink" arrow>
+              Go to the Client Area
+            </Btn>
+          }
+        />
+        <div className="card grid gap-x-10 px-6 py-2 sm:grid-cols-2 sm:px-8">
+          {CLIENT_FEATURES.map(([t, d]) => (
+            <div key={t} className="border-b border-line py-5 sm:[&:nth-last-child(-n+2)]:border-0 [&:last-child]:border-0">
+              <h3 className="text-[15.5px] font-semibold">{t}</h3>
+              <p className="mt-1 text-[14.5px] leading-relaxed text-tx2">{d}</p>
+            </div>
+          ))}
+        </div>
+      </Section>
+
+      <Section id="mobile" labelledBy="mob-title">
+        <div className="pcard pc-yel !min-h-0 overflow-hidden lg:!flex-row lg:items-center lg:justify-between lg:gap-12 lg:!p-12">
+          <div className="max-w-[560px]">
+            <span className="k">ANDROID · v{ANDROID_APP.version}</span>
+            <h2 id="mob-title" className="d mt-4 text-[clamp(36px,4vw,56px)] leading-[0.92]">
+              Kalks on Android.
+            </h2>
+            <p className="!max-w-[46ch]">
+              The Client Area, Kalks Trader and Kalks FX Options in one app, in all 22 languages, with biometric sign-in. Download the
+              APK here; the Play Store listing follows.
+            </p>
+            <div className="mt-7 flex flex-wrap items-center gap-3">
+              <Btn href={ANDROID_APP.href} v="ink" s={48} download>
+                <Download aria-hidden /> Download for Android
+              </Btn>
+              <Btn href={TRADER_URL} v="ghost" s={48}>
+                Open in the browser
+              </Btn>
+            </div>
+            <p className="!mt-5 !text-[12.5px] !leading-relaxed !opacity-80">
+              APK · {ANDROID_APP.minAndroid} or newer · {ANDROID_APP.sizeMb} MB · build {ANDROID_APP.build}. Android asks once to allow
+              installs from your browser. Older 32-bit phones:{' '}
+              <a href={ANDROID_APP.hrefUniversal} className="underline underline-offset-2">
+                universal APK
+              </a>
+              . SHA-256 <span className="break-all font-mono">{ANDROID_APP.sha256}</span>
+            </p>
           </div>
-          <div className="mt-16 grid gap-8 lg:grid-cols-2">
-            <Reveal>
-              <BrowserFrame src="/images/product/trader-fullchart.webp" alt="Kalks Trader in full chart mode" caption="Full chart mode" />
-            </Reveal>
-            <Reveal delay={0.08}>
-              <BrowserFrame src="/images/product/focus-depth.webp" width={2248} height={1600} alt="Kalks Trader with the depth ladder beside the chart" caption="Depth ladder beside the chart" />
-            </Reveal>
+          <div className="mx-auto mt-10 grid h-[220px] w-[220px] flex-none place-items-center rounded-[52px] bg-k-ink shadow-[10px_10px_0_#7A5D00] lg:mt-0 lg:h-[280px] lg:w-[280px] lg:rounded-[64px]" aria-hidden>
+            <KMark className="h-[42%] w-auto -translate-x-[3%] -translate-y-[3%]" />
           </div>
         </div>
-      </section>
+      </Section>
 
-      <section id="client-area" className="section scroll-mt-24 pt-0" aria-labelledby="ca-title">
-        <div className="container-site grid items-center gap-14 lg:grid-cols-[1fr_1.1fr] lg:gap-20">
+      <Section labelledBy="api-teaser" className="sec-last">
+        <div className="card flex flex-col items-start justify-between gap-8 p-7 sm:p-10 lg:flex-row lg:items-center">
           <div>
-            <SectionHead
-              id="ca-title"
-              kicker="Client Area"
-              lines={['Everything around', 'your trading.']}
-              lead="One place for accounts, money, copy trading, prop, partner earnings and learning, in 22 languages with light and dark themes."
-            />
-            <dl className="mt-10 grid gap-x-8 gap-y-6 sm:grid-cols-2">
-              {CLIENT_FEATURES.map(([t, d], i) => (
-                <Reveal key={t} delay={(i % 2) * 0.05} className="border-t border-white/[0.08] pt-4">
-                  <dt className="text-[15px] font-semibold">{t}</dt>
-                  <dd className="mt-1 text-sm leading-relaxed text-fg-2">{d}</dd>
-                </Reveal>
-              ))}
-            </dl>
-            <div className="mt-10" data-reveal>
-              <Button href={CRM_URL} variant="outline">
-                Go to the Client Area
-              </Button>
-            </div>
+            <span className="kicker">03 — API &amp; ALGO</span>
+            <h2 id="api-teaser" className="d t-h2 mt-3">
+              Automate it.
+            </h2>
+            <p className="body mt-3 max-w-xl">
+              Webhook alerts, a REST API with scoped keys, a visual strategy builder and backtests, running on our servers around the
+              clock.
+            </p>
           </div>
-          <Reveal>
-            <BrowserFrame
-              src="/images/product/focus-client.webp"
-              alt="Kalks Client Area overview: equity, P&L, wallet, accounts and quick actions"
-              url="app.kalkstrade.com"
-              width={2940}
-              height={1040}
-              tilt
-              caption="Illustrative data"
-            />
-          </Reveal>
-        </div>
-      </section>
-
-      <section id="mobile" className="section scroll-mt-24 pt-0" aria-labelledby="mob-title">
-        <div className="container-site">
-          <div className="relative isolate overflow-hidden rounded-[36px] border border-white/[0.08]">
-            <Art name="phone-light" alt="" className="!absolute inset-0 -z-10" sizes="(min-width: 1360px) 1360px, 100vw" position="70% center" />
-            <div className="absolute inset-0 -z-10 bg-[linear-gradient(90deg,rgba(7,7,10,0.95)_0%,rgba(7,7,10,0.75)_50%,rgba(7,7,10,0.4)_100%)]" />
-            <div className="grid items-center gap-12 p-6 sm:p-12 lg:grid-cols-[1.2fr_0.8fr] lg:p-16">
-              <div>
-                <span className="chip chip-ember" data-reveal>
-                  Android · v{ANDROID_APP.version}
-                </span>
-                <SectionHead
-                  id="mob-title"
-                  className="mt-6"
-                  lines={['Kalks on Android.']}
-                  lead="The Client Area, Kalks Trader and Kalks FX Options in one app, in all 22 languages, with biometric sign-in. Download the APK below; the Play Store listing follows."
-                />
-                <div className="mt-8 flex flex-wrap gap-3" data-reveal>
-                  <Button href={ANDROID_APP.href} arrow={false}>
-                    Download for Android
-                  </Button>
-                  <Button href={TRADER_URL} variant="outline">
-                    Open Kalks Trader
-                  </Button>
-                </div>
-                <p className="mt-4 max-w-md text-[13px] leading-relaxed text-fg-3" data-reveal>
-                  APK · {ANDROID_APP.minAndroid} or newer{ANDROID_APP.sizeMb ? ` · ${ANDROID_APP.sizeMb} MB` : ''}. Android asks once to allow installs from your browser.
-                  Older 32-bit phones:{' '}
-                  <a href={ANDROID_APP.hrefUniversal} className="underline decoration-fg-3/40 underline-offset-2 hover:text-fg">
-                    universal APK
-                  </a>
-                  .{ANDROID_APP.sha256 ? ` SHA-256 ${ANDROID_APP.sha256.slice(0, 16)}…` : ''}
-                </p>
-              </div>
-              <Reveal>
-                <PhoneFrame src="/images/product/phone-dashboard.webp" alt="The Kalks Client Area on a phone" />
-              </Reveal>
-            </div>
+          <div className="flex flex-wrap gap-3">
+            <Btn href="/white-label#api" v="ink" arrow>
+              API &amp; algo
+            </Btn>
+            <Btn href={DEMO_HREF} v="ghost">
+              Try the demo
+            </Btn>
           </div>
         </div>
-      </section>
-
-      <section className="section pt-0" aria-labelledby="api-teaser">
-        <div className="container-site">
-          <Reveal className="card flex flex-col items-start justify-between gap-8 p-8 sm:p-12 lg:flex-row lg:items-center">
-            <div>
-              <p className="kicker">API & algo trading</p>
-              <h2 id="api-teaser" className="t-h2 mt-5 max-w-[18ch]">
-                Automate it.
-              </h2>
-              <p className="t-body mt-4 max-w-xl">
-                Webhook alerts, a REST API with scoped keys, a visual strategy builder and backtests, running on our servers
-                around the clock.
-              </p>
-            </div>
-            <Button href="/white-label#api" variant="outline">
-              API & algo
-            </Button>
-          </Reveal>
-        </div>
-      </section>
-
-      <CtaBand lines={['See it for', 'yourself.']} lead="Open a free demo account and trade on live prices in Kalks Trader, in your browser, in a minute." />
+      </Section>
     </>
   );
 }

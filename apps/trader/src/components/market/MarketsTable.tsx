@@ -2,7 +2,8 @@
 
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { Search, ArrowUpRight } from 'lucide-react';
+import { Search } from 'lucide-react';
+import { Badges } from '@/components/ui/Flag';
 import { useLiveQuotes } from '@/lib/useLiveQuotes';
 import { changePct, formatPct, formatPrice } from '@/lib/quotes';
 import { TRADER_URL } from '@/lib/crm';
@@ -23,6 +24,7 @@ export const CLASSES = [
 
 const PAGE = 30;
 
+/** Searchable list of every market a live account can trade (and the stocks on demo), with live prices. */
 export function MarketsTable() {
   const params = useSearchParams();
   const router = useRouter();
@@ -36,7 +38,7 @@ export function MarketsTable() {
   const box = useRef<HTMLDivElement>(null);
   const [near, setNear] = useState(false);
 
-  // Load the list only when the table is close to the viewport.
+  // Load the list only when the table comes close to the viewport.
   useEffect(() => {
     const el = box.current;
     if (!el) return;
@@ -91,8 +93,8 @@ export function MarketsTable() {
 
   return (
     <div ref={box}>
-      <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
-        <div role="tablist" aria-label="Asset class" className="no-scrollbar -mx-[var(--gutter)] flex gap-2 overflow-x-auto px-[var(--gutter)] lg:mx-0 lg:px-0">
+      <div className="flex flex-col gap-4 xl:flex-row xl:items-center xl:justify-between">
+        <div role="tablist" aria-label="Asset class" className="no-sb -mx-[var(--gutter)] flex gap-2 overflow-x-auto px-[var(--gutter)] xl:mx-0 xl:px-0">
           {CLASSES.map((c) => (
             <button
               key={c.id}
@@ -100,18 +102,15 @@ export function MarketsTable() {
               aria-selected={cls === c.id}
               type="button"
               onClick={() => pick(c.id)}
-              className={cn(
-                'flex h-10 flex-none items-center gap-2 rounded-full border px-4 text-sm font-medium transition-colors',
-                cls === c.id ? 'border-ember bg-ember text-[#120804]' : 'border-white/15 text-fg-2 hover:border-white/30 hover:text-fg',
-              )}
+              className={cn('chip flex-none', cls === c.id && 'sel')}
             >
               {c.label}
-              {rows && <span className={cn('num text-[11px]', cls === c.id ? 'text-black/60' : 'text-fg-3')}>{counts[c.id] ?? 0}</span>}
+              {rows && <span className="font-mono text-[11px] opacity-70">{counts[c.id] ?? 0}</span>}
             </button>
           ))}
         </div>
-        <label className="relative flex h-11 w-full items-center lg:w-80">
-          <Search size={16} className="pointer-events-none absolute left-4 text-fg-3" aria-hidden />
+        <label className="field w-full xl:w-[340px]">
+          <Search size={17} aria-hidden />
           <span className="sr-only">Search markets</span>
           <input
             type="search"
@@ -121,99 +120,105 @@ export function MarketsTable() {
               setLimit(PAGE);
             }}
             placeholder="Search EURUSD, gold, Apple…"
-            className="h-full w-full rounded-full border border-white/15 bg-white/[0.03] pl-11 pr-4 text-sm text-fg placeholder:text-fg-3 focus:border-ember/60 focus:outline-none"
           />
         </label>
       </div>
 
-      <div className="mt-6 overflow-hidden rounded-[24px] border border-white/[0.09] bg-white/[0.015]">
-        <div className="flex items-center justify-between border-b border-white/[0.07] px-5 py-3 text-[11px] text-fg-3">
-          <span>{rows ? `${filtered.length.toLocaleString('en-US')} instruments` : 'Loading instruments…'}</span>
-          <span className="flex items-center gap-1.5">
-            <span className={cn('h-1.5 w-1.5 rounded-full', live ? 'bg-up' : 'bg-fg-3')} />
-            {live ? 'Live where streaming, otherwise latest' : 'Latest prices'}
+      <div className="card mt-5 overflow-hidden px-2 pb-2">
+        <div className="flex items-center justify-between px-4 py-3.5 font-mono text-[12px] text-tx3">
+          <span>{rows ? `${filtered.length.toLocaleString('en-US')} markets` : 'Loading markets…'}</span>
+          <span className="flex items-center gap-2">
+            <i className={cn('live-dot', live && 'on')} />
+            {live ? 'Streaming where live' : 'Latest prices'}
           </span>
         </div>
-        <table className="table-clean w-full">
-          <thead className="hidden sm:table-header-group">
-            <tr className="border-b border-white/[0.07]">
-              <th scope="col" className="px-5 py-3">Instrument</th>
-              <th scope="col" className="hidden px-3 py-3 md:table-cell">Class</th>
-              <th scope="col" className="px-3 py-3 !text-right">Bid</th>
-              <th scope="col" className="hidden px-3 py-3 !text-right sm:table-cell">Ask</th>
-              <th scope="col" className="px-3 py-3 !text-right">Day</th>
-              <th scope="col" className="hidden px-5 py-3 !text-right lg:table-cell">Status</th>
-            </tr>
-          </thead>
-          <tbody>
-            {!rows &&
-              Array.from({ length: 8 }).map((_, i) => (
-                <tr key={i} className="border-b border-white/[0.05]">
-                  <td colSpan={6} className="px-5 py-4">
-                    <div className="h-4 w-1/3 animate-pulse rounded bg-white/[0.05]" />
+        <div className="overflow-x-auto">
+          <table className="tb">
+            <thead className="max-sm:hidden">
+              <tr>
+                <th scope="col">Market</th>
+                <th scope="col" className="max-md:hidden">
+                  Class
+                </th>
+                <th scope="col" className="r">
+                  Bid
+                </th>
+                <th scope="col" className="r max-sm:hidden">
+                  Ask
+                </th>
+                <th scope="col" className="r">
+                  Day
+                </th>
+                <th scope="col" className="r max-lg:hidden">
+                  Status
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              {!rows &&
+                !failed &&
+                Array.from({ length: 8 }).map((_, i) => (
+                  <tr key={i}>
+                    <td colSpan={6}>
+                      <div className="h-4 w-1/3 animate-pulse rounded bg-s3" />
+                    </td>
+                  </tr>
+                ))}
+              {failed && (
+                <tr>
+                  <td colSpan={6} className="py-8 text-center text-tx2">
+                    The list did not load. Refresh the page to try again.
                   </td>
                 </tr>
-              ))}
-            {failed && (
-              <tr>
-                <td colSpan={6} className="px-5 py-8 text-center text-sm text-fg-2">
-                  The list did not load. Refresh the page to try again.
-                </td>
-              </tr>
-            )}
-            {shown.map(([s, name, c, ex, status, digits]) => {
-              const qq = quotes[s];
-              const ch = changePct(qq);
-              return (
-                <tr key={s} className="group border-b border-white/[0.05] transition-colors hover:bg-white/[0.03]">
-                  <td className="px-5 py-3.5">
-                    <a href={TRADER_URL} className="flex flex-col">
-                      <span className="flex items-center gap-2 text-[14px] font-semibold">
-                        {s}
-                        <ArrowUpRight size={13} className="text-fg-3 opacity-0 transition-opacity group-hover:opacity-100" aria-hidden />
-                      </span>
-                      <span className="max-w-[46vw] truncate text-[12px] text-fg-3 sm:max-w-[320px]">
-                        {name}
-                        {ex ? ` · ${ex}` : ''}
-                      </span>
-                    </a>
-                  </td>
-                  <td className="hidden px-3 py-3.5 text-[13px] capitalize text-fg-2 md:table-cell">{c}</td>
-                  <td className="num px-3 py-3.5 text-right text-[13px]">{formatPrice(qq?.bid, digits)}</td>
-                  <td className="num hidden px-3 py-3.5 text-right text-[13px] sm:table-cell">{formatPrice(qq?.ask, digits)}</td>
-                  <td className={cn('num px-3 py-3.5 text-right text-[12px]', ch === undefined ? 'text-fg-3' : ch >= 0 ? 'text-up' : 'text-down')}>
-                    {formatPct(ch)}
-                  </td>
-                  <td className="hidden px-5 py-3.5 text-right lg:table-cell">
-                    {status === 'live' ? (
-                      <span className="chip !h-6 !border-up/30 !bg-up/10 text-[11px] !text-[#7ee2a1]">Live</span>
-                    ) : (
-                      <span className="chip !h-6 text-[11px]">Live soon · demo now</span>
-                    )}
+              )}
+              {shown.map(([s, name, c, ex, status, digits]) => {
+                const qq = quotes[s];
+                const ch = changePct(qq);
+                return (
+                  <tr key={s}>
+                    <td>
+                      <a href={TRADER_URL} className="flex items-center gap-3">
+                        <Badges symbol={s} cls={c} />
+                        <span className="min-w-0">
+                          <span className="block text-[14px] font-semibold">{s}</span>
+                          <span className="block max-w-[44vw] truncate text-[12.5px] text-tx3 sm:max-w-[300px]">
+                            {name}
+                            {ex ? ` · ${ex}` : ''}
+                          </span>
+                        </span>
+                      </a>
+                    </td>
+                    <td className="capitalize text-tx2 max-md:hidden">{c}</td>
+                    <td className="r m">{formatPrice(qq?.bid, digits)}</td>
+                    <td className="r m max-sm:hidden">{formatPrice(qq?.ask, digits)}</td>
+                    <td className="r">
+                      <span className={cn('chg', ch !== undefined && (ch >= 0 ? 'up' : 'dn'))}>{formatPct(ch)}</span>
+                    </td>
+                    <td className="r max-lg:hidden">{status === 'live' ? <span className="tag live">Live</span> : <span className="tag">Demo now</span>}</td>
+                  </tr>
+                );
+              })}
+              {rows && !filtered.length && (
+                <tr>
+                  <td colSpan={6} className="py-10 text-center text-tx2">
+                    Nothing matches “{q}”. Try a symbol like XAUUSD or a name like Tesla.
                   </td>
                 </tr>
-              );
-            })}
-            {rows && !filtered.length && (
-              <tr>
-                <td colSpan={6} className="px-5 py-10 text-center text-sm text-fg-2">
-                  Nothing matches “{q}”. Try a symbol like XAUUSD or a name like Tesla.
-                </td>
-              </tr>
-            )}
-          </tbody>
-        </table>
+              )}
+            </tbody>
+          </table>
+        </div>
         {filtered.length > limit && (
-          <div className="flex justify-center p-5">
-            <button type="button" onClick={() => setLimit((l) => l + PAGE * 2)} className="btn btn-outline btn-sm">
+          <div className="flex justify-center p-4">
+            <button type="button" onClick={() => setLimit((l) => l + PAGE * 2)} className="btn v-ghost">
               Show more ({(filtered.length - limit).toLocaleString('en-US')} left)
             </button>
           </div>
         )}
       </div>
-      <p className="mt-4 text-xs text-fg-3">
-        Bid and ask from the Kalks public market-data feed; day change is the mid price against the day’s open. Symbols that
-        are not streaming show their latest snapshot. The spread on your account depends on its type.
+      <p className="mt-4 text-[12.5px] text-tx3">
+        Bid and ask from the Kalks public market-data feed. Day change is the mid price against today&rsquo;s open. Markets that
+        are not streaming show their latest snapshot. Your account type sets the spread you trade on.
       </p>
     </div>
   );

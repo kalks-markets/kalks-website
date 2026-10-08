@@ -4,10 +4,18 @@
  * re-check them against production before a campaign. Never add a number without a source.
  */
 
-/** config/instruments.json (1,389 rows); live rule in services/trading/src/specs.rs:15-18 */
+/**
+ * config/instruments.json (1,389 rows); live rule in services/trading/src/specs.rs:15-18.
+ * Re-synced 2026-10-09 against the live engine (GET https://trade.kalkstrade.com/api/engine/symbols): 233 catalogue
+ * markets live + the 28 core instruments (always live) = 261 live on real-money accounts; 1,128 catalogue markets are
+ * demo-only (1,100 stocks, 19 forex, 7 crypto, 2 indices). Every instrument trades on demo. Lead with the live number;
+ * never present 1,389 as "markets you can trade" without saying most stocks are demo-only.
+ */
 export const INSTRUMENTS = {
+  checked: '2026-10-09',
   total: 1389,
-  liveMarkets: 261, // 28 core + 233 catalogue rows with "live": true
+  liveMarkets: 261, // 28 core + 233 catalogue rows with liveTrading = true
+  demoOnly: 1128,
   byClass: {
     forex: { total: 63, live: 44 },
     metals: { total: 16, live: 16 },
@@ -27,6 +35,8 @@ export const LEVERAGE = {
 
 export type AccountType = {
   id: string;
+  /** An account trades one product, set by its group (Kalks 2 Track 1, services/trading/migrations/20261022120000_account_products.sql). */
+  product: 'cfd';
   name: string;
   tagline: string;
   currency: string;
@@ -49,6 +59,7 @@ export type AccountType = {
 export const ACCOUNTS: AccountType[] = [
   {
     id: 'standard',
+    product: 'cfd',
     name: 'Standard',
     tagline: 'The everyday account. All-in spread, no commission.',
     currency: 'USD',
@@ -66,6 +77,7 @@ export const ACCOUNTS: AccountType[] = [
   },
   {
     id: 'pro',
+    product: 'cfd',
     name: 'Pro',
     tagline: 'Tighter all-in pricing for active traders.',
     currency: 'USD',
@@ -82,6 +94,7 @@ export const ACCOUNTS: AccountType[] = [
   },
   {
     id: 'ecn',
+    product: 'cfd',
     name: 'ECN',
     tagline: 'Raw spread with a fixed commission.',
     currency: 'USD',
@@ -98,6 +111,7 @@ export const ACCOUNTS: AccountType[] = [
   },
   {
     id: 'cent',
+    product: 'cfd',
     name: 'Cent',
     tagline: 'Balances in US cents. Real markets, small stakes.',
     currency: 'USC (US cents)',
@@ -114,6 +128,7 @@ export const ACCOUNTS: AccountType[] = [
   },
   {
     id: 'vip',
+    product: 'cfd',
     name: 'VIP',
     tagline: 'Raw pricing with the lowest commission.',
     currency: 'USD',
@@ -130,6 +145,32 @@ export const ACCOUNTS: AccountType[] = [
   },
 ];
 
+/**
+ * Options accounts (services/trading/migrations/20261022120000_account_products.sql and
+ * services/options/migrations/20261022120000_options_pro_group.sql): an Options account trades options only; a client
+ * can hold CFD and Options accounts side by side, all funded from the one USDT wallet. Options Standard is enabled with
+ * no account minimum and the platform default fee. Options Pro is seeded DISABLED (its fee and minimum are placeholders
+ * until the founder sets them), so the website names it as coming, with no numbers.
+ */
+export const OPTIONS_ACCOUNTS = [
+  {
+    id: 'options-standard',
+    name: 'Options Standard',
+    status: 'live' as const,
+    tagline: 'Calls and puts on forex, gold, silver and oil.',
+    minDeposit: 'No account minimum',
+    commission: '$0.25 per contract, capped at 10% of the premium',
+    leverage: 'None: you pay the premium in cash',
+    selling: 'Allowed; uses margin',
+  },
+  {
+    id: 'options-pro',
+    name: 'Options Pro',
+    status: 'soon' as const,
+    tagline: 'Lower per-contract fees for larger accounts.',
+  },
+] as const;
+
 /** services/trading/migrations/0001_trading.sql:47-49 and services/trading/README.md:149 */
 export const DEMO = {
   defaultBalance: '$10,000',
@@ -141,7 +182,7 @@ export const DEMO = {
 export const OPTIONS = {
   underlyingsLive: ['EURUSD', 'GBPUSD', 'USDJPY', 'AUDUSD', 'USDCAD', 'USDCHF', 'EURJPY', 'GBPJPY', 'XAUUSD', 'XAGUSD', 'USOIL', 'UKOIL'],
   underlyingsSoon: ['NZDUSD'],
-  fxPairs: 9,
+  fxPairsLive: 8,
   expiries: { daily: 'the next 5 business days', weekly: 'the next 4 Fridays', monthly: 'the next 3 month-end Fridays' },
   dailyPerWeek: 5,
   cut: '10:00 New York',
@@ -296,10 +337,10 @@ export const OPTIONS_RISK =
 /** The Android app on the website (served by Caddy from /srv/kalks/downloads on the server). Update on each release. */
 export const ANDROID_APP = {
   version: '1.0.0',
-  build: 2,
+  build: 3,
   href: '/download/kalks-android.apk',
   hrefUniversal: '/download/kalks-android-universal.apk',
   sizeMb: 44,
-  sha256: '8798ed34393c2f8e9ce8ed5f702d7721c11753f57427f41b49432959ac8fe135',
+  sha256: 'e34b5847d53932529b7f59d16739eb5bbb2317f27832039cbcf060a6baaa25bf',
   minAndroid: 'Android 7.0',
 };

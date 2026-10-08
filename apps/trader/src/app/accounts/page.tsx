@@ -1,20 +1,19 @@
 import type { Metadata } from 'next';
-import { PageHero } from '@/components/ui/PageHero';
-import { SectionHead, Reveal, FactList } from '@/components/ui/Section';
-import { Button } from '@/components/ui/Button';
-import { BrowserFrame } from '@/components/ui/Frames';
-import { CtaBand } from '@/components/ui/CtaBand';
+import { Check } from 'lucide-react';
+import { Hero } from '@/components/ui/Hero';
+import { Btn } from '@/components/ui/Button';
+import { Section, SectionHead, FactList, Steps } from '@/components/ui/Section';
 import { Faq } from '@/components/ui/Faq';
 import { RiskNote } from '@/components/ui/RiskNote';
-import { PixelStat } from '@/components/motion/PixelStat';
-import { ACCOUNTS, DEMO, FUNDING } from '@/content/facts';
-import { REGISTER_HREF } from '@/lib/crm';
+import { AccountCardsArt } from '@/components/art/HeroArt';
+import { ACCOUNTS, DEMO, FUNDING, OPTIONS_ACCOUNTS } from '@/content/facts';
+import { DEMO_HREF, REGISTER_HREF } from '@/lib/crm';
 import { cn } from '@/lib/cn';
 
 export const metadata: Metadata = {
-  title: 'Account types: Standard, Pro, ECN, Cent, VIP and demo',
+  title: 'Accounts: five CFD accounts, an Options account and free demo',
   description:
-    'Compare Kalks trading accounts: minimum deposit from $10, leverage up to 1:1000, all-in spreads or raw spreads with commission, hedging or netting, and free demo accounts.',
+    'Compare Kalks accounts: Standard, Pro, ECN, Cent and VIP for CFDs, from $10 with leverage up to 1:1000, and Options Standard for calls and puts. One USDT wallet funds them all. Free demo with $10,000.',
   alternates: { canonical: '/accounts' },
 };
 
@@ -28,33 +27,29 @@ const ROWS: [string, (a: (typeof ACCOUNTS)[number]) => string][] = [
   ['Margin call / stop out', (a) => `${a.marginCall} / ${a.stopOut}`],
   ['Position mode', (a) => a.mode],
   ['Negative balance protection', () => 'Yes'],
-  ['Kalks FX Options', () => 'Yes, same account'],
   ['Best for', (a) => a.bestFor],
-];
-
-const STEPS = [
-  { t: 'Sign up', d: 'Create your Kalks profile in the Client Area with your email. It takes a minute.' },
-  { t: 'Open an account', d: 'Choose live or demo, the account type and your leverage. Your login is issued instantly.' },
-  { t: 'Fund your wallet', d: `Deposit ${FUNDING.methods}. Credited ${FUNDING.creditTime}.` },
-  { t: 'Trade', d: 'Move funds to your account, instantly and free, then trade CFDs and options in Kalks Trader.' },
 ];
 
 const FAQ = [
   {
+    q: 'Can one account trade CFDs and options?',
+    a: 'No. Each account trades one product: a CFD account trades CFDs, an Options account trades options. Open one of each in the Client Area; one USDT wallet funds both, and moving money between them is instant and free.',
+  },
+  {
     q: 'How many accounts can I open?',
-    a: 'You can hold several live and demo accounts at the same time, up to five of each account type, and move money between them and your wallet instantly.',
+    a: 'Several live and demo accounts at once, up to five of each account type, and you can move money between them and your wallet instantly.',
   },
   {
     q: 'What is the difference between hedging and netting?',
-    a: 'In hedging mode you can hold buy and sell positions on the same instrument at once, each with its own stop loss and take profit. In netting mode each instrument has one position, and new trades add to it or reduce it. Pro accounts come in both modes.',
+    a: 'In hedging mode you can hold buy and sell positions on the same market at once, each with its own stop loss and take profit. In netting mode each market has one position; new trades add to it or reduce it. Pro accounts come in both modes.',
   },
   {
     q: 'What is a Cent account?',
-    a: 'Its balance is shown in US cents, so a $10 deposit appears as 1,000 cents. You trade the same markets at a smaller size, which makes it a good way to test a strategy with real money.',
+    a: 'Its balance is shown in US cents, so a $10 deposit appears as 1,000 cents. You trade the same markets at a smaller size: a good way to test a strategy with real money.',
   },
   {
     q: 'Can I change my leverage later?',
-    a: 'Yes, from the Client Area, as long as the account has no open positions. The leverage on any single trade is also capped by the instrument’s own limit.',
+    a: 'Yes, in the Client Area, while the account has no open positions. The leverage on any trade is also capped by the market’s own limit. Leverage does not apply to options: you pay the premium in cash.',
   },
   {
     q: 'Do I need to verify my identity?',
@@ -62,135 +57,182 @@ const FAQ = [
   },
   {
     q: 'What does “raw spread” mean?',
-    a: 'The spread from our price feed with no markup added. ECN and VIP accounts trade on it and pay a fixed commission per lot instead. Standard, Pro and Cent accounts add a fixed markup and charge no commission.',
+    a: 'The spread from our price feed with no markup. ECN and VIP trade on it and pay a fixed commission per lot. Standard, Pro and Cent add a fixed markup and charge no commission.',
   },
 ];
 
 export default function AccountsPage() {
+  const [optStd, optPro] = OPTIONS_ACCOUNTS;
   return (
     <>
-      <PageHero
-        kicker="Account types"
-        lines={['Five live accounts.', <span key="b" className="text-fg-3">Free demo.</span>]}
-        lead="Standard, Pro, ECN, Cent and VIP: choose all-in pricing or raw spreads with a commission, hedging or netting, dollars or cents. Every account trades CFDs and Kalks FX Options."
+      <Hero
+        tone="ink"
+        kicker="ACCOUNTS"
+        title="Five ways to trade CFDs. One for options."
+        lede={`All-in spreads or raw pricing with commission, in dollars or cents, from $10. Options get their own account. Free demo with ${DEMO.defaultBalance} in virtual funds.`}
         actions={
           <>
-            <Button href={REGISTER_HREF}>Open account</Button>
-            <Button href="#compare" variant="outline" arrow={false}>
-              Compare all
-            </Button>
+            <Btn href={REGISTER_HREF} v="red" s={56} arrow>
+              Open account
+            </Btn>
+            <Btn href="#compare" v="ghost" s={56}>
+              Compare accounts
+            </Btn>
           </>
         }
-        visual={
-          <BrowserFrame
-            src="/images/product/focus-open-account.webp"
-            alt="Opening a trading account in the Kalks Client Area: live or demo, with the account’s terms on the right"
-            url="app.kalkstrade.com"
-            width={2772}
-            height={1280}
-            priority
-            tilt
-            sizes="(min-width: 1024px) 680px, 92vw"
-          />
-        }
+        facts="One USDT wallet funds every account"
+        art={<AccountCardsArt />}
+        strip={[
+          { v: '$10', l: 'Minimum deposit on Standard and Cent' },
+          { v: '1:1000', l: 'Maximum leverage on Standard and Cent' },
+          { v: '$3', l: 'Per lot round turn on VIP, raw spread' },
+          { v: DEMO.defaultBalance, l: `Free demo, refill up to ${DEMO.refillsPerDay} times a day` },
+        ]}
       />
 
-      <section className="section" aria-labelledby="types-title">
-        <div className="container-site">
-          <SectionHead id="types-title" kicker="Choose" lines={['Pick your pricing.']} />
-          <div className="mt-12 grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-            {ACCOUNTS.map((a, i) => (
-              <Reveal
-                key={a.id}
-                delay={(i % 3) * 0.05}
-                className={cn(
-                  'relative flex scroll-mt-28 flex-col overflow-hidden rounded-[28px] border p-7',
-                  a.highlight
-                    ? 'border-ember/50 bg-[linear-gradient(180deg,rgba(255,90,31,0.18),rgba(255,90,31,0.02)_60%)]'
-                    : 'border-white/[0.09] bg-[linear-gradient(180deg,#131317,#0d0d10)]',
-                )}
-              >
-                <span id={a.id} className="absolute -top-28" aria-hidden />
-                <div className="flex items-center justify-between">
-                  <h3 className="font-display text-[2.2rem] font-semibold tracking-[-0.045em]">{a.name}</h3>
-                  {a.highlight && <span className="chip chip-ember">Most popular</span>}
+      <Section id="cfd" labelledBy="cfd-title">
+        <SectionHead
+          id="cfd-title"
+          kicker="01 — CFD ACCOUNTS"
+          title="Pick your pricing."
+          lede="All five trade forex, metals, energies, indices, crypto and stocks. They differ in pricing, minimum deposit and leverage."
+        />
+        <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+          {ACCOUNTS.map((a) => (
+            <div key={a.id} id={a.id} className={cn('card relative flex scroll-mt-28 flex-col p-6', a.highlight && 'shadow-[var(--sh1),inset_0_0_0_2px_var(--red)]')}>
+              <div className="flex items-center justify-between gap-3">
+                <div className="flex items-center gap-2">
+                  <span className="tag cfd">CFD</span>
+                  <h3 className="d-wide text-[26px]">{a.name}</h3>
                 </div>
-                <p className="mt-2 text-fg-2">{a.tagline}</p>
-                <div className="mt-6 flex items-end gap-6">
-                  <div>
-                    <p className="text-[11px] uppercase tracking-[0.14em] text-fg-3">From</p>
-                    <p className="t-pixel mt-1 text-[2.6rem]">{a.minDeposit}</p>
-                  </div>
-                  <div>
-                    <p className="text-[11px] uppercase tracking-[0.14em] text-fg-3">Leverage up to</p>
-                    <p className="t-pixel mt-1 text-[2.6rem]">{a.leverage}</p>
-                  </div>
-                </div>
-                <FactList
-                  className="mt-6"
-                  items={[
-                    ['Spread', a.spread],
-                    ['Commission', a.commission],
-                    ['Margin call / stop out', `${a.marginCall} / ${a.stopOut}`],
-                    ['Mode', a.mode],
-                  ]}
-                />
-                <div className="mt-auto pt-7">
-                  <Button href={REGISTER_HREF} variant={a.highlight ? 'ember' : 'outline'} size="sm">
-                    Open {a.name}
-                  </Button>
-                </div>
-              </Reveal>
-            ))}
-            <Reveal
-              delay={0.1}
-              className="relative flex scroll-mt-28 flex-col overflow-hidden rounded-[28px] bg-cream p-7 text-[#140904]"
-            >
-              <span id="demo" className="absolute -top-28" aria-hidden />
-              <h3 className="font-display text-[2.2rem] font-semibold tracking-[-0.045em]">Demo</h3>
-              <p className="mt-2 text-black/70">Practise for free with virtual funds on live prices. CFDs and options.</p>
-              <div className="mt-6 flex items-end gap-6">
+                {a.highlight && <span className="tag new">Popular</span>}
+              </div>
+              <p className="body mt-2">{a.tagline}</p>
+              <div className="mt-5 grid grid-cols-2 gap-4">
                 <div>
-                  <p className="text-[11px] uppercase tracking-[0.14em] text-black/55">Starts with</p>
-                  <p className="t-pixel mt-1 text-[2.6rem]">{DEMO.defaultBalance}</p>
+                  <p className="text-[12.5px] font-semibold text-tx3">From</p>
+                  <p className="money mt-1 text-[28px]">{a.minDeposit}</p>
+                </div>
+                <div>
+                  <p className="text-[12.5px] font-semibold text-tx3">Leverage up to</p>
+                  <p className="money mt-1 text-[28px]">{a.leverage}</p>
                 </div>
               </div>
-              <ul className="mt-6 flex flex-col gap-2.5 text-sm text-black/75">
-                <li className="border-t border-black/10 pt-2.5">Choose any balance from {DEMO.balanceRange}</li>
-                <li className="border-t border-black/10 pt-2.5">Refill up to {DEMO.refillsPerDay} times a day</li>
-                <li className="border-t border-black/10 pt-2.5">Every instrument, stocks included</li>
-                <li className="border-t border-black/10 pt-2.5">Expires after 10 days without a login</li>
-              </ul>
-              <div className="mt-auto pt-7">
-                <Button href={REGISTER_HREF} variant="light" size="sm" className="!bg-[#140904] !text-cream">
-                  Try a free demo
-                </Button>
+              <FactList
+                className="mt-5"
+                items={[
+                  ['Spread', a.spread],
+                  ['Commission', a.commission],
+                  ['Margin call / stop out', `${a.marginCall} / ${a.stopOut}`],
+                  ['Mode', a.mode],
+                ]}
+              />
+              <div className="mt-auto pt-6">
+                <Btn href={REGISTER_HREF} v={a.highlight ? 'red' : 'ink'} s={40}>
+                  Open {a.name}
+                </Btn>
               </div>
-            </Reveal>
+            </div>
+          ))}
+          <div id="demo" className="pcard pc-yel scroll-mt-28 !min-h-0">
+            <span className="k">DEMO</span>
+            <h3>Practise for free.</h3>
+            <p>Virtual funds on live prices, for CFDs and options.</p>
+            <p className="money !mt-5 !text-[30px] !opacity-100">{DEMO.defaultBalance}</p>
+            <ul className="mt-4 flex flex-col gap-2 text-[14px]">
+              <li>Any balance from {DEMO.balanceRange}</li>
+              <li>Refill up to {DEMO.refillsPerDay} times a day</li>
+              <li>Every market, stocks included</li>
+            </ul>
+            <div className="mt-auto pt-6">
+              <Btn href={DEMO_HREF} v="ink">
+                Try the demo
+              </Btn>
+            </div>
           </div>
-          <p className="mt-6 text-xs text-fg-3">
-            1 pip = 10 points on a 5-digit FX pair. Raw spreads are the spreads of our price feed and move with the market. The
-            figures shown are the current defaults and can change.
-          </p>
         </div>
-      </section>
+        <p className="mt-4 text-[12.5px] text-tx3">
+          1 pip = 10 points on a 5-digit FX pair. Raw spreads are our price feed’s spreads and move with the market. Figures are the
+          current defaults and can change.
+        </p>
+      </Section>
 
-      <section id="compare" className="section scroll-mt-24 pt-0" aria-labelledby="cmp-title">
-        <div className="container-site">
-          <SectionHead id="cmp-title" kicker="Side by side" lines={['Compare every', 'account.']} />
-          <div className="no-scrollbar -mx-[var(--gutter)] mt-12 overflow-x-auto px-[var(--gutter)]" data-reveal>
-            <table className="table-clean w-full min-w-[860px] border-separate border-spacing-0 text-sm">
+      <Section id="options" labelledBy="opt-title">
+        <SectionHead
+          id="opt-title"
+          kicker="02 — OPTIONS ACCOUNT"
+          title="Options get their own account."
+          lede="An account trades one product. Open an Options account next to your CFD account: one wallet funds both, transfers are instant and free."
+        />
+        <div className="grid gap-4 lg:grid-cols-[1.3fr_1fr]">
+          <div className="card flex flex-col p-6 sm:p-8">
+            <div className="flex items-center gap-2">
+              <span className="tag opt">Options</span>
+              <h3 className="d-wide text-[26px]">{optStd.name}</h3>
+            </div>
+            <p className="body mt-2">{optStd.tagline} Daily, weekly and monthly expiries, settled in cash in US dollars.</p>
+            <FactList
+              className="mt-5"
+              items={[
+                ['Minimum deposit', optStd.minDeposit],
+                ['Commission', optStd.commission],
+                ['Leverage', optStd.leverage],
+                ['Selling options', optStd.selling],
+                ['Demo', 'Free, with virtual funds'],
+              ]}
+            />
+            <div className="mt-6 flex flex-wrap gap-3">
+              <Btn href={REGISTER_HREF} v="red" arrow>
+                Open {optStd.name}
+              </Btn>
+              <Btn href="/options" v="ghost">
+                How options work
+              </Btn>
+            </div>
+          </div>
+          <div className="flex flex-col gap-4">
+            <div className="card flex flex-col p-6">
+              <div className="flex items-center justify-between gap-3">
+                <div className="flex items-center gap-2">
+                  <span className="tag opt">Options</span>
+                  <h3 className="d-wide text-[22px]">{optPro.name}</h3>
+                </div>
+                <span className="st st-warn">Coming soon</span>
+              </div>
+              <p className="body mt-3">{optPro.tagline}</p>
+            </div>
+            <div className="card flex flex-1 flex-col gap-3 p-6">
+              <h3 className="t-h3 !text-[18px]">How the split works</h3>
+              <ul className="flex flex-col gap-2.5 text-[14.5px] text-tx2">
+                {[
+                  'A CFD account trades CFDs. An Options account trades options.',
+                  'Hold both at once, live and demo.',
+                  'One USDT wallet funds every account.',
+                  'Prop, copy, PAMM and MAM accounts trade CFDs only.',
+                ].map((x) => (
+                  <li key={x} className="flex gap-2.5">
+                    <Check size={18} className="mt-0.5 flex-none text-up-tx" aria-hidden />
+                    {x}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </div>
+        </div>
+      </Section>
+
+      <Section id="compare" labelledBy="cmp-title">
+        <SectionHead id="cmp-title" kicker="03 — SIDE BY SIDE" title="Compare the CFD accounts." />
+        <div className="card overflow-hidden px-2 py-2">
+          <div className="overflow-x-auto">
+            <table className="tb min-w-[880px]">
               <thead>
                 <tr>
-                  <th scope="col" className="sticky left-0 z-10 w-[200px] bg-ink py-4 pr-4">
+                  <th scope="col" className="w-[190px]">
                     <span className="sr-only">Feature</span>
                   </th>
                   {ACCOUNTS.map((a) => (
-                    <th
-                      key={a.id}
-                      scope="col"
-                      className={cn('px-4 py-4 !text-[0.95rem] !normal-case !tracking-tight !text-fg', a.highlight && 'rounded-t-2xl bg-ember/[0.1]')}
-                    >
+                    <th key={a.id} scope="col" className="!text-[13px] !normal-case !tracking-normal !text-tx">
                       {a.name}
                     </th>
                   ))}
@@ -199,11 +241,11 @@ export default function AccountsPage() {
               <tbody>
                 {ROWS.map(([label, get]) => (
                   <tr key={label}>
-                    <th scope="row" className="sticky left-0 z-10 border-t border-white/[0.07] bg-ink py-3.5 pr-4 !text-[0.8rem] !font-normal !normal-case !tracking-normal text-fg-3">
+                    <th scope="row" className="!font-medium !text-tx3">
                       {label}
                     </th>
                     {ACCOUNTS.map((a) => (
-                      <td key={a.id} className={cn('border-t border-white/[0.07] px-4 py-3.5 align-top text-fg', a.highlight && 'bg-ember/[0.06]')}>
+                      <td key={a.id} className={cn('align-top', a.highlight && 'bg-[color-mix(in_srgb,var(--red-soft)_45%,transparent)]')}>
                         {get(a)}
                       </td>
                     ))}
@@ -213,71 +255,61 @@ export default function AccountsPage() {
             </table>
           </div>
         </div>
-      </section>
+      </Section>
 
-      <section id="open" className="section scroll-mt-24 pt-0" aria-labelledby="open-title">
-        <div className="container-site">
-          <SectionHead id="open-title" kicker="Get started" lines={['Trading in', 'four steps.']} />
-          <ol className="mt-12 grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-            {STEPS.map((s, i) => (
-              <Reveal as="li" key={s.t} delay={i * 0.06} className="card p-6">
-                <span className="t-pixel text-[2.4rem] text-ember">{String(i + 1).padStart(2, '0')}</span>
-                <h3 className="mt-5 text-xl font-semibold tracking-tight">{s.t}</h3>
-                <p className="t-body mt-2">{s.d}</p>
-              </Reveal>
-            ))}
-          </ol>
-        </div>
-      </section>
+      <Section id="open" labelledBy="open-title">
+        <SectionHead id="open-title" kicker="04 — GET STARTED" title="Trading in four steps." />
+        <Steps
+          steps={[
+            { t: 'Sign up', d: 'Create your Kalks profile in the Client Area with your email. It takes a minute.' },
+            { t: 'Open an account', d: 'CFD or Options, live or demo. Choose the type and leverage; your login is issued at once.' },
+            { t: 'Fund your wallet', d: `Deposit ${FUNDING.methods}. Credited ${FUNDING.creditTime}.` },
+            { t: 'Trade', d: 'Move funds to your account, instantly and free, and trade in Kalks Trader.' },
+          ]}
+        />
+      </Section>
 
-      <section id="funding" className="section scroll-mt-24 pt-0" aria-labelledby="fund-title">
-        <div className="container-site">
-          <div className="relative overflow-hidden rounded-[36px] border border-white/[0.08] bg-[linear-gradient(180deg,#120d0b,#0b0a0c)] p-6 sm:p-12 lg:p-16">
-            <div aria-hidden className="glow-ember right-[-15%] top-[-40%] h-[90%] w-[50%] opacity-35" />
-            <div className="relative grid gap-12 lg:grid-cols-[1fr_1fr]">
-              <SectionHead
-                id="fund-title"
-                kicker="Funding"
-                lines={['Deposit USDT.', 'Trade in a minute.']}
-                lead="Your Kalks wallet takes USDT on BNB Chain (BEP20) and TRON (TRC20), verified on-chain. Pay from MetaMask or TronLink, or send to your deposit address. USDT is credited 1:1 as US dollars."
-              />
-              <dl className="grid grid-cols-2 gap-x-6 gap-y-10 self-end">
-                {[
-                  { v: 10, s: ' USDT', l: 'Minimum deposit' },
-                  { v: 1, s: ' min', l: 'Usual time to credit', pre: '~' },
-                  { v: 1, s: ' USDT', l: 'Withdrawal fee, flat' },
-                  { v: 0, s: '', l: 'Fee to move funds between wallet and accounts', pre: '$' },
-                ].map((x) => (
-                  <div key={x.l} data-reveal>
-                    <dt className="sr-only">{x.l}</dt>
-                    <dd>
-                      <PixelStat value={x.v} prefix={x.pre} suffix={x.s} className="t-pixel block text-[2.4rem] sm:text-[3rem]" />
-                      <p className="mt-2 text-[13px] text-fg-2">{x.l}</p>
-                      <div className="stat-line mt-3" />
-                    </dd>
-                  </div>
-                ))}
-              </dl>
-            </div>
-            <p className="relative mt-10 text-xs text-fg-3">
-              Withdrawals from {FUNDING.withdrawalRange} per request need a verified identity and are reviewed before they are
-              sent. To protect your account, funds cannot be withdrawn within 24 hours of a deposit.
+      <Section id="funding" labelledBy="fund-title">
+        <div className="pcard pc-ink !min-h-0 gap-10 lg:!flex-row lg:items-end lg:justify-between lg:!p-10">
+          <div>
+            <span className="k !text-k-yel">05 — FUNDING</span>
+            <h2 id="fund-title" className="d mt-4 max-w-[12ch] text-[clamp(32px,3.4vw,46px)] leading-[0.95]">
+              Deposit USDT. Trade in a minute.
+            </h2>
+            <p className="mt-4 max-w-[46ch] text-[15.5px] leading-relaxed text-[#B8AAA5]">
+              {FUNDING.methods}, verified on-chain. Pay from MetaMask or TronLink, or send to your deposit address. USDT is credited
+              1:1 as US dollars.
             </p>
           </div>
+          <dl className="grid grid-cols-2 gap-px overflow-hidden rounded-[18px] bg-[rgba(255,255,255,0.08)] lg:w-[460px] lg:flex-none">
+            {[
+              [FUNDING.minDeposit, 'Minimum deposit'],
+              ['~1 min', 'Usual time to credit'],
+              ['$0', 'Wallet to account, instant'],
+              [FUNDING.withdrawalFee.replace(' flat', ''), 'Flat withdrawal fee'],
+            ].map(([v, l]) => (
+              <div key={l} className="flex flex-col-reverse bg-[#0B0809] p-4">
+                <dt className="mt-1 text-[12.5px] text-[#B8AAA5]">{l}</dt>
+                <dd className="money text-[26px] text-white">{v}</dd>
+              </div>
+            ))}
+          </dl>
         </div>
-      </section>
+        <p className="mt-4 text-[12.5px] text-tx3">
+          Withdrawals from {FUNDING.withdrawalRange} per request need a verified identity and are reviewed before they are sent. To
+          protect your account, funds cannot be withdrawn within 24 hours of a deposit.
+        </p>
+      </Section>
 
-      <section className="section pt-0" aria-labelledby="afaq-title">
-        <div className="container-site grid gap-12 lg:grid-cols-[0.8fr_1.2fr]">
-          <SectionHead id="afaq-title" kicker="Questions" lines={['Accounts,', 'answered.']} />
+      <Section labelledBy="afaq-title" className="sec-last">
+        <div className="grid gap-10 lg:grid-cols-[0.8fr_1.2fr] lg:gap-16">
+          <SectionHead id="afaq-title" kicker="06 — QUESTIONS" title="Accounts, answered." />
           <div>
             <Faq items={FAQ} schema />
-            <RiskNote className="mt-8" />
+            <RiskNote options className="mt-8" />
           </div>
         </div>
-      </section>
-
-      <CtaBand lines={['Open an account', 'in a minute.']} art="analyst" />
+      </Section>
     </>
   );
 }

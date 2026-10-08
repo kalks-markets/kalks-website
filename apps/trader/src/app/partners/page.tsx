@@ -1,27 +1,19 @@
 import type { Metadata } from 'next';
-import { PageHero } from '@/components/ui/PageHero';
-import { SectionHead, Reveal } from '@/components/ui/Section';
-import { Button } from '@/components/ui/Button';
-import { BrowserFrame } from '@/components/ui/Frames';
-import { CtaBand } from '@/components/ui/CtaBand';
+import { Hero } from '@/components/ui/Hero';
+import { Btn } from '@/components/ui/Button';
+import { Section, SectionHead, Steps, Feature } from '@/components/ui/Section';
 import { Faq } from '@/components/ui/Faq';
+import { NetworkArt } from '@/components/art/HeroArt';
 import { IB, IB_LEVELS } from '@/content/facts';
 import { REGISTER_HREF } from '@/lib/crm';
 import { cn } from '@/lib/cn';
 
 export const metadata: Metadata = {
-  title: 'Partners (IB): earn on every lot your network trades',
+  title: 'Partners: earn on every lot your network trades',
   description:
-    'Every Kalks client is a partner from sign-up. Per-lot commission on three tiers of referrals, CPA rewards, five partner levels from Bronze to Diamond, weekly payouts in USDT.',
+    'Every Kalks client is a partner from sign-up. Per-lot commission on three tiers of referrals, CPA rewards, five levels from Bronze to Diamond, weekly payouts in USDT.',
   alternates: { canonical: '/partners' },
 };
-
-const HOW = [
-  { t: 'Share your link', d: 'Your partner link and code are ready the moment you sign up, with campaign links and a QR code for each channel.' },
-  { t: 'Clients trade', d: 'Earn a fixed amount per lot your clients trade, set by asset class and your partner level.' },
-  { t: 'Your network grows', d: `Earn on three tiers by default: ${IB.tierShares} of the per-lot rate. Share part of it with sub-partners or as a rebate to clients.` },
-  { t: 'Get paid weekly', d: `${IB.payout}, from ${IB.minPayout}.` },
-];
 
 const FAQ = [
   {
@@ -34,137 +26,134 @@ const FAQ = [
   },
   {
     q: 'What is CPA?',
-    a: 'A one-off reward for each new client who deposits at least $500 and places a first trade, paid after a 30-day hold. $200 at Bronze and Silver, $300 from Gold.',
+    a: 'A one-off reward for each new client who deposits at least $500 and places a first trade, paid after a 30-day hold: $200 at Bronze and Silver, $300 from Gold.',
   },
   {
     q: 'Can I give part of my commission back?',
-    a: 'Yes. You can pass up to 50% to clients as a rebate and up to 50% to your sub-partners.',
+    a: 'Yes. Pass up to 50% to clients as a rebate and up to 50% to your sub-partners.',
   },
   {
     q: 'How do levels work?',
-    a: 'You start at Bronze. Levels rise with the number of active clients and the lots they trade each month, and every level raises your per-lot rates.',
+    a: 'You start at Bronze. Levels rise with your active clients and the lots they trade each month, and every level raises your per-lot rates.',
   },
 ];
 
 export default function PartnersPage() {
+  const top = IB_LEVELS[IB_LEVELS.length - 1];
   return (
     <>
-      <PageHero
-        kicker="Partners (IB)"
-        lines={['Earn on every lot', <span key="b" className="text-fg-3">your network trades.</span>]}
-        lead="Every Kalks client is a partner from sign-up. Share your link, earn per-lot commission on three tiers of referrals, and get paid every week in USDT."
+      <Hero
+        tone="red"
+        kicker="PARTNERS"
+        title="Earn on every lot your network trades."
+        lede="Every Kalks client is a partner from day one. Share your link, earn per lot on three tiers of referrals, and get paid every Monday in USDT."
         actions={
           <>
-            <Button href={REGISTER_HREF}>Become a partner</Button>
-            <Button href="#levels" variant="outline" arrow={false}>
+            <Btn href={REGISTER_HREF} v="wht" s={56} arrow>
+              Become a partner
+            </Btn>
+            <Btn href="#levels" v="ghost" s={56}>
               See the rates
-            </Button>
+            </Btn>
           </>
         }
-        visual={
-          <BrowserFrame
-            src="/images/product/focus-partner.webp"
-            alt="Partner dashboard in the Kalks Client Area with level progress, referral link and earnings"
-            url="app.kalkstrade.com · Partner"
-            width={2772}
-            height={1120}
-            priority
-            tilt
-            caption="Illustrative data"
-            sizes="(min-width: 1024px) 680px, 92vw"
-          />
-        }
+        facts="No application · no minimum to start"
+        art={<NetworkArt />}
+        strip={[
+          { v: `$${top.fxMajor}`, l: `Per FX major lot at ${top.name}` },
+          { v: IB.tiers, l: `Tiers deep: ${IB.tierShares} of the rate` },
+          { v: 'Weekly', l: 'Paid every Monday to your USDT wallet' },
+          { v: IB.minPayout, l: 'Minimum payout' },
+        ]}
       />
 
-      <section className="section" aria-labelledby="ph-title">
-        <div className="container-site">
-          <SectionHead id="ph-title" kicker="How it works" lines={['Share, earn,', 'get paid.']} />
-          <ol className="mt-12 grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-            {HOW.map((s, i) => (
-              <Reveal as="li" key={s.t} delay={i * 0.06} className="card p-6">
-                <span className="t-pixel text-[2.4rem] text-ember">{String(i + 1).padStart(2, '0')}</span>
-                <h3 className="mt-5 text-xl font-semibold tracking-tight">{s.t}</h3>
-                <p className="t-body mt-2">{s.d}</p>
-              </Reveal>
-            ))}
-          </ol>
-        </div>
-      </section>
+      <Section labelledBy="ph-title">
+        <SectionHead id="ph-title" kicker="01 — HOW IT WORKS" title="Share, earn, get paid." />
+        <Steps
+          steps={[
+            { t: 'Share your link', d: 'Your link and code are ready when you sign up, with campaign links and a QR code for each channel.' },
+            { t: 'Clients trade', d: 'Earn a fixed amount per lot your clients trade, set by asset class and your level.' },
+            { t: 'Your network grows', d: `Earn on three tiers: ${IB.tierShares} of the per-lot rate. Share part with sub-partners or as a rebate.` },
+            { t: 'Get paid weekly', d: `${IB.payout}, from ${IB.minPayout}.` },
+          ]}
+        />
+      </Section>
 
-      <section id="levels" className="section scroll-mt-24 pt-0" aria-labelledby="lv-title">
-        <div className="container-site">
-          <SectionHead
-            id="lv-title"
-            kicker="Partner levels"
-            lines={['Five levels.', 'Higher rates at each.']}
-            lead="Commission in US dollars per lot traded by your direct clients. Your level updates as your network grows."
-          />
-          <div className="no-scrollbar -mx-[var(--gutter)] mt-12 overflow-x-auto px-[var(--gutter)]" data-reveal>
-            <table className="table-clean w-full min-w-[820px] text-sm">
+      <Section id="levels" labelledBy="lv-title">
+        <SectionHead
+          id="lv-title"
+          kicker="02 — LEVELS"
+          title="Five levels. Higher rates at each."
+          lede="Commission in US dollars per standard lot traded by your direct clients. Your level updates as your network grows."
+        />
+        <div className="card overflow-hidden p-2">
+          <div className="overflow-x-auto">
+            <table className="tb min-w-[760px]">
               <thead>
-                <tr className="border-b border-white/[0.08]">
-                  <th scope="col" className="py-4 pr-4">Level</th>
-                  <th scope="col" className="px-4 py-4 !text-right">FX majors</th>
-                  <th scope="col" className="px-4 py-4 !text-right">Metals</th>
-                  <th scope="col" className="px-4 py-4 !text-right">Crypto</th>
-                  <th scope="col" className="px-4 py-4 !text-right">CPA</th>
-                  <th scope="col" className="px-4 py-4">To reach it</th>
+                <tr>
+                  <th scope="col">Level</th>
+                  <th scope="col" className="r">
+                    FX majors
+                  </th>
+                  <th scope="col" className="r">
+                    Metals
+                  </th>
+                  <th scope="col" className="r">
+                    Crypto
+                  </th>
+                  <th scope="col" className="r">
+                    CPA
+                  </th>
+                  <th scope="col">To reach it</th>
                 </tr>
               </thead>
               <tbody>
                 {IB_LEVELS.map((l, i) => (
-                  <tr key={l.name} className={cn('border-b border-white/[0.06]', i === IB_LEVELS.length - 1 && 'bg-ember/[0.06]')}>
-                    <th scope="row" className="py-4 pr-4 !text-base !font-semibold !normal-case !tracking-tight !text-fg">
-                      {l.name}
+                  <tr key={l.name}>
+                    <th scope="row">
+                      <span className="flex items-center gap-2.5">
+                        <span
+                          className={cn('h-3 w-3 rounded-full', i === IB_LEVELS.length - 1 ? 'bg-k-yel' : 'bg-s4')}
+                          style={{ opacity: 0.35 + i * 0.16 }}
+                          aria-hidden
+                        />
+                        {l.name}
+                      </span>
                     </th>
-                    <td className="num px-4 py-4 text-right">${l.fxMajor}</td>
-                    <td className="num px-4 py-4 text-right">${l.metals}</td>
-                    <td className="num px-4 py-4 text-right">${l.crypto}</td>
-                    <td className="num px-4 py-4 text-right">${l.cpa}</td>
-                    <td className="px-4 py-4 text-fg-2">{l.needs}</td>
+                    <td className="r m">${l.fxMajor}</td>
+                    <td className="r m">${l.metals}</td>
+                    <td className="r m">${l.crypto}</td>
+                    <td className="r m">${l.cpa}</td>
+                    <td className="text-tx2">{l.needs}</td>
                   </tr>
                 ))}
               </tbody>
             </table>
           </div>
-          <p className="mt-4 text-xs text-fg-3">
-            Rates per standard lot. FX minors, indices, energies and stocks have their own rates at each level, shown in your
-            partner dashboard. These are the current default rates and can change.
-          </p>
         </div>
-      </section>
+        <p className="mt-4 text-[12.5px] text-tx3">
+          FX minors, indices, energies and stocks have their own rates at each level, shown in your partner dashboard. These are the
+          current default rates and can change.
+        </p>
+      </Section>
 
-      <section className="section pt-0" aria-labelledby="pt-title">
-        <div className="container-site grid gap-4 lg:grid-cols-3">
-          {[
-            ['Three tiers deep', `Earn on clients referred by your clients: ${IB.tierShares} of the per-lot rate.`],
-            ['Campaign links', 'One link per channel, with clicks, sign-ups and first deposits tracked for each.'],
-            ['White-label ready', 'Bringing a whole business? Run your own brand on the Kalks platform.'],
-          ].map(([t, d], i) => (
-            <Reveal key={t} delay={i * 0.06} className="card p-7">
-              <h3 id={i === 0 ? 'pt-title' : undefined} className="t-h3">
-                {t}
-              </h3>
-              <p className="t-body mt-3">{d}</p>
-            </Reveal>
-          ))}
+      <Section labelledBy="pt-title">
+        <h2 id="pt-title" className="sr-only">
+          More for partners
+        </h2>
+        <div className="grid gap-4 lg:grid-cols-3">
+          <Feature t="Three tiers deep" d={`Earn on clients referred by your clients: ${IB.tierShares} of the per-lot rate.`} />
+          <Feature t="Campaign links" d="One link per channel, with clicks, sign-ups and first deposits tracked for each." />
+          <Feature t="White-label ready" d="Bringing a whole business? Run your own brand on the Kalks platform." />
         </div>
-      </section>
+      </Section>
 
-      <section className="section pt-0" aria-labelledby="pfq-title">
-        <div className="container-site grid gap-12 lg:grid-cols-[0.8fr_1.2fr]">
-          <SectionHead id="pfq-title" kicker="Questions" lines={['Partners,', 'answered.']} />
+      <Section labelledBy="pfq-title" className="sec-last">
+        <div className="grid gap-10 lg:grid-cols-[0.8fr_1.2fr] lg:gap-16">
+          <SectionHead id="pfq-title" kicker="03 — QUESTIONS" title="Partners, answered." />
           <Faq items={FAQ} schema />
         </div>
-      </section>
-
-      <CtaBand
-        lines={['Your link is', 'waiting.']}
-        lead="Sign up and your partner dashboard, link and code are ready. No application, no minimums to start."
-        primary={{ label: 'Become a partner', href: REGISTER_HREF }}
-        secondary={{ label: 'White-label', href: '/white-label' }}
-        photo="team-desk"
-      />
+      </Section>
     </>
   );
 }

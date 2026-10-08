@@ -1,4 +1,4 @@
-/** Schematic payoff at expiry for the strategy builder templates (not to scale). y = 30 is break-even. */
+/** Schematic payoff at expiry for the strategy templates (not to scale). y = 30 is break-even. */
 const SHAPES: Record<string, string> = {
   'Long call': '0,40 62,40 120,4',
   'Long put': '0,4 58,40 120,40',
@@ -15,32 +15,21 @@ export function Payoff({ name, className }: { name: string; className?: string }
   if (!pts) return null;
   return (
     <svg viewBox="0 0 120 50" className={className} role="img" aria-label={`${name} payoff at expiry`}>
-      <defs>
-        <linearGradient id={`pf-${name.replace(/\s/g, '')}`} x1="0" x2="1">
-          <stop offset="0" stopColor="#ff5a1f" />
-          <stop offset="1" stopColor="#ff8a3d" />
-        </linearGradient>
-      </defs>
-      <line x1="0" y1="30" x2="120" y2="30" stroke="rgba(255,255,255,0.22)" strokeDasharray="2 3" strokeWidth="0.8" />
-      <polyline
-        points={pts}
-        fill="none"
-        stroke={`url(#pf-${name.replace(/\s/g, '')})`}
-        strokeWidth="2.2"
-        strokeLinejoin="round"
-        strokeLinecap="round"
-      />
+      <rect x="0" y="0" width="120" height="30" fill="var(--up-soft)" opacity=".55" />
+      <rect x="0" y="30" width="120" height="20" fill="var(--dn-soft)" opacity=".55" />
+      <line x1="0" y1="30" x2="120" y2="30" stroke="var(--tx3)" strokeDasharray="2 3" strokeWidth="0.8" />
+      <polyline points={pts} fill="none" stroke="var(--tx)" strokeWidth="2.4" strokeLinejoin="round" strokeLinecap="round" />
     </svg>
   );
 }
 
 export const STRATEGY_NOTES: Record<string, { view: string; d: string }> = {
-  'Long call': { view: 'Bullish', d: 'Profit if the price rises past the strike plus what you paid. Risk limited to the premium.' },
-  'Long put': { view: 'Bearish', d: 'Profit if the price falls below the strike minus what you paid. Risk limited to the premium.' },
-  Straddle: { view: 'Big move, any direction', d: 'A call and a put at the same strike. Pays when the market moves far either way.' },
-  Strangle: { view: 'Big move, cheaper', d: 'A call and a put at different strikes. Costs less than a straddle, needs a bigger move.' },
-  'Bull call spread': { view: 'Moderately bullish', d: 'Buy a call, sell a higher call. Cheaper than a call alone, with a capped upside.' },
-  'Bear put spread': { view: 'Moderately bearish', d: 'Buy a put, sell a lower put. Cheaper than a put alone, with a capped downside payout.' },
-  'Iron condor': { view: 'Range-bound', d: 'Sell a call spread and a put spread. Earns when the price stays inside a range.' },
+  'Long call': { view: 'Bullish', d: 'Pays if the price rises past the strike plus what you paid. Risk: the premium.' },
+  'Long put': { view: 'Bearish', d: 'Pays if the price falls below the strike minus what you paid. Risk: the premium.' },
+  Straddle: { view: 'Big move', d: 'A call and a put at one strike. Pays when the market moves far either way.' },
+  Strangle: { view: 'Big move, cheaper', d: 'A call and a put at two strikes. Costs less than a straddle; needs a bigger move.' },
+  'Bull call spread': { view: 'Mildly bullish', d: 'Buy a call, sell a higher one. Cheaper than a call alone; the upside is capped.' },
+  'Bear put spread': { view: 'Mildly bearish', d: 'Buy a put, sell a lower one. Cheaper than a put alone; the payout is capped.' },
+  'Iron condor': { view: 'Range-bound', d: 'Sell a call spread and a put spread. Earns while the price stays in a range.' },
   Butterfly: { view: 'Pinned price', d: 'Pays most if the market settles near the middle strike at expiry.' },
 };

@@ -261,10 +261,10 @@ export default function PrivacyPage() {
       </Section>
 
       <CtaBanner
-        title="Your Data, Your Control"
+        title="Your data, your control."
         lead={`Open a ${BRAND_NAME} account confident that we treat your personal data with the same care we apply to your trading capital.`}
-        primary={{ label: 'Open Account', href: '/auth/register' }}
-        secondary={{ label: 'Delete My Account', href: '/delete-account' }}
+        primary={{ label: 'Open account', href: '/auth/register' }}
+        secondary={{ label: 'Delete my account', href: '/delete-account' }}
       />
     </div>
   );

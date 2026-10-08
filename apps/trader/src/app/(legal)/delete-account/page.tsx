@@ -205,7 +205,7 @@ export default function DeleteAccountPage() {
         title="Questions about your data?"
         lead={`Our support team can walk you through what ${BRAND_NAME} stores, why, and how to have it removed.`}
         primary={{ label: 'Email us', href: mailto }}
-        secondary={{ label: 'Privacy Policy', href: '/privacy' }}
+        secondary={{ label: 'Privacy policy', href: '/privacy' }}
       />
     </div>
   );

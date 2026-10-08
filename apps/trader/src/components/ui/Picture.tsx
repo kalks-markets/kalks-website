@@ -1,13 +1,16 @@
 import type { CSSProperties } from 'react';
+import { cn } from '@/lib/cn';
 
 /**
- * Pre-encoded AVIF/WebP image (scripts/brand-models.mjs) with a small and a native size. Used for the founder's
- * low-resolution model images, where re-encoding through the image optimiser would cost quality.
+ * A pre-encoded AVIF / WebP picture from public/images/k2 (scripts/k2-images.mjs).
+ * SHARPNESS (KALKS2 §8): the image is never drawn larger than its native pixels per device pixel. `px-cap` limits
+ * the rendered box to native / devicePixelRatio (--dpr is set in <head> before paint), whatever the layout asks for.
  */
 export function Picture({
   name,
   widths,
-  height,
+  w,
+  h,
   alt,
   sizes,
   className,
@@ -15,12 +18,13 @@ export function Picture({
   priority = false,
   style,
 }: {
-  /** Base path without extension, e.g. /images/brand/model-glyph */
+  /** e.g. /images/k2/figure (files: figure.avif, figure-480.avif, …) */
   name: string;
-  /** [native, small] widths; the small file is `${name}-${small}.ext`. */
-  widths: [number, number];
-  /** Native height (for the intrinsic aspect ratio). */
-  height: number;
+  /** native width first, then the smaller encodes */
+  widths: number[];
+  /** native size */
+  w: number;
+  h: number;
   alt: string;
   sizes: string;
   className?: string;
@@ -28,24 +32,29 @@ export function Picture({
   priority?: boolean;
   style?: CSSProperties;
 }) {
-  const [big, small] = widths;
-  const set = (ext: string) => `${name}-${small}.${ext} ${small}w, ${name}.${ext} ${big}w`;
+  const set = (ext: string) =>
+    widths
+      .slice()
+      .reverse()
+      .map((x) => `${name}${x === widths[0] ? '' : `-${x}`}.${ext} ${x}w`)
+      .join(', ');
   return (
-    <picture className={className} style={style}>
+    <picture className={className}>
       <source type="image/avif" srcSet={set('avif')} sizes={sizes} />
       <source type="image/webp" srcSet={set('webp')} sizes={sizes} />
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img
         src={`${name}.webp`}
-        alt={alt}
-        width={big}
-        height={height}
-        sizes={sizes}
         srcSet={set('webp')}
+        sizes={sizes}
+        width={w}
+        height={h}
+        alt={alt}
         loading={priority ? 'eager' : 'lazy'}
         fetchPriority={priority ? 'high' : 'auto'}
-        decoding="async"
-        className={imgClassName ?? 'block h-auto w-full'}
+        decoding={priority ? 'sync' : 'async'}
+        className={cn('px-cap', imgClassName)}
+        style={{ ['--nw' as string]: w, ['--nh' as string]: h, ...style }}
       />
     </picture>
   );

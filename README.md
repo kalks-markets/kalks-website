@@ -26,6 +26,18 @@ Other scripts: `build`, `start`, `lint`.
 
 Copy the block in [.env.example](.env.example) to `apps/trader/.env.local`. This file is git-ignored, so a fresh clone has none. Without it, `next dev` falls back to the white-label defaults in `src/lib/brand.ts` and shows the name "Bullza".
 
-## Content
+## Design and content
 
-`apps/trader/README-CONTENT-PLACEHOLDERS.md` lists where to drop images and banners. The About page still needs its four images (`about banner.png`, `about_card1.png`, `about_card2.png`, `about_card3.png`).
+The site follows the **Kalks 2** style sheet (`docs/design/KALKS2.md` in the platform repo): tokens for light and dark
+in `apps/trader/src/app/globals.css` (theme follows the device, with an Auto / Light / Dark switch in the menu and
+footer), Tailwind colour names mapped to the same tokens, NeoPOP buttons (`components/ui/Button.tsx`), the solid-colour
+page hero (`components/ui/Hero.tsx`) and the composed hero subjects (`components/art/HeroArt.tsx`).
+
+- **Numbers** come only from `apps/trader/src/content/facts.ts`; re-check it against the live platform before a
+  campaign (instrument counts: `https://trade.kalkstrade.com/api/engine/symbols`).
+- **Copy deck**: `docs/design/WEBSITE-COPY.md` in the platform repo.
+- **Imagery**: `node scripts/k2-images.mjs` builds `public/images/k2/*` (AVIF + WebP + OG JPEG) from the founder's
+  sources; images are never drawn larger than their native pixels (`--dpr`, `.px-cap`).
+- **Icons**: `node scripts/k2-icons.mjs` (favicon, apple-touch icon, PWA icons).
+- **Fonts**: Archivo and JetBrains Mono are self-hosted, instanced to the axis ranges the site uses
+  (`src/app/fonts/LICENSE.md`); Instrument Sans and the locale fallbacks come from `next/font/google`.

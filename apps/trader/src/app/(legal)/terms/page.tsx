@@ -204,10 +204,10 @@ export default function TermsPage() {
       </Section>
 
       <CtaBanner
-        title="Ready to Begin?"
+        title="Ready to begin?"
         lead={`By opening a ${BRAND_NAME} account, you confirm you have read and accepted these Terms.`}
-        primary={{ label: 'Open Account', href: '/auth/register' }}
-        secondary={{ label: 'Contact Support', href: `mailto:${BRAND_SUPPORT_EMAIL}` }}
+        primary={{ label: 'Open account', href: '/auth/register' }}
+        secondary={{ label: 'Contact support', href: `mailto:${BRAND_SUPPORT_EMAIL}` }}
       />
     </div>
   );

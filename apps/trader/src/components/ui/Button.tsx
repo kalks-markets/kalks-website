@@ -1,64 +1,68 @@
 import Link from 'next/link';
 import type { ReactNode } from 'react';
-import { ArrowUpRight } from 'lucide-react';
+import { ArrowRight } from 'lucide-react';
 import { cn } from '@/lib/cn';
 
-type Variant = 'ember' | 'outline' | 'light';
+export type BtnVariant = 'red' | 'yel' | 'ink' | 'wht' | 'ghost' | 'buy';
+export type BtnSize = 32 | 40 | 48 | 56;
 
 /**
- * Pill button as a link. `arrow` adds the round ↗ chip.
- * External links (Client Area, Kalks Trader) open in the same tab: they are part of one journey.
+ * NeoPOP button (KALKS2 §5) rendered as a link. One saturated action per panel: `red` for the main action,
+ * `ink` for strong secondary, `ghost` for the rest, `yel` for highlights, `wht` on photos and red surfaces.
+ * Same-site pages use next/link; sign-in / sign-up (/auth/* redirects), downloads, mail and other sites are plain
+ * anchors so the browser follows the redirect or the file.
  */
-export function Button({
+export function Btn({
   href,
   children,
-  variant = 'ember',
-  size = 'md',
-  arrow = true,
+  v = 'ink',
+  s = 40,
+  arrow = false,
+  round = false,
+  block = false,
   className,
-  ariaLabel,
+  label,
+  download,
 }: {
   href: string;
-  children: ReactNode;
-  variant?: Variant;
-  size?: 'sm' | 'md';
+  children?: ReactNode;
+  v?: BtnVariant;
+  s?: BtnSize;
   arrow?: boolean;
+  round?: boolean;
+  block?: boolean;
   className?: string;
-  ariaLabel?: string;
+  /** aria-label, required for icon-only (round) buttons */
+  label?: string;
+  download?: boolean;
 }) {
-  const cls = cn('btn', `btn-${variant}`, size === 'sm' && 'btn-sm', className);
+  const cls = cn('btn', s !== 40 && `s${s}`, v !== 'ink' && `v-${v}`, round && 'round', block && 'block', className);
   const inner = (
     <>
-      <span>{children}</span>
-      {arrow && (
-        <span className="arrow" aria-hidden>
-          <ArrowUpRight size={size === 'sm' ? 14 : 16} strokeWidth={2.2} />
-        </span>
-      )}
+      {children}
+      {arrow && <ArrowRight aria-hidden strokeWidth={2} />}
     </>
   );
-  const common = {
-    className: cls,
-    'aria-label': ariaLabel,
-  };
-  if (/^https?:/.test(href)) {
+  const plain = /^(https?:|mailto:|tel:)/.test(href) || href.startsWith('/auth/') || href.startsWith('/download/') || download;
+  if (plain) {
     return (
-      <a href={href} {...common}>
+      <a href={href} className={cls} aria-label={label} download={download || undefined}>
         {inner}
       </a>
     );
   }
   return (
-    <Link href={href} {...common}>
+    <Link href={href} className={cls} aria-label={label}>
       {inner}
     </Link>
   );
 }
 
-export function ArrowCircle({ className, size = 18 }: { className?: string; size?: number }) {
+/** A decorative round NeoPOP arrow for whole-card links (the card is the link). */
+export function RoundArrow({ s = 48, className }: { s?: 40 | 48; className?: string }) {
   return (
-    <span className={cn('arrow-circle', className)} aria-hidden>
-      <ArrowUpRight size={size} strokeWidth={1.8} />
+    <span className={cn('btn round', s === 48 && 's48', className)} aria-hidden>
+      <ArrowRight strokeWidth={2} />
     </span>
   );
 }

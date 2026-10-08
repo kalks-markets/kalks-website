@@ -3,19 +3,34 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
-import { ChevronDown, ArrowUpRight } from 'lucide-react';
-import { KalksLogo } from '@/components/brand/Logo';
+import { BookOpen, Building2, ChevronDown, Copy, LifeBuoy, Menu, Network, Smartphone, Users, X, ArrowRight } from 'lucide-react';
+import { Wordmark } from '@/components/brand/Logo';
 import { NAV_MORE, NAV_PRIMARY } from '@/content/site';
-import { LOGIN_HREF, REGISTER_HREF } from '@/lib/crm';
+import { ANDROID_APP, RISK_WARNING } from '@/content/facts';
+import { LOGIN_HREF, REGISTER_HREF, DEMO_HREF } from '@/lib/crm';
 import { LanguagePicker, LanguageSelect } from '@/components/chrome/LanguagePicker';
-import { RISK_WARNING } from '@/content/facts';
+import { ThemeSwitch } from '@/components/chrome/ThemeSwitch';
 import { cn } from '@/lib/cn';
 
+const ICONS: Record<string, JSX.Element> = {
+  copy: <Copy aria-hidden />,
+  partners: <Network aria-hidden />,
+  academy: <BookOpen aria-hidden />,
+  whitelabel: <Building2 aria-hidden />,
+  about: <Users aria-hidden />,
+  help: <LifeBuoy aria-hidden />,
+};
+
+/**
+ * Site navigation. Floats over the hero card in the hero's colours (globals.css reads the hero's data-tone with
+ * :has()), and turns into a frosted bar in the theme colours once the page scrolls. Hides while scrolling down,
+ * returns on the way up. "More" opens the mega menu; phones get a full-screen sheet.
+ */
 export default function Nav() {
   const pathname = usePathname();
-  const [scrolled, setScrolled] = useState(false);
+  const [solid, setSolid] = useState(false);
   const [hidden, setHidden] = useState(false);
-  const [menu, setMenu] = useState(false);
+  const [sheet, setSheet] = useState(false);
   const [more, setMore] = useState(false);
   const moreRef = useRef<HTMLDivElement>(null);
   const lastY = useRef(0);
@@ -23,9 +38,9 @@ export default function Nav() {
   useEffect(() => {
     const onScroll = () => {
       const y = window.scrollY;
-      setScrolled(y > 24);
-      setHidden(y > 480 && y > lastY.current + 4);
-      if (y < lastY.current - 4) setHidden(false);
+      setSolid(y > 24);
+      if (y > 520 && y > lastY.current + 6) setHidden(true);
+      else if (y < lastY.current - 6 || y < 520) setHidden(false);
       lastY.current = y;
     };
     onScroll();
@@ -34,28 +49,24 @@ export default function Nav() {
   }, []);
 
   useEffect(() => {
-    setMenu(false);
+    setSheet(false);
     setMore(false);
   }, [pathname]);
 
   useEffect(() => {
-    const lenis = window.__lenis;
-    if (menu) {
-      lenis?.stop();
-      document.body.style.overflow = 'hidden';
-    } else {
-      lenis?.start();
-      document.body.style.overflow = '';
-    }
+    document.body.style.overflow = sheet ? 'hidden' : '';
     const onKey = (e: KeyboardEvent) => {
       if (e.key === 'Escape') {
-        setMenu(false);
+        setSheet(false);
         setMore(false);
       }
     };
     document.addEventListener('keydown', onKey);
-    return () => document.removeEventListener('keydown', onKey);
-  }, [menu]);
+    return () => {
+      document.removeEventListener('keydown', onKey);
+      document.body.style.overflow = '';
+    };
+  }, [sheet]);
 
   useEffect(() => {
     if (!more) return;
@@ -71,45 +82,17 @@ export default function Nav() {
 
   return (
     <>
-      <header
-        className={cn(
-          'fixed inset-x-0 top-0 z-[70] transition-transform duration-500 ease-out',
-          hidden && !menu ? '-translate-y-[120%]' : 'translate-y-0',
-        )}
-      >
-        {/* Soft scrim once the page has scrolled, so content passing underneath never collides with the logo. */}
-        <div
-          aria-hidden
-          className={cn(
-            'pointer-events-none absolute inset-x-0 top-0 h-[120px] bg-gradient-to-b from-ink/90 via-ink/55 to-transparent transition-opacity duration-500 lg:h-[132px]',
-            scrolled && !menu ? 'opacity-100' : 'opacity-0',
-          )}
-        />
-        <div className="container-site relative flex h-[76px] items-center justify-between gap-4 lg:h-[88px]">
-          <Link href="/" aria-label="Kalks home" className="relative z-[2] flex-none text-fg">
-            <KalksLogo className="h-[22px] w-auto lg:h-[26px]" title="Kalks" />
+      <header className={cn('nav', (solid || more) && 'is-solid', hidden && !more && 'is-hidden')}>
+        <div className="nav-in">
+          <Link href="/" aria-label="Kalks home" className="flex-none">
+            <Wordmark className="h-[30px] w-auto max-md:h-[26px]" title="Kalks" />
           </Link>
 
-          {/* Desktop pill */}
-          <nav
-            aria-label="Main"
-            className={cn(
-              'hidden items-center gap-1 rounded-full p-1.5 transition-all duration-500 lg:flex',
-              scrolled ? 'glass-strong' : 'glass',
-            )}
-          >
+          <nav aria-label="Main" className="nav-links">
             {NAV_PRIMARY.map((l) => (
-              <Link
-                key={l.href}
-                href={l.href}
-                aria-current={isActive(l.href) ? 'page' : undefined}
-                className={cn(
-                  'relative flex h-10 items-center gap-2 rounded-full px-4 text-[14px] font-medium transition-colors',
-                  isActive(l.href) ? 'bg-white/[0.09] text-fg' : 'text-fg-2 hover:text-fg',
-                )}
-              >
+              <Link key={l.href} href={l.href} aria-current={isActive(l.href) ? 'page' : undefined}>
                 {l.label}
-                {l.note && <span className="h-1.5 w-1.5 rounded-full bg-ember shadow-[0_0_8px_#ff5a1f]" aria-label="new" />}
+                {l.tag && <span className="tag new">{l.tag}</span>}
               </Link>
             ))}
             <div ref={moreRef} className="relative">
@@ -118,121 +101,117 @@ export default function Nav() {
                 aria-expanded={more}
                 aria-haspopup="true"
                 onClick={() => setMore((v) => !v)}
-                className={cn(
-                  'flex h-10 items-center gap-1.5 rounded-full px-4 text-[14px] font-medium transition-colors',
-                  moreActive || more ? 'bg-white/[0.09] text-fg' : 'text-fg-2 hover:text-fg',
-                )}
+                className={cn(moreActive && 'bg-[var(--n-hover)]')}
               >
                 More
-                <ChevronDown size={14} className={cn('transition-transform duration-300', more && 'rotate-180')} aria-hidden />
+                <ChevronDown size={16} aria-hidden className={cn('transition-transform duration-200', more && 'rotate-180')} />
               </button>
               {more && (
-                <div className="glass-strong absolute left-1/2 top-[52px] w-[360px] -translate-x-1/2 rounded-3xl p-2">
-                  {NAV_MORE.map((l) => (
+                <div className="mega">
+                  <div className="grid grid-cols-2 gap-1">
+                    {NAV_MORE.map((l) => (
+                      <Link key={l.href} href={l.href} className="mi" aria-current={isActive(l.href) ? 'page' : undefined}>
+                        <span className="ic">{ICONS[l.icon]}</span>
+                        <span>
+                          <b>{l.label}</b>
+                          <small>{l.note}</small>
+                        </span>
+                      </Link>
+                    ))}
+                  </div>
+                  <div className="flex flex-col gap-1.5">
                     <Link
-                      key={l.href}
-                      href={l.href}
-                      aria-current={isActive(l.href) ? 'page' : undefined}
-                      className="group flex items-center justify-between gap-4 rounded-2xl px-4 py-3 transition-colors hover:bg-white/[0.06]"
+                      href="/platforms#mobile"
+                      className="relative flex flex-1 flex-col justify-between overflow-hidden rounded-[18px] bg-k-yel p-5 text-k-ink"
                     >
-                      <span>
-                        <span className="block text-[14px] font-medium text-fg">{l.label}</span>
-                        {l.note && <span className="block text-[12px] text-fg-3">{l.note}</span>}
+                      <span className="font-mono text-[12px] font-semibold tracking-[0.04em] opacity-80">ANDROID · v{ANDROID_APP.version}</span>
+                      <span className="d mt-3 block text-[26px] leading-[0.95]">Kalks in your pocket.</span>
+                      <span className="mt-4 flex items-center gap-2 text-[14px] font-semibold">
+                        Get the app <ArrowRight size={16} aria-hidden />
                       </span>
-                      <ArrowUpRight size={16} className="text-fg-3 transition-all group-hover:rotate-45 group-hover:text-ember-2" aria-hidden />
+                      <Smartphone aria-hidden className="absolute right-4 top-4 h-6 w-6 opacity-70" />
                     </Link>
-                  ))}
+                    <div className="flex items-center justify-between gap-3 rounded-[16px] bg-s2 px-4 py-3">
+                      <span className="text-[13px] font-semibold text-tx2">Theme</span>
+                      <ThemeSwitch />
+                    </div>
+                  </div>
                 </div>
               )}
             </div>
           </nav>
 
-          <div className="relative z-[2] flex items-center gap-1.5">
-            <LanguagePicker className="hidden lg:block" />
-            <Link
-              href={LOGIN_HREF}
-              className="hidden h-10 items-center rounded-full px-4 text-[14px] font-medium text-fg-2 transition-colors hover:text-fg lg:flex"
-            >
+          <div className="nav-r">
+            <LanguagePicker className="lg-only" />
+            <a href={LOGIN_HREF} className="nav-lnk lg-only">
               Log in
-            </Link>
-            <Link
-              href={REGISTER_HREF}
-              className="btn btn-ember btn-sm !h-10 !px-4 text-[13px] sm:!px-5 sm:text-[14px]"
-            >
+            </a>
+            <a href={REGISTER_HREF} className="btn max-md:!h-9 max-md:!px-3 max-md:!text-[13px]">
               Open account
-            </Link>
+            </a>
             <button
               type="button"
-              onClick={() => setMenu((v) => !v)}
-              aria-expanded={menu}
-              aria-controls="mobile-menu"
-              aria-label={menu ? 'Close menu' : 'Open menu'}
-              className="glass relative ml-1 grid h-11 w-11 place-items-center rounded-full lg:hidden"
+              className="icb menu-btn"
+              aria-label="Open menu"
+              aria-expanded={sheet}
+              aria-controls="site-menu"
+              onClick={() => setSheet(true)}
             >
-              <span className="relative block h-3 w-5" aria-hidden>
-                <span
-                  className={cn(
-                    'absolute left-0 top-0 h-[1.5px] w-5 bg-fg transition-transform duration-500',
-                    menu && 'translate-y-[5px] rotate-45',
-                  )}
-                />
-                <span
-                  className={cn(
-                    'absolute bottom-0 left-0 h-[1.5px] w-5 bg-fg transition-transform duration-500',
-                    menu && '-translate-y-[5px] -rotate-45',
-                  )}
-                />
-              </span>
+              <Menu size={22} aria-hidden />
             </button>
           </div>
         </div>
       </header>
 
-      {/* Mobile menu */}
-      <div
-        id="mobile-menu"
-        className={cn(
-          'fixed inset-0 z-[65] overflow-y-auto bg-[rgba(7,7,10,0.92)] backdrop-blur-2xl transition-[opacity,visibility] duration-500 lg:hidden',
-          menu ? 'visible opacity-100' : 'invisible opacity-0',
-        )}
-        aria-hidden={!menu}
-        data-lenis-prevent
-      >
-        <div aria-hidden className="glow-ember right-[-30%] top-[-10%] h-[60vh] w-[90vw] opacity-40" />
-        <nav aria-label="Mobile" className="container-site relative flex min-h-full flex-col gap-10 pb-10 pt-28">
-          <ul className="flex flex-col">
-            {[...NAV_PRIMARY, ...NAV_MORE].map((l, i) => (
-              <li key={l.href} className="border-b border-white/[0.07]">
-                <Link
-                  href={l.href}
-                  tabIndex={menu ? 0 : -1}
-                  aria-current={isActive(l.href) ? 'page' : undefined}
-                  className={cn(
-                    'flex items-baseline gap-4 py-3.5 font-display text-[1.9rem] font-semibold tracking-tighter transition-colors',
-                    isActive(l.href) ? 'text-ember-2' : 'text-fg',
-                  )}
-                  style={{ transitionDelay: menu ? `${i * 30}ms` : '0ms' }}
-                >
-                  <span className="num w-6 text-xs font-normal text-fg-3">{String(i + 1).padStart(2, '0')}</span>
-                  {l.label}
-                </Link>
-              </li>
-            ))}
-          </ul>
-          <div className="flex flex-col gap-3">
-            <Link href={REGISTER_HREF} tabIndex={menu ? 0 : -1} className="btn btn-ember w-full">
-              Open account
+      {sheet && (
+        <div id="site-menu" className="sheet" role="dialog" aria-modal="true" aria-label="Menu">
+          <div className="flex h-[var(--nav-h)] flex-none items-center justify-between px-[22px] pt-[var(--inset)]">
+            <Link href="/" aria-label="Kalks home">
+              <Wordmark className="h-[26px] w-auto" title="Kalks" />
             </Link>
-            <Link href={LOGIN_HREF} tabIndex={menu ? 0 : -1} className="btn btn-outline w-full">
-              Log in
-            </Link>
+            <button type="button" className="icb" aria-label="Close menu" onClick={() => setSheet(false)}>
+              <X size={22} aria-hidden />
+            </button>
           </div>
-          <LanguageSelect />
-          <p className="text-xs leading-relaxed text-fg-3">
-            <span className="font-semibold text-fg-2">Risk warning:</span> {RISK_WARNING}
-          </p>
-        </nav>
-      </div>
+          <nav aria-label="Mobile" className="flex flex-1 flex-col gap-8 px-[22px] pb-10 pt-4">
+            <ul className="flex flex-col">
+              {[...NAV_PRIMARY, ...NAV_MORE].map((l) => (
+                <li key={l.href} className="border-b border-line">
+                  <Link
+                    href={l.href}
+                    aria-current={isActive(l.href) ? 'page' : undefined}
+                    className={cn('d-wide flex items-center gap-3 py-3.5 text-[24px]', isActive(l.href) && 'text-red-tx')}
+                  >
+                    {l.label}
+                    {l.tag && <span className="tag new">{l.tag}</span>}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+            <div className="flex flex-col gap-3">
+              <a href={REGISTER_HREF} className="btn v-red s48 block">
+                Open account
+              </a>
+              <a href={DEMO_HREF} className="btn v-ghost s48 block !w-full">
+                Try the demo
+              </a>
+              <a href={LOGIN_HREF} className="py-2 text-center text-[15px] font-semibold text-tx2">
+                Log in
+              </a>
+            </div>
+            <div className="flex flex-col gap-3">
+              <LanguageSelect />
+              <div className="flex items-center justify-between">
+                <span className="text-[13px] font-semibold text-tx2">Theme</span>
+                <ThemeSwitch />
+              </div>
+            </div>
+            <p className="text-[12px] leading-relaxed text-tx3">
+              <span className="font-semibold text-tx2">Risk warning:</span> {RISK_WARNING}
+            </p>
+          </nav>
+        </div>
+      )}
     </>
   );
 }

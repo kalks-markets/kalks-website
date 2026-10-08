@@ -1,9 +1,9 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
-import { PageHero } from '@/components/ui/PageHero';
+import { Hero } from '@/components/ui/Hero';
 import { Faq } from '@/components/ui/Faq';
 import { RiskNote } from '@/components/ui/RiskNote';
-import { ACCOUNTS, DEMO, FUNDING, OPTIONS, IB } from '@/content/facts';
+import { ACCOUNTS, DEMO, FUNDING, IB, INSTRUMENTS, OPTIONS, OPTIONS_ACCOUNTS, ANDROID_APP } from '@/content/facts';
 import { BRAND_SUPPORT_EMAIL } from '@/lib/brand';
 
 export const metadata: Metadata = {
@@ -23,16 +23,20 @@ const GROUPS: Group[] = [
     title: 'Accounts',
     items: [
       {
-        q: 'Which account types are there?',
-        a: `Five live account types, Standard, Pro, ECN, Cent and VIP, plus free demo accounts. Standard, Pro and Cent use an all-in spread with no commission; ECN and VIP trade on raw spreads with a fixed commission per lot. Minimum deposits: ${minDeposits}.`,
+        q: 'Which accounts are there?',
+        a: `Five CFD accounts, Standard, Pro, ECN, Cent and VIP, and ${OPTIONS_ACCOUNTS[0].name} for options, plus free demo accounts. Standard, Pro and Cent use an all-in spread with no commission; ECN and VIP trade on raw spreads with a fixed commission per lot. Minimum deposits: ${minDeposits}.`,
+      },
+      {
+        q: 'Can one account trade CFDs and options?',
+        a: 'No. Each account trades one product. Open a CFD account and an Options account side by side; one USDT wallet funds both, and moving money between them is instant and free.',
       },
       {
         q: 'How do I open an account?',
-        a: 'Sign up in the Client Area with your email, then open a live or demo account, choose the account type and leverage. Your login is issued instantly.',
+        a: 'Sign up in the Client Area with your email, then open a CFD or Options account, live or demo, and choose the type and leverage. Your login is issued at once.',
       },
       {
         q: 'Is the demo account free?',
-        a: `Yes. A demo account starts with ${DEMO.defaultBalance} in virtual funds (you can choose from ${DEMO.balanceRange}), can be refilled up to ${DEMO.refillsPerDay} times a day, and trades every instrument on live prices, options included.`,
+        a: `Yes. A demo account starts with ${DEMO.defaultBalance} in virtual funds (any balance from ${DEMO.balanceRange}), can be refilled up to ${DEMO.refillsPerDay} times a day, and trades every market on live prices.`,
       },
       {
         q: 'Do I need to verify my identity?',
@@ -50,7 +54,7 @@ const GROUPS: Group[] = [
       },
       {
         q: 'How do I withdraw?',
-        a: `Request a withdrawal from your wallet in the Client Area: ${FUNDING.withdrawalRange} per request, with a ${FUNDING.withdrawalFee} fee. Withdrawals need a verified identity and are reviewed before they are sent. To protect your account, funds cannot be withdrawn within 24 hours of a deposit.`,
+        a: `Request a withdrawal from your wallet in the Client Area: ${FUNDING.withdrawalRange} per request, with a ${FUNDING.withdrawalFee} fee. Withdrawals need a verified identity and are reviewed before they are sent. Funds cannot be withdrawn within 24 hours of a deposit.`,
       },
       {
         q: 'How do I move money between my wallet and my accounts?',
@@ -68,19 +72,19 @@ const GROUPS: Group[] = [
     items: [
       {
         q: 'What can I trade?',
-        a: 'CFDs on 1,389 instruments: forex, metals, energies, indices and crypto (24/7), with 1,100 US, Hong Kong and Tokyo stocks on demo now and coming to live accounts soon. Kalks FX Options add calls and puts on forex, gold, silver and oil.',
+        a: `CFDs on ${INSTRUMENTS.liveMarkets} live markets in forex, metals, energies, indices, crypto (24/7) and stocks, with 1,100 more US, Hong Kong and Tokyo stocks on demo and coming to live accounts. Kalks FX Options add calls and puts on forex, gold, silver and oil.`,
       },
       {
         q: 'What is the maximum leverage?',
-        a: 'Up to 1:1000 on Standard and Cent accounts and 1:500 on Pro, ECN and VIP. The leverage on a single trade is also capped by the instrument, for example 1:20 on the main cryptocurrencies.',
+        a: 'Up to 1:1000 on Standard and Cent accounts and 1:500 on Pro, ECN and VIP. The leverage on a trade is also capped by the market, for example 1:20 on the main cryptocurrencies. Leverage does not apply to options.',
       },
       {
         q: 'What are the margin call and stop-out levels?',
-        a: 'Margin call at 100% and stop out at 50% on all accounts except Cent, where they are 60% and 20%. Negative balance protection resets a negative balance to zero.',
+        a: 'Margin call at 100% and stop out at 50% on all CFD accounts except Cent, where they are 60% and 20%. Negative balance protection resets a negative balance to zero.',
       },
       {
         q: 'Do you charge overnight financing?',
-        a: 'Positions held overnight are charged or credited financing, shown in Kalks Trader for each instrument before you trade. Crypto is charged every night, weekends included.',
+        a: 'Positions held overnight are charged or credited financing, shown in Kalks Trader for each market before you trade. Crypto is charged every night, weekends included.',
       },
     ],
   },
@@ -90,19 +94,19 @@ const GROUPS: Group[] = [
     items: [
       {
         q: 'What are Kalks FX Options?',
-        a: `Calls and puts on ${OPTIONS.fxPairs - 1} FX pairs, gold, silver, WTI and Brent, with daily, weekly and monthly expiries. They are European style and settled in cash in US dollars, in the same account as your CFDs.`,
+        a: `Calls and puts on ${OPTIONS.fxPairsLive} FX pairs, gold, silver, WTI and Brent, with daily, weekly and monthly expiries. European style, settled in cash in US dollars, in an Options account.`,
       },
       {
         q: 'What is the most I can lose?',
-        a: 'When you buy an option, the most you can lose is the premium you paid. Selling an option is different: your loss is not limited to the premium you receive, and the position uses margin.',
+        a: 'When you buy an option, the premium you paid. Selling an option is different: your loss is not limited to the premium you receive, and the position uses margin.',
       },
       {
         q: 'What does it cost?',
-        a: `The premium shown on the chain, plus a commission of ${OPTIONS.commission}.`,
+        a: `The premium shown on the chain, plus ${OPTIONS.commission}.`,
       },
       {
         q: 'How do options settle?',
-        a: `Automatically, in cash, at the average of one-second mid prices over the 30 minutes before the ${OPTIONS.cut} cut. You can also close a position at any time before then.`,
+        a: `Automatically, in cash, at the average of one-second mid prices over the 30 minutes before the ${OPTIONS.cut} cut. You can also close a position any time before.`,
       },
     ],
   },
@@ -120,7 +124,7 @@ const GROUPS: Group[] = [
       },
       {
         q: 'Is the capital real?',
-        a: 'Challenge and funded accounts trade simulated funds. Your share of the profit on a funded account is paid in real money, on your plan’s payout schedule.',
+        a: 'Challenge and funded accounts trade simulated funds. Your share of the profit on a funded account is paid in real money, on your plan’s schedule.',
       },
     ],
   },
@@ -130,11 +134,11 @@ const GROUPS: Group[] = [
     items: [
       {
         q: 'How does copy trading work?',
-        a: 'A copy account mirrors every trade of the master you follow, sized the way you choose, within limits you set: equity stop, maximum drawdown, maximum lot size and excluded symbols. You can pause or stop at any time.',
+        a: 'A copy account mirrors every trade of the master you follow, sized the way you choose, within limits you set: equity stop, maximum drawdown, maximum lot size and excluded markets. Pause or stop at any time.',
       },
       {
         q: 'What do masters charge?',
-        a: 'A performance fee of up to 50% of profit, charged only on new highs, so you never pay twice for the same gain.',
+        a: 'A performance fee of up to 50% of profit, only on new highs, so you never pay twice for the same gain.',
       },
       {
         q: 'Can I lose money copying?',
@@ -148,11 +152,11 @@ const GROUPS: Group[] = [
     items: [
       {
         q: 'How do I become a partner?',
-        a: 'Every Kalks client is a partner from sign-up. Your partner link, code and dashboard are in the Client Area; there is no separate application.',
+        a: 'Every Kalks client is a partner from sign-up. Your link, code and dashboard are in the Client Area; there is no separate application.',
       },
       {
         q: 'How am I paid?',
-        a: `A fixed amount per lot your clients trade, set by asset class and your partner level, on ${IB.tiers} tiers of referrals. Payouts: ${IB.payout.toLowerCase()}, from ${IB.minPayout}.`,
+        a: `A fixed amount per lot your clients trade, set by asset class and your level, on ${IB.tiers} tiers of referrals. Payouts: ${IB.payout.toLowerCase()}, from ${IB.minPayout}.`,
       },
     ],
   },
@@ -166,7 +170,7 @@ const GROUPS: Group[] = [
       },
       {
         q: 'Is there a mobile app?',
-        a: 'A native Android app is coming soon. Until then, everything works in your phone’s browser.',
+        a: `Yes, for Android (${ANDROID_APP.minAndroid} or newer): download the APK from the Platforms page. The Play Store listing follows.`,
       },
       {
         q: 'Which languages are available?',
@@ -185,35 +189,41 @@ const LD = {
 export default function FaqPage() {
   return (
     <>
-      <PageHero
+      <Hero
+        tone="plain"
         compact
         kicker="FAQ"
-        lines={['Questions,', <span key="b" className="text-fg-3">answered.</span>]}
-        lead="Accounts, funding, trading conditions, options, prop, copy trading, partners and the platform."
+        title="Questions, answered."
+        lede="Accounts, funding, trading conditions, options, prop, copy trading, partners and the platform."
+        style={{ ['--h1' as string]: 'clamp(40px, 4.8vw, 68px)', ['--h1-s' as string]: '38px' }}
       />
-      <section className="section pt-8" aria-label="Frequently asked questions">
-        <div className="container-site grid gap-12 lg:grid-cols-[240px_1fr] lg:gap-16">
+      <section className="sec sec-last" aria-label="Frequently asked questions">
+        <div className="wrap grid gap-10 lg:grid-cols-[240px_1fr] lg:gap-16">
           <nav aria-label="FAQ topics" className="lg:sticky lg:top-28 lg:self-start">
-            <ul className="no-scrollbar -mx-[var(--gutter)] flex gap-2 overflow-x-auto px-[var(--gutter)] lg:mx-0 lg:flex-col lg:gap-1 lg:px-0">
+            <ul className="no-sb -mx-[var(--gutter)] flex gap-2 overflow-x-auto px-[var(--gutter)] lg:mx-0 lg:flex-col lg:gap-1 lg:px-0">
               {GROUPS.map((g) => (
                 <li key={g.id} className="flex-none">
-                  <a href={`#${g.id}`} className="chip lg:!flex lg:!h-auto lg:!border-0 lg:!bg-transparent lg:!px-0 lg:!py-1.5 lg:!text-sm lg:hover:!text-fg">
+                  <a href={`#${g.id}`} className="chip lg:!h-auto lg:!bg-transparent lg:!px-0 lg:!py-1.5 lg:!text-[14px] lg:hover:!text-tx">
                     {g.title}
                   </a>
                 </li>
               ))}
             </ul>
           </nav>
-          <div className="flex flex-col gap-16">
+          <div className="flex flex-col gap-12">
             {GROUPS.map((g) => (
               <div key={g.id} id={g.id} className="scroll-mt-28">
-                <h2 className="t-h3 mb-4">{g.title}</h2>
+                <h2 className="d-wide mb-2 text-[22px]">{g.title}</h2>
                 <Faq items={g.items} />
               </div>
             ))}
-            <p className="text-sm text-fg-2">
-              Still have a question? <Link href="/contact" className="prose-link">Contact us</Link> or write to{' '}
-              <a href={`mailto:${BRAND_SUPPORT_EMAIL}`} className="prose-link">
+            <p className="text-[14.5px] text-tx2">
+              Still have a question?{' '}
+              <Link href="/contact" className="link">
+                Contact us
+              </Link>{' '}
+              or write to{' '}
+              <a href={`mailto:${BRAND_SUPPORT_EMAIL}`} className="link">
                 {BRAND_SUPPORT_EMAIL}
               </a>
               .

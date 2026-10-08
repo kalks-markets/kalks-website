@@ -19,3 +19,6 @@ export const REGISTER_HREF = '/auth/register';
 /** Public market data (quotes, instruments, stream). CORS-open, read-only. */
 export const MARKET_API = (process.env.NEXT_PUBLIC_MARKET_API || 'https://api.kalkstrade.com').replace(/\/$/, '');
 export const MARKET_WS = MARKET_API.replace(/^http/, 'ws') + '/v1/stream';
+
+/** "Try the demo": new visitors sign up first; the Client Area then opens a free demo account in one step. */
+export const DEMO_HREF = REGISTER_HREF;

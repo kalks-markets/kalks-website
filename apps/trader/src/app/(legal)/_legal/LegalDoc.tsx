@@ -7,7 +7,7 @@
  * page files themselves. This module owns ONLY the presentation: the
  * ~72ch measure, the h2/h3 hierarchy, the numbered-section anchors and
  * the sticky contents rail that appears from lg upwards. Everything is
- * drawn from the marketing tokens in src/marketing/tokens.css.
+ * drawn from the Kalks 2 tokens through (legal)/legal.css.
  *
  * Server components throughout — the sticky rail is pure CSS, so no page
  * here needs to opt into the client bundle.
@@ -44,7 +44,7 @@ export function LegalDoc({
 }) {
   return (
     <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_230px] gap-10 lg:gap-14 items-start">
-      <article className="flex flex-col gap-10 min-w-0" style={{ maxWidth: '72ch' }}>
+      <article className="card flex min-w-0 flex-col gap-10 p-6 sm:p-10">
         {updated && (
           <p
             style={{
@@ -63,7 +63,7 @@ export function LegalDoc({
       {/* Contents rail — lg+ only; the document reads top-to-bottom below that. */}
       <nav
         aria-label="On this page"
-        className="hidden lg:block lg:sticky"
+        className="legal-toc hidden lg:block lg:sticky"
         style={{ top: '7rem' }}
       >
         <p
@@ -183,8 +183,8 @@ export function LegalCallout({
     <div
       className="mk-body"
       style={{
-        background: warn ? 'rgba(239, 68, 68, 0.08)' : 'var(--mk-accent-soft)',
-        border: `1px solid ${warn ? 'rgba(239, 68, 68, 0.32)' : 'var(--mk-accent-line)'}`,
+        background: warn ? 'var(--red-soft)' : 'var(--mk-accent-soft)',
+        border: `1px solid ${warn ? 'color-mix(in srgb, var(--red-tx) 35%, transparent)' : 'var(--mk-accent-line)'}`,
         borderRadius: 'var(--mk-radius)',
         padding: 'var(--mk-space-5)',
       }}

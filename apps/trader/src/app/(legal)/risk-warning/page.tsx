@@ -125,10 +125,10 @@ export default function RiskWarningPage() {
       </Section>
 
       <CtaBanner
-        title="Trade Responsibly"
+        title="Trade responsibly."
         lead="Open an account only after reading and accepting all our risk disclosures."
-        primary={{ label: 'Open Account', href: '/auth/register' }}
-        secondary={{ label: 'Restricted Countries', href: '/restricted-countries' }}
+        primary={{ label: 'Open account', href: '/auth/register' }}
+        secondary={{ label: 'Restricted countries', href: '/restricted-countries' }}
       />
     </div>
   );

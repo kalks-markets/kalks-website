@@ -1,22 +1,22 @@
-export type NavLink = { label: string; href: string; note?: string };
+export type NavLink = { label: string; href: string; note?: string; tag?: string };
 
-/** Primary navigation (desktop pill). */
+/** Primary navigation (desktop bar). */
 export const NAV_PRIMARY: NavLink[] = [
-  { label: 'Options', href: '/options', note: 'New' },
+  { label: 'Options', href: '/options', tag: 'New' },
   { label: 'Markets', href: '/markets' },
   { label: 'Accounts', href: '/accounts' },
   { label: 'Platforms', href: '/platforms' },
   { label: 'Prop', href: '/prop' },
 ];
 
-/** Under "More" on desktop; listed in full in the mobile menu. */
-export const NAV_MORE: NavLink[] = [
-  { label: 'Copy trading & PAMM', href: '/copy-trading', note: 'Follow masters or run a fund' },
-  { label: 'Partners (IB)', href: '/partners', note: 'Earn on every lot your network trades' },
-  { label: 'Academy', href: '/academy', note: '118 lessons, 9 phases' },
-  { label: 'White-label & API', href: '/white-label', note: 'For brokers and builders' },
-  { label: 'About Kalks', href: '/about' },
-  { label: 'Help & contact', href: '/contact' },
+/** The "More" mega menu; listed in full in the mobile menu. `icon` keys map to lucide icons in Nav.tsx. */
+export const NAV_MORE: (NavLink & { icon: string })[] = [
+  { label: 'Copy trading & PAMM', href: '/copy-trading', note: 'Follow a master, or become one', icon: 'copy' },
+  { label: 'Partners', href: '/partners', note: 'Earn on every lot your network trades', icon: 'partners' },
+  { label: 'Academy', href: '/academy', note: '118 lessons in 9 phases', icon: 'academy' },
+  { label: 'White-label & API', href: '/white-label', note: 'Your brokerage on our platform', icon: 'whitelabel' },
+  { label: 'About Kalks', href: '/about', note: 'What we build and why', icon: 'about' },
+  { label: 'Help & contact', href: '/contact', note: 'Support chat and email', icon: 'help' },
 ];
 
 export const FOOTER_COLUMNS: { title: string; links: NavLink[] }[] = [
@@ -34,7 +34,8 @@ export const FOOTER_COLUMNS: { title: string; links: NavLink[] }[] = [
   {
     title: 'Accounts',
     links: [
-      { label: 'Account types', href: '/accounts' },
+      { label: 'CFD accounts', href: '/accounts#cfd' },
+      { label: 'Options account', href: '/accounts#options' },
       { label: 'Demo account', href: '/accounts#demo' },
       { label: 'Funding', href: '/accounts#funding' },
       { label: 'Prop challenges', href: '/prop' },
@@ -46,7 +47,7 @@ export const FOOTER_COLUMNS: { title: string; links: NavLink[] }[] = [
     links: [
       { label: 'Kalks Trader', href: '/platforms#trader' },
       { label: 'Client Area', href: '/platforms#client-area' },
-      { label: 'Mobile app', href: '/platforms#mobile' },
+      { label: 'Android app', href: '/platforms#mobile' },
       { label: 'API & algo trading', href: '/white-label#api' },
     ],
   },
@@ -54,7 +55,7 @@ export const FOOTER_COLUMNS: { title: string; links: NavLink[] }[] = [
     title: 'Company',
     links: [
       { label: 'About', href: '/about' },
-      { label: 'Partners (IB)', href: '/partners' },
+      { label: 'Partners', href: '/partners' },
       { label: 'White-label', href: '/white-label' },
       { label: 'Academy', href: '/academy' },
       { label: 'Help & contact', href: '/contact' },
@@ -73,10 +74,10 @@ export const LEGAL_LINKS: NavLink[] = [
   { label: 'Delete your account', href: '/delete-account' },
 ];
 
-/** Homepage hero copy (founder, 2026-10-08). */
+/** Homepage hero (KALKS2 §10 "after", approved 2026-10-09). */
 export const HERO = {
-  eyebrow: 'Kalks FX Options · the first forex options platform',
-  headline: ['Trade like', 'a sovereign.'] as const,
-  subline: 'Options on forex, gold and oil. 1,389 CFDs. Instant funding. One kingdom.',
-  cta: 'Enter the kingdom',
+  eyebrow: 'Kalks FX Options',
+  headline: ['Options on forex,', 'made simple.'] as const,
+  subline: 'Calls and puts on forex, gold, silver and oil. Buy an option and the premium is the most you can lose.',
+  facts: '$10 to start · Fund with USDT · 22 languages',
 };
