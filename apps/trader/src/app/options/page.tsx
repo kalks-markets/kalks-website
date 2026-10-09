@@ -1,10 +1,10 @@
 import type { Metadata } from 'next';
-import { Hero, Eyebrow } from '@/components/ui/Hero';
+import { PageHero } from '@/components/kx/PageHero';
+import { StatRow } from '@/components/kx/StatRow';
 import { Btn } from '@/components/ui/Button';
 import { Section, SectionHead, FactList, Feature } from '@/components/ui/Section';
 import { Faq } from '@/components/ui/Faq';
 import { RiskNote } from '@/components/ui/RiskNote';
-import { PayoffArt } from '@/components/art/HeroArt';
 import { OptionChain } from '@/components/mock/OptionChain';
 import { QuickTicket } from '@/components/mock/QuickTicket';
 import { Payoff, STRATEGY_NOTES } from '@/components/options/Payoff';
@@ -115,11 +115,11 @@ export default async function OptionsPage() {
   const acc = OPTIONS_ACCOUNTS[0];
   return (
     <>
-      <Hero
-        tone="red"
-        eyebrow={<Eyebrow>Kalks FX Options</Eyebrow>}
-        title="Calls and puts on forex. Settled in dollars."
-        lede="Daily, weekly and monthly expiries on forex, gold, silver and oil. $0.25 a contract, capped at 10% of the premium. Options trade in their own Options account."
+      <PageHero
+        kicker="Kalks FX Options"
+        title="Options on forex, with the risk printed first."
+        lede="Calls and puts on forex, gold, silver and oil, with daily, weekly and monthly expiries. Buy one and the premium is the most you can lose. $0.25 a contract, capped at 10% of the premium, in an Options account of its own."
+        photo="options"
         actions={
           <>
             <Btn href={REGISTER_HREF} v="wht" s={56} arrow>
@@ -130,15 +130,14 @@ export default async function OptionsPage() {
             </Btn>
           </>
         }
-        facts={`${acc.name} · Free demo · Inside Kalks Trader`}
-        art={<PayoffArt />}
-        strip={[
-          { v: OPTIONS.underlyingsLive.length, l: `Underlyings: ${OPTIONS.fxPairsLive} FX pairs, gold, silver, WTI and Brent` },
-          { v: 'Daily', l: `${OPTIONS.dailyPerWeek} a week, plus weekly and monthly expiries` },
-          { v: OPTIONS.strategies.length, l: `Strategy templates, up to ${OPTIONS.maxLegs} legs per order` },
-          { v: 'USD', l: 'Settled in cash, straight to your balance' },
-        ]}
-      />
+      >
+        <StatRow items={[
+          { v: String(OPTIONS.underlyingsLive.length), l: `Underlyings: ${OPTIONS.fxPairsLive} FX pairs, gold, silver, WTI and Brent` },
+          { v: String('Daily'), l: `${OPTIONS.dailyPerWeek} a week, plus weekly and monthly expiries` },
+          { v: String(OPTIONS.strategies.length), l: `Strategy templates, up to ${OPTIONS.maxLegs} legs per order` },
+          { v: String('USD'), l: 'Settled in cash, straight to your balance' },
+        ]} />
+      </PageHero>
 
       <Section id="how" labelledBy="how-title">
         <SectionHead
@@ -151,7 +150,7 @@ export default async function OptionsPage() {
         <ol className="mt-6 grid gap-x-6 gap-y-1 sm:grid-cols-2 xl:grid-cols-5">
           {CHAIN_NOTES.map((m, i) => (
             <li key={m.t} className="flex gap-3 border-t border-line py-4">
-              <span className="grid h-6 w-6 flex-none place-items-center rounded-full bg-k-yel font-mono text-[11.5px] font-bold text-k-ink">
+              <span className="grid h-6 w-6 flex-none place-items-center rounded-full bg-[#2447e0] font-mono text-[11.5px] font-bold text-white">
                 {i + 1}
               </span>
               <div>

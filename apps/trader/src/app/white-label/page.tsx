@@ -1,8 +1,9 @@
 import type { Metadata } from 'next';
-import { Hero } from '@/components/ui/Hero';
+import { PageHero } from '@/components/kx/PageHero';
+import { StatRow } from '@/components/kx/StatRow';
 import { Btn } from '@/components/ui/Button';
 import { Section, SectionHead, Feature } from '@/components/ui/Section';
-import { BrandSwapArt } from '@/components/art/HeroArt';
+import { API_FEATURES as API } from '@/content/platforms';
 import { ALGO } from '@/content/facts';
 import { BRAND_SUPPORT_EMAIL } from '@/lib/brand';
 import { REGISTER_HREF } from '@/lib/crm';
@@ -23,24 +24,16 @@ const WL: [string, string][] = [
   ['The whole platform', 'The same trading engine, option pricing, market data and 22 languages that run Kalks.'],
 ];
 
-const API: [string, string][] = [
-  ['Webhook alerts', `Send alerts from your charting tool to a Kalks webhook URL. Each webhook can route to up to ${ALGO.webhookRoutes} accounts, each with its own size.`],
-  ['REST API', 'API keys with read and trade scopes, never withdrawals. Bearer or HMAC signing, and an IP allow-list for live trading keys.'],
-  ['Visual strategy builder', 'Build rules with blocks, switch to code, or describe a strategy in plain words and let the assistant draft it.'],
-  ['Backtests', `Test a strategy on history on our servers, with ${ALGO.indicatorSeries} indicator series that match Kalks Trader.`],
-  ['24/7 deployments', 'Run strategies on our servers on demo or live accounts, with kill switches when you need to stop at once.'],
-  ['Marketplace', 'Publish a strategy for others to run, or start from one someone else built.'],
-];
 
 export default function WhiteLabelPage() {
   const mailto = `mailto:${BRAND_SUPPORT_EMAIL}?subject=${encodeURIComponent('White-label enquiry')}`;
   return (
     <>
-      <Hero
-        tone="yellow"
+      <PageHero
         kicker="FOR BUSINESS"
         title="Your brokerage. Our platform."
         lede="Launch a broker under your own brand and domains, with forex options, CFDs, prop, copy trading and partners built in. Or connect your systems through the API."
+        photo="whitelabel"
         actions={
           <>
             <Btn href={mailto} v="red" s={56} arrow>
@@ -51,15 +44,14 @@ export default function WhiteLabelPage() {
             </Btn>
           </>
         }
-        facts="Setup fee · monthly licence · revenue share"
-        art={<BrandSwapArt />}
-        strip={[
-          { v: 4, l: 'Apps under your brand: website, Client Area, Trader, Back Office' },
-          { v: 22, l: 'Languages, right to left included' },
-          { v: 'Modules', l: 'Options, prop, copy, partners: on or off per broker' },
-          { v: 'Isolated', l: 'Your clients and money, separate in the database' },
-        ]}
-      />
+      >
+        <StatRow items={[
+          { v: String(4), l: 'Apps under your brand: website, Client Area, Trader, Back Office' },
+          { v: String(22), l: 'Languages, right to left included' },
+          { v: String('Modules'), l: 'Options, prop, copy, partners: on or off per broker' },
+          { v: String('Isolated'), l: 'Your clients and money, separate in the database' },
+        ]} />
+      </PageHero>
 
       <Section labelledBy="wl-title">
         <SectionHead

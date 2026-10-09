@@ -1,8 +1,8 @@
 import type { Metadata } from 'next';
-import { Hero } from '@/components/ui/Hero';
+import { PageHero } from '@/components/kx/PageHero';
+import { StatRow } from '@/components/kx/StatRow';
 import { Btn } from '@/components/ui/Button';
 import { Section, SectionHead, Feature } from '@/components/ui/Section';
-import { HeroImage } from '@/components/art/HeroArt';
 import { ACADEMY } from '@/content/facts';
 import { REGISTER_HREF } from '@/lib/crm';
 
@@ -22,11 +22,11 @@ const LEVEL: Record<string, string> = {
 export default function AcademyPage() {
   return (
     <>
-      <Hero
-        tone="ink"
+      <PageHero
         kicker="KALKS ACADEMY"
         title="Learn it properly. Then trade it."
         lede={`${ACADEMY.lessons} lessons in ${ACADEMY.phases} phases, from how markets work to macro regimes and FX options. A quiz after every lesson and certificates anyone can verify.`}
+        photo="academy"
         actions={
           <>
             <Btn href={REGISTER_HREF} v="red" s={56} arrow>
@@ -37,26 +37,14 @@ export default function AcademyPage() {
             </Btn>
           </>
         }
-        facts="Inside the Client Area · pass mark 70%"
-        art={
-          <HeroImage
-            name="/images/k2/glyph"
-            widths={[673, 448]}
-            w={673}
-            h={1200}
-            sizes="(max-width: 1100px) 300px, 420px"
-            alt="A man in shadow with yellow glyphs painted in columns across his face and neck"
-            mask="linear-gradient(180deg, #000 70%, transparent), linear-gradient(90deg, transparent, #000 18%, #000 82%, transparent)"
-            className="max-h-[560px] [&_img]:max-h-[560px] [&_img]:w-auto [&_img]:![mask-composite:intersect] [&_img]:![-webkit-mask-composite:source-in]"
-          />
-        }
-        strip={[
-          { v: ACADEMY.phases, l: 'Phases, beginner to professional' },
-          { v: ACADEMY.lessons, l: 'Lessons, each with a quiz' },
-          { v: ACADEMY.quizQuestions, l: 'Quiz questions' },
-          { v: ACADEMY.glossary, l: 'Terms in the glossary' },
-        ]}
-      />
+      >
+        <StatRow items={[
+          { v: String(ACADEMY.phases), l: 'Phases, beginner to professional' },
+          { v: String(ACADEMY.lessons), l: 'Lessons, each with a quiz' },
+          { v: String(ACADEMY.quizQuestions), l: 'Quiz questions' },
+          { v: String(ACADEMY.glossary), l: 'Terms in the glossary' },
+        ]} />
+      </PageHero>
 
       <Section id="phases" labelledBy="phases-title">
         <SectionHead

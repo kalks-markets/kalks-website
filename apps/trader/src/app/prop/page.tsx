@@ -1,10 +1,10 @@
 import type { Metadata } from 'next';
-import { Hero } from '@/components/ui/Hero';
+import { PageHero } from '@/components/kx/PageHero';
+import { StatRow } from '@/components/kx/StatRow';
 import { Btn } from '@/components/ui/Button';
 import { Section, SectionHead, FactList, Steps } from '@/components/ui/Section';
 import { Faq } from '@/components/ui/Faq';
 import { RiskNote } from '@/components/ui/RiskNote';
-import { PropArt } from '@/components/art/HeroArt';
 import { PROP } from '@/content/facts';
 import { REGISTER_HREF } from '@/lib/crm';
 import { cn } from '@/lib/cn';
@@ -48,30 +48,31 @@ const FAQ = [
 export default function PropPage() {
   return (
     <>
-      <Hero
-        tone="red"
-        kicker="PROP CHALLENGES"
-        title="Get funded. Keep up to 90%."
-        lede="Pass a 1-step or 2-step evaluation, or start funded today. Simulated accounts from $5k to $200k, rules checked live, payouts in USDT."
+      <PageHero
+        kicker="Prop challenges"
+        title="Earn your wings. Keep up to 90%."
+        lede="Pass a one-step or two-step evaluation, or start funded today. Simulated accounts from $5k to $200k, every rule checked live on the server, payouts in USDT."
+        photo="prop"
         actions={
           <>
-            <Btn href={REGISTER_HREF} v="wht" s={56} arrow>
+            <a href={REGISTER_HREF} className="kx-btn prim lg">
               Start a challenge
-            </Btn>
-            <Btn href="#plans" v="ghost" s={56}>
-              Compare plans
-            </Btn>
+            </a>
+            <a href="#plans" className="kx-btn ghost lg">
+              Compare the plans
+            </a>
           </>
         }
-        facts="Fee from $49 · paid once from your USDT wallet"
-        art={<PropArt />}
-        strip={[
-          { v: '90%', l: 'Top profit split, with scaling' },
-          { v: '$200k', l: 'Largest simulated account' },
-          { v: '$49', l: 'Lowest challenge fee' },
-          { v: '14 days', l: 'To your first payout on Classic and Rapid' },
-        ]}
-      />
+      >
+        <StatRow
+          items={[
+            { v: '90%', l: 'Top profit split' },
+            { v: '$200k', l: 'Largest account' },
+            { v: '$49', l: 'Lowest fee' },
+            { v: '14 days', l: 'To a first payout' },
+          ]}
+        />
+      </PageHero>
 
       <Section id="plans" labelledBy="plans-title">
         <SectionHead

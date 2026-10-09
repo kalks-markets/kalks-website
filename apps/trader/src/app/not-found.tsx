@@ -1,35 +1,33 @@
 import Link from 'next/link';
-import { Hero } from '@/components/ui/Hero';
-import { Btn } from '@/components/ui/Button';
+import { ArrowUpRight } from 'lucide-react';
+import { PageHero } from '@/components/kx/PageHero';
 import { NAV_PRIMARY } from '@/content/site';
 
 export default function NotFound() {
   return (
     <>
-      <Hero
-        tone="yellow"
-        compact
-        kicker="404 · PAGE NOT FOUND"
+      <PageHero
+        short
+        kicker="404 · Page not found"
         title="This page moved, or never existed."
         lede="The link may be old. Everything Kalks does is one click away below."
-        style={{ ['--h1' as string]: 'clamp(40px, 5vw, 72px)', ['--h1-s' as string]: '38px' }}
         actions={
           <>
-            <Btn href="/" v="ink" s={56} arrow>
-              Go home
-            </Btn>
-            <Btn href="/options" v="ghost" s={56}>
+            <Link href="/" className="kx-btn prim lg">
+              Go home <ArrowUpRight size={16} aria-hidden />
+            </Link>
+            <Link href="/options" className="kx-btn ghost lg">
               Explore options
-            </Btn>
+            </Link>
           </>
         }
       />
-      <section className="sec sec-last">
-        <div className="wrap">
-          <ul className="flex flex-wrap gap-2">
+      <section className="kx-sec last">
+        <div className="kx-wrap">
+          <ul className="kx-chips">
             {[...NAV_PRIMARY, { label: 'FAQ', href: '/faq' }, { label: 'Help & contact', href: '/contact' }].map((l) => (
               <li key={l.href}>
-                <Link href={l.href} className="chip out">
+                <Link href={l.href} className="kx-chip !h-9 !px-4 !text-[14px]">
                   {l.label}
                 </Link>
               </li>

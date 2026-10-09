@@ -7,7 +7,7 @@ import { cn } from '@/lib/cn';
 export function OptionChain({ className, numbered = false }: { className?: string; numbered?: boolean }) {
   const N = ({ n }: { n: number }) =>
     numbered ? (
-      <span className="ml-1.5 inline-grid h-[18px] w-[18px] place-items-center rounded-full bg-k-yel align-middle font-mono text-[10.5px] font-bold text-k-ink">
+      <span className="ml-1.5 inline-grid h-[18px] w-[18px] place-items-center rounded-full bg-[#2447e0] align-middle font-mono text-[10.5px] font-bold text-white">
         {n}
       </span>
     ) : null;

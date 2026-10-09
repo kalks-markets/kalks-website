@@ -3,7 +3,8 @@ import Link from 'next/link';
 import { BookOpen, CandlestickChart, Copy, Network, ShieldCheck, Sigma } from 'lucide-react';
 import { Btn, RoundArrow } from '@/components/ui/Button';
 import { Section, SectionHead } from '@/components/ui/Section';
-import { Picture } from '@/components/ui/Picture';
+import { PageHero } from '@/components/kx/PageHero';
+import { StatRow } from '@/components/kx/StatRow';
 import { ACADEMY, INSTRUMENTS, OPTIONS } from '@/content/facts';
 import { REGISTER_HREF } from '@/lib/crm';
 
@@ -44,36 +45,31 @@ const PRINCIPLES = [
 export default function AboutPage() {
   return (
     <>
-      <section className="hero" data-tone="ink" aria-labelledby="hero-title">
-        <div className="mx-auto flex max-w-[1440px] flex-col items-center px-[18px] pb-14 pt-[calc(var(--nav-h)+28px)] text-center sm:px-11">
-          <Picture
-            name="/images/k2/emblem"
-            widths={[1672, 1200, 800]}
-            w={1672}
-            h={941}
-            priority
-            sizes="(max-width: 760px) 92vw, 900px"
-            alt="Kalks: a woman in a long black coat between two black great danes, in front of giant black Kalks letters on a red wall"
-            className="block w-full"
-            imgClassName="mx-auto h-auto w-full rounded-[22px] [mask-image:radial-gradient(90%_90%_at_50%_45%,#000_62%,transparent_100%)]"
-          />
-          <span className="hero-kicker mt-10">ABOUT KALKS</span>
-          <h1 id="hero-title" className="d mt-5 max-w-[16ch] text-[clamp(38px,5vw,72px)] leading-[0.92] tracking-[-0.045em]">
-            Built for traders everywhere.
-          </h1>
-          <p className="hero-lede mx-auto mt-5 max-w-[46ch] text-[clamp(17px,1.4vw,20px)] leading-[1.42] text-[#B8AAA5]">
-            Forex options, CFDs, prop challenges, copy trading and a partner programme in one place, on technology we build ourselves.
-          </p>
-          <div className="hero-cta justify-center">
+      <PageHero
+        kicker="About Kalks"
+        title="Built in-house, for traders everywhere."
+        lede="Forex options, CFDs, prop challenges, copy trading and a partner programme in one place, on technology we write ourselves, in 22 languages."
+        photo="about"
+        actions={
+          <>
             <Btn href={REGISTER_HREF} v="red" s={56} arrow>
-              Open account
+              Open an account
             </Btn>
             <Btn href="/contact" v="ghost" s={56}>
-              Contact us
+              Talk to us
             </Btn>
-          </div>
-        </div>
-      </section>
+          </>
+        }
+      >
+        <StatRow
+          items={[
+            { v: String(INSTRUMENTS.liveMarkets), l: 'Markets live' },
+            { v: String(INSTRUMENTS.assetClasses), l: 'Asset classes' },
+            { v: '22', l: 'Languages' },
+            { v: String(ACADEMY.lessons), l: 'Academy lessons' },
+          ]}
+        />
+      </PageHero>
 
       <Section labelledBy="what-title">
         <SectionHead id="what-title" kicker="01 — WHAT WE DO" title="Six products. One platform." lede="From the first demo trade to running a fund or a brokerage." />
@@ -81,7 +77,7 @@ export default function AboutPage() {
           {PRODUCTS.map(({ Icon, t, d, href }) => (
             <Link key={t} href={href} className="card flex flex-col p-6">
               <div className="flex items-start justify-between">
-                <span className="grid h-11 w-11 place-items-center rounded-[13px] bg-k-ink text-k-yel">
+                <span className="grid h-11 w-11 place-items-center rounded-[13px] bg-[#e6edff] text-[#2447e0]">
                   <Icon size={20} aria-hidden />
                 </span>
                 <RoundArrow s={40} />

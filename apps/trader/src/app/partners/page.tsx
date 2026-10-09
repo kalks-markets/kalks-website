@@ -1,15 +1,15 @@
 import type { Metadata } from 'next';
-import { Hero } from '@/components/ui/Hero';
+import { PageHero } from '@/components/kx/PageHero';
+import { StatRow } from '@/components/kx/StatRow';
 import { Btn } from '@/components/ui/Button';
 import { Section, SectionHead, Steps, Feature } from '@/components/ui/Section';
 import { Faq } from '@/components/ui/Faq';
-import { NetworkArt } from '@/components/art/HeroArt';
 import { IB, IB_LEVELS } from '@/content/facts';
 import { REGISTER_HREF } from '@/lib/crm';
 import { cn } from '@/lib/cn';
 
 export const metadata: Metadata = {
-  title: 'Partners: earn on every lot your network trades',
+  title: 'Partners: get paid for the lots your clients trade',
   description:
     'Every Kalks client is a partner from sign-up. Per-lot commission on three tiers of referrals, CPA rewards, five levels from Bronze to Diamond, weekly payouts in USDT.',
   alternates: { canonical: '/partners' },
@@ -42,11 +42,11 @@ export default function PartnersPage() {
   const top = IB_LEVELS[IB_LEVELS.length - 1];
   return (
     <>
-      <Hero
-        tone="red"
+      <PageHero
         kicker="PARTNERS"
-        title="Earn on every lot your network trades."
+        title="Get paid for the lots your clients trade."
         lede="Every Kalks client is a partner from day one. Share your link, earn per lot on three tiers of referrals, and get paid every Monday in USDT."
+        photo="partners"
         actions={
           <>
             <Btn href={REGISTER_HREF} v="wht" s={56} arrow>
@@ -57,15 +57,14 @@ export default function PartnersPage() {
             </Btn>
           </>
         }
-        facts="No application · no minimum to start"
-        art={<NetworkArt />}
-        strip={[
-          { v: `$${top.fxMajor}`, l: `Per FX major lot at ${top.name}` },
-          { v: IB.tiers, l: `Tiers deep: ${IB.tierShares} of the rate` },
-          { v: 'Weekly', l: 'Paid every Monday to your USDT wallet' },
-          { v: IB.minPayout, l: 'Minimum payout' },
-        ]}
-      />
+      >
+        <StatRow items={[
+          { v: String(`$${top.fxMajor}`), l: `Per FX major lot at ${top.name}` },
+          { v: String(IB.tiers), l: `Tiers deep: ${IB.tierShares} of the rate` },
+          { v: String('Weekly'), l: 'Paid every Monday to your USDT wallet' },
+          { v: String(IB.minPayout), l: 'Minimum payout' },
+        ]} />
+      </PageHero>
 
       <Section labelledBy="ph-title">
         <SectionHead id="ph-title" kicker="01 — HOW IT WORKS" title="Share, earn, get paid." />
@@ -113,7 +112,7 @@ export default function PartnersPage() {
                     <th scope="row">
                       <span className="flex items-center gap-2.5">
                         <span
-                          className={cn('h-3 w-3 rounded-full', i === IB_LEVELS.length - 1 ? 'bg-k-yel' : 'bg-s4')}
+                          className={cn('h-3 w-3 rounded-full', i === IB_LEVELS.length - 1 ? 'bg-[#2447e0]' : 'bg-s4')}
                           style={{ opacity: 0.35 + i * 0.16 }}
                           aria-hidden
                         />

@@ -344,3 +344,17 @@ export const ANDROID_APP = {
   sha256: 'e34b5847d53932529b7f59d16739eb5bbb2317f27832039cbcf060a6baaa25bf',
   minAndroid: 'Android 7.0',
 };
+
+/**
+ * Trading hours (crates/markethours/src/lib.rs, config/trading-specs.json in the platform repo): server time is
+ * GMT+3 during US daylight saving and GMT+2 otherwise, so 00:00 server time is 17:00 in New York. The `fx` session
+ * (forex, metals, energies, index CFDs) runs Monday 00:00 to Friday 24:00 server time; crypto is 24x7; US stocks
+ * 09:30–16:00 New York. Overnight financing is charged at the server-day rollover; Wednesday is charged ×3 for forex
+ * and metals, Friday for indices and energies.
+ */
+export const HOURS = {
+  rolloverNy: '17:00',
+  fxWeek: 'Sunday 17:00 to Friday 17:00 New York',
+  usStocks: '09:30–16:00 New York',
+  tripleSwap: { forexMetals: 'Wednesday', indicesEnergies: 'Friday' },
+} as const;

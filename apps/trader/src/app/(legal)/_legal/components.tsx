@@ -1,12 +1,13 @@
 import type { ReactNode } from 'react';
-import { Hero } from '@/components/ui/Hero';
+import { PageHero as KxPageHero } from '@/components/kx/PageHero';
 import { Btn } from '@/components/ui/Button';
 import { cn } from '@/lib/cn';
 
-/* Presentation for the legal documents (Kalks 2). The wording lives in each page file and is unchanged. */
+/* Presentation for the legal documents. The wording lives in each page file and is unchanged. Legal pages stay text-only:
+   a short hero on the blue field, the document on a white card. */
 
 export function PageHero({ kicker, title, lead }: { kicker?: string; title: ReactNode; lead?: ReactNode }) {
-  return <Hero tone="plain" compact kicker={kicker?.toUpperCase()} title={title} lede={lead} style={{ ['--h1' as string]: 'clamp(38px, 4.4vw, 60px)', ['--h1-s' as string]: '36px' }} />;
+  return <KxPageHero short kicker={kicker} title={title} lede={lead} />;
 }
 
 export function Section({ children, className }: { children: ReactNode; raised?: boolean; className?: string }) {

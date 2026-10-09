@@ -1,15 +1,13 @@
 import type { Metadata } from 'next';
+import { PageHero } from '@/components/kx/PageHero';
+import { StatRow } from '@/components/kx/StatRow';
 import { Suspense } from 'react';
-import { Hero } from '@/components/ui/Hero';
-import { Btn } from '@/components/ui/Button';
 import { Section, SectionHead, Feature } from '@/components/ui/Section';
 import { RiskNote } from '@/components/ui/RiskNote';
 import { Badges } from '@/components/ui/Flag';
-import { LiveBoard } from '@/components/market/PriceStrip';
 import { MarketsTable } from '@/components/market/MarketsTable';
 import { INSTRUMENTS, LEVERAGE } from '@/content/facts';
 import { REGISTER_HREF } from '@/lib/crm';
-import { getQuotes } from '@/lib/quotes';
 
 export const revalidate = 60;
 
@@ -19,16 +17,16 @@ export const metadata: Metadata = {
   alternates: { canonical: '/markets' },
 };
 
-const BOARD = [
-  { s: 'EURUSD', label: 'EUR/USD', name: 'Forex', digits: 5 },
-  { s: 'XAUUSD', label: 'Gold', name: 'Metals', digits: 2 },
-  { s: 'USOIL', label: 'WTI oil', name: 'Energies', digits: 2 },
-  { s: 'NAS100', label: 'US Tech 100', name: 'Indices', digits: 1, cls: 'indices' },
-  { s: 'BTCUSD', label: 'Bitcoin', name: 'Crypto · 24/7', digits: 2, cls: 'crypto' },
-  { s: 'NVDA', label: 'NVIDIA', name: 'Stocks', digits: 2, cls: 'stocks' },
-];
 
 const C = INSTRUMENTS.byClass;
+/** each class's own page (stocks list in the table below) */
+const PAGES: Record<string, string> = {
+  forex: '/markets/forex',
+  metals: '/markets/metals-energies',
+  energies: '/markets/metals-energies',
+  indices: '/markets/indices',
+  crypto: '/markets/crypto',
+};
 const CLASSES = [
   {
     id: 'forex',
@@ -94,48 +92,44 @@ const CLASSES = [
 ];
 
 export default async function MarketsPage() {
-  const quotes = await getQuotes(BOARD.map((b) => b.s));
   return (
     <>
-      <Hero
-        tone="yellow"
-        kicker="MARKETS"
-        title={`${INSTRUMENTS.liveMarkets} markets live. Six asset classes.`}
-        lede="Forex, metals, energies, indices, crypto and stocks, long or short, from $10. Every market, the 1,100 demo-only stocks included, trades on a free demo."
+      <PageHero
+        kicker="Markets"
+        title={`${INSTRUMENTS.liveMarkets} markets, live on real money.`}
+        lede={`Forex, metals, energies, indices and crypto, long or short, from $10. The full catalogue of ${INSTRUMENTS.total.toLocaleString('en-US')} markets, stocks included, is open on a free demo.`}
+        photo="heroMarkets"
         actions={
           <>
-            <Btn href={REGISTER_HREF} v="red" s={56} arrow>
-              Open account
-            </Btn>
-            <Btn href="#list" v="ghost" s={56}>
-              Search markets
-            </Btn>
+            <a href={REGISTER_HREF} className="kx-btn prim lg">
+              Open an account
+            </a>
+            <a href="#list" className="kx-btn ghost lg">
+              Search the markets
+            </a>
           </>
         }
-        facts={`Prices from the Kalks market-data feed · checked ${INSTRUMENTS.checked}`}
-        art={
-          <div className="flex h-full items-center">
-            <LiveBoard rows={BOARD} initial={quotes} />
-          </div>
-        }
-        strip={[
-          { v: INSTRUMENTS.liveMarkets, l: 'Markets live on real-money accounts' },
-          { v: INSTRUMENTS.total.toLocaleString('en-US'), l: 'Markets on demo, stocks included' },
-          { v: `1:${LEVERAGE.accountMax}`, l: 'Maximum leverage, on FX with Standard and Cent' },
-          { v: '24/7', l: 'Crypto, weekends included' },
-        ]}
-      />
+      >
+        <StatRow
+          items={[
+            { v: String(INSTRUMENTS.liveMarkets), l: 'Live markets' },
+            { v: INSTRUMENTS.total.toLocaleString('en-US'), l: 'On demo' },
+            { v: `1:${LEVERAGE.accountMax}`, l: 'Highest leverage' },
+            { v: '24/7', l: 'Crypto' },
+          ]}
+        />
+      </PageHero>
 
       <Section labelledBy="classes-title">
         <SectionHead
           id="classes-title"
           kicker="01 — ASSET CLASSES"
-          title="Every market that moves."
+          title="Six asset classes to choose from."
           lede="CFDs let you go long or short with leverage, without owning the asset. The leverage on a trade is the lower of your account’s and the market’s own cap."
         />
         <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
           {CLASSES.map((c) => (
-            <a key={c.id} href={`/markets?class=${c.id}#list`} className="card flex flex-col p-6">
+            <a key={c.id} href={PAGES[c.id] ?? `/markets?class=${c.id}#list`} className="card flex flex-col p-6">
               <div className="flex items-start justify-between gap-4">
                 <div className="flex items-center gap-3">
                   <Badges symbol={c.sym} cls={c.id} size={30} />

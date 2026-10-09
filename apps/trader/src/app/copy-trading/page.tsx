@@ -1,10 +1,10 @@
 import type { Metadata } from 'next';
-import { Hero } from '@/components/ui/Hero';
+import { PageHero } from '@/components/kx/PageHero';
+import { StatRow } from '@/components/kx/StatRow';
 import { Btn } from '@/components/ui/Button';
 import { Section, SectionHead, Steps } from '@/components/ui/Section';
 import { Faq } from '@/components/ui/Faq';
 import { RiskNote } from '@/components/ui/RiskNote';
-import { FigurePair } from '@/components/art/HeroArt';
 import { SOCIAL } from '@/content/facts';
 import { REGISTER_HREF } from '@/lib/crm';
 
@@ -70,12 +70,11 @@ const FAQ = [
 export default function CopyTradingPage() {
   return (
     <>
-      <Hero
-        tone="yellow"
-        className="hero--pair"
+      <PageHero
         kicker="COPY TRADING · PAMM · MAM"
-        title="Follow a master. Or become one."
+        title="Trade alongside someone who has done it before."
         lede="Mirror approved traders with limits you set, invest in a managed fund, or let a manager trade your account. Fees only on new highs."
+        photo="copy"
         actions={
           <>
             <Btn href={REGISTER_HREF} v="red" s={56} arrow>
@@ -86,15 +85,14 @@ export default function CopyTradingPage() {
             </Btn>
           </>
         }
-        facts="CFD accounts only · pause or stop at any time"
-        backdrop={<FigurePair />}
-        strip={[
-          { v: '50%', l: 'Highest performance fee, on new highs only' },
-          { v: `${SOCIAL.trackRecordDays} days`, l: 'Minimum track record for a master' },
-          { v: SOCIAL.minAllocation, l: 'Lowest amount to start copying' },
-          { v: SOCIAL.sizingModes.length, l: 'Ways to size the trades you copy' },
-        ]}
-      />
+      >
+        <StatRow items={[
+          { v: String('50%'), l: 'Highest performance fee, on new highs only' },
+          { v: String(`${SOCIAL.trackRecordDays} days`), l: 'Minimum track record for a master' },
+          { v: String(SOCIAL.minAllocation), l: 'Lowest amount to start copying' },
+          { v: String(SOCIAL.sizingModes.length), l: 'Ways to size the trades you copy' },
+        ]} />
+      </PageHero>
 
       <Section labelledBy="ways-title">
         <SectionHead id="ways-title" kicker="01 — THREE WAYS IN" title="As hands-on as you like." />
@@ -131,11 +129,11 @@ export default function CopyTradingPage() {
       <Section id="master" labelledBy="m-title">
         <div className="pcard pc-ink !min-h-0 gap-10 lg:!grid lg:grid-cols-2 lg:!p-12">
           <div>
-            <span className="k !text-k-yel">03 — FOR TRADERS WITH A RECORD</span>
+            <span className="k">03 — FOR TRADERS WITH A RECORD</span>
             <h2 id="m-title" className="d mt-4 max-w-[12ch] text-[clamp(32px,3.4vw,46px)] leading-[0.95]">
               Become a master. Earn on new highs.
             </h2>
-            <p className="!max-w-[44ch] text-[#B8AAA5]">
+            <p className="!max-w-[44ch] text-[#4a5578]">
               Publish your strategy, let others copy it or invest in your fund, and earn a performance fee each time your followers
               reach a new high.
             </p>
@@ -145,7 +143,7 @@ export default function CopyTradingPage() {
               </Btn>
             </div>
           </div>
-          <dl className="grid gap-px self-end overflow-hidden rounded-[18px] bg-[rgba(255,255,255,0.08)] sm:grid-cols-2">
+          <dl className="grid gap-px self-end overflow-hidden rounded-[18px] bg-[rgba(11,22,64,0.08)] sm:grid-cols-2">
             {[
               ['Performance fee', `${SOCIAL.perfFee}, new highs only`],
               ['Track record', `${SOCIAL.trackRecordDays} days minimum`],
@@ -154,9 +152,9 @@ export default function CopyTradingPage() {
               ['Approval', 'Verified identity and a live account'],
               ['Platform share', '20% of the fees you earn'],
             ].map(([k, v]) => (
-              <div key={k} className="bg-[#0B0809] p-4">
-                <dt className="font-mono text-[11.5px] font-semibold text-[#B8AAA5]">{k.toUpperCase()}</dt>
-                <dd className="mt-1.5 text-[15px] font-semibold text-white">{v}</dd>
+              <div key={k} className="bg-[#f4f7ff] p-4">
+                <dt className="font-mono text-[11.5px] font-semibold text-[#4a5578]">{k.toUpperCase()}</dt>
+                <dd className="mt-1.5 text-[15px] font-semibold text-[#0b1640]">{v}</dd>
               </div>
             ))}
           </dl>

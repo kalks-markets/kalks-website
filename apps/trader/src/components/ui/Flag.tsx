@@ -11,7 +11,7 @@ const C: Record<Code, JSX.Element> = {
       <g fill="#FFD21F">
         {Array.from({ length: 12 }).map((_, i) => {
           const a = (i / 12) * Math.PI * 2;
-          return <circle key={i} cx={10 + Math.cos(a) * 5.2} cy={10 + Math.sin(a) * 5.2} r=".95" />;
+          return <circle key={i} cx={+(10 + Math.cos(a) * 5.2).toFixed(3)} cy={+(10 + Math.sin(a) * 5.2).toFixed(3)} r=".95" />;
         })}
       </g>
     </>
@@ -103,7 +103,7 @@ const C: Record<Code, JSX.Element> = {
   ),
   OIL: (
     <>
-      <rect width="20" height="20" fill="#231B1C" />
+      <rect width="20" height="20" fill="#0B1640" />
       <path d="M10 4.2c2.4 3.2 3.8 5.3 3.8 7.4a3.8 3.8 0 0 1-7.6 0c0-2.1 1.4-4.2 3.8-7.4Z" fill="#F6EEE8" />
     </>
   ),
@@ -123,13 +123,13 @@ const C: Record<Code, JSX.Element> = {
   ),
   IDX: (
     <>
-      <rect width="20" height="20" fill="#0B0809" />
-      <path d="M4.5 13.5 8 9.5l2.6 2.2 4.9-5.2" fill="none" stroke="#FFD21F" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+      <rect width="20" height="20" fill="#0B1640" />
+      <path d="M4.5 13.5 8 9.5l2.6 2.2 4.9-5.2" fill="none" stroke="#A9C3F3" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
     </>
   ),
   STK: (
     <>
-      <rect width="20" height="20" fill="#3A0A12" />
+      <rect width="20" height="20" fill="#1F3FD6" />
       <rect x="5" y="9" width="2.6" height="6" rx=".6" fill="#F6EEE8" />
       <rect x="8.7" y="6" width="2.6" height="9" rx=".6" fill="#F6EEE8" />
       <rect x="12.4" y="7.5" width="2.6" height="7.5" rx=".6" fill="#F6EEE8" />

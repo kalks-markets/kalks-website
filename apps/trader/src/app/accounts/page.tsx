@@ -1,11 +1,11 @@
 import type { Metadata } from 'next';
+import { PageHero } from '@/components/kx/PageHero';
+import { StatRow } from '@/components/kx/StatRow';
 import { Check } from 'lucide-react';
-import { Hero } from '@/components/ui/Hero';
 import { Btn } from '@/components/ui/Button';
 import { Section, SectionHead, FactList, Steps } from '@/components/ui/Section';
 import { Faq } from '@/components/ui/Faq';
 import { RiskNote } from '@/components/ui/RiskNote';
-import { AccountCardsArt } from '@/components/art/HeroArt';
 import { ACCOUNTS, DEMO, FUNDING, OPTIONS_ACCOUNTS } from '@/content/facts';
 import { DEMO_HREF, REGISTER_HREF } from '@/lib/crm';
 import { cn } from '@/lib/cn';
@@ -65,30 +65,31 @@ export default function AccountsPage() {
   const [optStd, optPro] = OPTIONS_ACCOUNTS;
   return (
     <>
-      <Hero
-        tone="ink"
-        kicker="ACCOUNTS"
-        title="Five ways to trade CFDs. One for options."
-        lede={`All-in spreads or raw pricing with commission, in dollars or cents, from $10. Options get their own account. Free demo with ${DEMO.defaultBalance} in virtual funds.`}
+      <PageHero
+        kicker="Accounts"
+        title="Two kinds of account. One wallet."
+        lede="Five CFD accounts, priced all-in or raw plus commission, and an Options account of its own. Fund every one of them from the same USDT wallet, from $10."
+        photo="heroAccounts"
         actions={
           <>
-            <Btn href={REGISTER_HREF} v="red" s={56} arrow>
-              Open account
-            </Btn>
-            <Btn href="#compare" v="ghost" s={56}>
+            <a href={REGISTER_HREF} className="kx-btn prim lg">
+              Open an account
+            </a>
+            <a href="#compare" className="kx-btn ghost lg">
               Compare accounts
-            </Btn>
+            </a>
           </>
         }
-        facts="One USDT wallet funds every account"
-        art={<AccountCardsArt />}
-        strip={[
-          { v: '$10', l: 'Minimum deposit on Standard and Cent' },
-          { v: '1:1000', l: 'Maximum leverage on Standard and Cent' },
-          { v: '$3', l: 'Per lot round turn on VIP, raw spread' },
-          { v: DEMO.defaultBalance, l: `Free demo, refill up to ${DEMO.refillsPerDay} times a day` },
-        ]}
-      />
+      >
+        <StatRow
+          items={[
+            { v: '$10', l: 'To open Standard or Cent' },
+            { v: '1:1000', l: 'Highest leverage' },
+            { v: '$3', l: 'A lot on VIP, raw spread' },
+            { v: DEMO.defaultBalance, l: 'Free demo funds' },
+          ]}
+        />
+      </PageHero>
 
       <Section id="cfd" labelledBy="cfd-title">
         <SectionHead
@@ -272,25 +273,25 @@ export default function AccountsPage() {
       <Section id="funding" labelledBy="fund-title">
         <div className="pcard pc-ink !min-h-0 gap-10 lg:!flex-row lg:items-end lg:justify-between lg:!p-10">
           <div>
-            <span className="k !text-k-yel">05 — FUNDING</span>
+            <span className="k">05 — FUNDING</span>
             <h2 id="fund-title" className="d mt-4 max-w-[12ch] text-[clamp(32px,3.4vw,46px)] leading-[0.95]">
               Deposit USDT. Trade in a minute.
             </h2>
-            <p className="mt-4 max-w-[46ch] text-[15.5px] leading-relaxed text-[#B8AAA5]">
+            <p className="mt-4 max-w-[46ch] text-[15.5px] leading-relaxed text-[#4a5578]">
               {FUNDING.methods}, verified on-chain. Pay from MetaMask or TronLink, or send to your deposit address. USDT is credited
               1:1 as US dollars.
             </p>
           </div>
-          <dl className="grid grid-cols-2 gap-px overflow-hidden rounded-[18px] bg-[rgba(255,255,255,0.08)] lg:w-[460px] lg:flex-none">
+          <dl className="grid grid-cols-2 gap-px overflow-hidden rounded-[18px] bg-[rgba(11,22,64,0.08)] lg:w-[460px] lg:flex-none">
             {[
               [FUNDING.minDeposit, 'Minimum deposit'],
               ['~1 min', 'Usual time to credit'],
               ['$0', 'Wallet to account, instant'],
               [FUNDING.withdrawalFee.replace(' flat', ''), 'Flat withdrawal fee'],
             ].map(([v, l]) => (
-              <div key={l} className="flex flex-col-reverse bg-[#0B0809] p-4">
-                <dt className="mt-1 text-[12.5px] text-[#B8AAA5]">{l}</dt>
-                <dd className="money text-[26px] text-white">{v}</dd>
+              <div key={l} className="flex flex-col-reverse bg-[#f4f7ff] p-4">
+                <dt className="mt-1 text-[12.5px] text-[#4a5578]">{l}</dt>
+                <dd className="money text-[26px] text-[#0b1640]">{v}</dd>
               </div>
             ))}
           </dl>

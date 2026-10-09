@@ -1,0 +1,170 @@
+/** FAQ content shared by /faq and the home page. Numbers come from ./facts. */
+import { ACCOUNTS, DEMO, FUNDING, IB, INSTRUMENTS, OPTIONS, OPTIONS_ACCOUNTS, ANDROID_APP } from '@/content/facts';
+
+export type FaqGroup = { id: string; title: string; items: { q: string; a: string }[] };
+
+const minDeposits = ACCOUNTS.map((a) => `${a.name} ${a.minDeposit}`).join(', ');
+
+export const FAQ_GROUPS: FaqGroup[] = [
+  {
+    id: 'accounts',
+    title: 'Accounts',
+    items: [
+      {
+        q: 'Which accounts are there?',
+        a: `Five CFD accounts, Standard, Pro, ECN, Cent and VIP, and ${OPTIONS_ACCOUNTS[0].name} for options, plus free demo accounts. Standard, Pro and Cent use an all-in spread with no commission; ECN and VIP trade on raw spreads with a fixed commission per lot. Minimum deposits: ${minDeposits}.`,
+      },
+      {
+        q: 'Can one account trade CFDs and options?',
+        a: 'No. Each account trades one product. Open a CFD account and an Options account side by side; one USDT wallet funds both, and moving money between them is instant and free.',
+      },
+      {
+        q: 'How do I open an account?',
+        a: 'Sign up in the Client Area with your email, then open a CFD or Options account, live or demo, and choose the type and leverage. Your login is issued at once.',
+      },
+      {
+        q: 'Is the demo account free?',
+        a: `Yes. A demo account starts with ${DEMO.defaultBalance} in virtual funds (any balance from ${DEMO.balanceRange}), can be refilled up to ${DEMO.refillsPerDay} times a day, and trades every market on live prices.`,
+      },
+      {
+        q: 'Do I need to verify my identity?',
+        a: 'Not to sign up, open accounts or deposit. Withdrawals need a verified identity (KYC), which you complete in the Client Area with your phone camera.',
+      },
+    ],
+  },
+  {
+    id: 'funding',
+    title: 'Deposits and withdrawals',
+    items: [
+      {
+        q: 'How do I deposit?',
+        a: `Deposit ${FUNDING.methods} to your Kalks wallet, from MetaMask or TronLink or by sending to your deposit address. The minimum is ${FUNDING.minDeposit}, and deposits are ${FUNDING.creditTime}. USDT is credited 1:1 as US dollars.`,
+      },
+      {
+        q: 'How do I withdraw?',
+        a: `Request a withdrawal from your wallet in the Client Area: ${FUNDING.withdrawalRange} per request, with a ${FUNDING.withdrawalFee} fee. Withdrawals need a verified identity and are reviewed before they are sent. Funds cannot be withdrawn within 24 hours of a deposit.`,
+      },
+      {
+        q: 'How do I move money between my wallet and my accounts?',
+        a: `${FUNDING.transfers}, from the wallet page in the Client Area.`,
+      },
+      {
+        q: 'Can I deposit by card or bank transfer?',
+        a: 'Not at the moment. Kalks accepts USDT on BNB Chain (BEP20) and TRON (TRC20).',
+      },
+    ],
+  },
+  {
+    id: 'trading',
+    title: 'Trading conditions',
+    items: [
+      {
+        q: 'What can I trade?',
+        a: `CFDs on ${INSTRUMENTS.liveMarkets} live markets in forex, metals, energies, indices, crypto (24/7) and stocks, with 1,100 more US, Hong Kong and Tokyo stocks on demo and coming to live accounts. Kalks FX Options add calls and puts on forex, gold, silver and oil.`,
+      },
+      {
+        q: 'What is the maximum leverage?',
+        a: 'Up to 1:1000 on Standard and Cent accounts and 1:500 on Pro, ECN and VIP. The leverage on a trade is also capped by the market, for example 1:20 on the main cryptocurrencies. Leverage does not apply to options.',
+      },
+      {
+        q: 'What are the margin call and stop-out levels?',
+        a: 'Margin call at 100% and stop out at 50% on all CFD accounts except Cent, where they are 60% and 20%. Negative balance protection resets a negative balance to zero.',
+      },
+      {
+        q: 'Do you charge overnight financing?',
+        a: 'Positions held overnight are charged or credited financing, shown in Kalks Trader for each market before you trade. Crypto is charged every night, weekends included.',
+      },
+    ],
+  },
+  {
+    id: 'options',
+    title: 'Kalks FX Options',
+    items: [
+      {
+        q: 'What are Kalks FX Options?',
+        a: `Calls and puts on ${OPTIONS.fxPairsLive} FX pairs, gold, silver, WTI and Brent, with daily, weekly and monthly expiries. European style, settled in cash in US dollars, in an Options account.`,
+      },
+      {
+        q: 'What is the most I can lose?',
+        a: 'When you buy an option, the premium you paid. Selling an option is different: your loss is not limited to the premium you receive, and the position uses margin.',
+      },
+      {
+        q: 'What does it cost?',
+        a: `The premium shown on the chain, plus ${OPTIONS.commission}.`,
+      },
+      {
+        q: 'How do options settle?',
+        a: `Automatically, in cash, at the average of one-second mid prices over the 30 minutes before the ${OPTIONS.cut} cut. You can also close a position any time before.`,
+      },
+    ],
+  },
+  {
+    id: 'prop',
+    title: 'Prop challenges',
+    items: [
+      {
+        q: 'Which prop plans are there?',
+        a: 'Classic 2-Step (targets of 8% and 5%), Rapid 1-Step (a 10% target) and Instant Funding (no evaluation), on simulated accounts from $5k to $200k, with fees from $49.',
+      },
+      {
+        q: 'How much of the profit do I keep?',
+        a: 'From 80% on Classic and Rapid and 70% on Instant Funding, rising to 90% with the scaling plan. Payouts go to your Kalks wallet and need a verified identity.',
+      },
+      {
+        q: 'Is the capital real?',
+        a: 'Challenge and funded accounts trade simulated funds. Your share of the profit on a funded account is paid in real money, on your plan’s schedule.',
+      },
+    ],
+  },
+  {
+    id: 'copy',
+    title: 'Copy trading, PAMM and MAM',
+    items: [
+      {
+        q: 'How does copy trading work?',
+        a: 'A copy account mirrors every trade of the master you follow, sized the way you choose, within limits you set: equity stop, maximum drawdown, maximum lot size and excluded markets. Pause or stop at any time.',
+      },
+      {
+        q: 'What do masters charge?',
+        a: 'A performance fee of up to 50% of profit, only on new highs, so you never pay twice for the same gain.',
+      },
+      {
+        q: 'Can I lose money copying?',
+        a: 'Yes. Copying takes the same market risk the master takes, scaled to your size. Past performance does not guarantee future results.',
+      },
+    ],
+  },
+  {
+    id: 'partners',
+    title: 'Partners',
+    items: [
+      {
+        q: 'How do I become a partner?',
+        a: 'Every Kalks client is a partner from sign-up. Your link, code and dashboard are in the Client Area; there is no separate application.',
+      },
+      {
+        q: 'How am I paid?',
+        a: `A fixed amount per lot your clients trade, set by asset class and your level, on ${IB.tiers} tiers of referrals. Payouts: ${IB.payout.toLowerCase()}, from ${IB.minPayout}.`,
+      },
+    ],
+  },
+  {
+    id: 'platform',
+    title: 'Platform and apps',
+    items: [
+      {
+        q: 'Do I need to install anything?',
+        a: 'No. Kalks Trader and the Client Area run in any modern browser on desktop and phone.',
+      },
+      {
+        q: 'Is there a mobile app?',
+        a: `Yes, for Android (${ANDROID_APP.minAndroid} or newer): download the APK from the Platforms page. The Play Store listing follows.`,
+      },
+      {
+        q: 'Which languages are available?',
+        a: 'Kalks Trader and the Client Area are translated into 22 languages, including Arabic, Urdu and Persian (right to left), Hindi, Bengali, Tamil, Chinese, Japanese, Korean and the main European languages.',
+      },
+    ],
+  },
+];
+

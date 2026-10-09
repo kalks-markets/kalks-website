@@ -1,12 +1,13 @@
 import type { Metadata } from 'next';
+import { PageHero } from '@/components/kx/PageHero';
+import { StatRow } from '@/components/kx/StatRow';
 import { Download } from 'lucide-react';
-import { Hero } from '@/components/ui/Hero';
 import { Btn } from '@/components/ui/Button';
 import { Section, SectionHead, Feature } from '@/components/ui/Section';
-import { HeroImage } from '@/components/art/HeroArt';
 import { TraderMock } from '@/components/mock/TraderMock';
 import { KMark } from '@/components/brand/Logo';
-import { ACADEMY, ANDROID_APP, TRADER } from '@/content/facts';
+import { ANDROID_APP, TRADER } from '@/content/facts';
+import { CLIENT_FEATURES, TRADER_FEATURES } from '@/content/platforms';
 import { CRM_URL, DEMO_HREF, TRADER_URL } from '@/lib/crm';
 
 export const metadata: Metadata = {
@@ -16,36 +17,14 @@ export const metadata: Metadata = {
   alternates: { canonical: '/platforms' },
 };
 
-const TRADER_FEATURES: [string, string][] = [
-  ['Charts', `${TRADER.chartTypes} chart types, ${TRADER.timeframes.length} timeframes from M1 to MN, ${TRADER.indicators} indicators and ${TRADER.drawingTools} drawing tools.`],
-  ['Orders', 'Market, limit, stop and stop-limit. Stop loss, take profit, a server-side trailing stop, OCO and expiry by date.'],
-  ['One-click trading', 'Sell and buy straight from the chart, or switch it off and confirm every trade.'],
-  ['Trade on the chart', 'Drag stop loss, take profit, pending orders and alerts along the price axis.'],
-  ['Depth ladder', 'The order book beside the chart, with limit orders in one click.'],
-  ['Position tools', 'Partial close, close by, and bulk close: all, winners, losers, buys or sells.'],
-  ['Full chart mode', 'Hide everything but the chart when you want to focus.'],
-  ['Options', 'Option chains, quick trade and the strategy builder for your Options account.'],
-];
-
-const CLIENT_FEATURES: [string, string][] = [
-  ['Accounts', 'Open CFD and Options accounts, live and demo; change leverage; set read-only investor passwords.'],
-  ['Wallet', 'Deposit and withdraw USDT; move money between wallet and accounts, instantly and free.'],
-  ['Copy trading, PAMM, MAM', 'Follow masters, invest in funds, or apply to become a master.'],
-  ['Prop challenges', 'Buy a challenge, track every rule live, request payouts, download certificates.'],
-  ['Partner dashboard', 'Referral links, clients, your network, commission and weekly payouts.'],
-  ['Academy', `${ACADEMY.lessons} lessons in ${ACADEMY.phases} phases, quizzes, exams and certificates.`],
-  ['Developer', 'API keys, webhooks, a visual strategy builder, backtests and 24/7 deployments.'],
-  ['Support', 'Chat from any page: an instant help assistant, with our team behind it.'],
-];
-
 export default function PlatformsPage() {
   return (
     <>
-      <Hero
-        tone="ink"
+      <PageHero
         kicker="PLATFORMS"
-        title="Kalks Trader. Nothing to install."
-        lede="A big, clean chart for CFDs and options, in your browser and on Android. The Client Area runs everything around it."
+        title="Your screen for every market."
+        lede="Kalks Trader in your browser and on Android, with the Client Area around it for accounts, money, copy trading, prop and learning."
+        photo="platforms"
         actions={
           <>
             <Btn href={TRADER_URL} v="red" s={56} arrow>
@@ -56,25 +35,14 @@ export default function PlatformsPage() {
             </Btn>
           </>
         }
-        facts="Desktop and phone browsers · Android · 22 languages"
-        art={
-          <HeroImage
-            name="/images/k2/robot"
-            widths={[1672, 1200, 800]}
-            w={1672}
-            h={941}
-            sizes="(max-width: 1100px) 92vw, 700px"
-            alt="The Kalks robot: a glossy black helmet in profile with a glowing red eye, in a black leather collar, on red light and black waves"
-            mask="radial-gradient(72% 78% at 58% 46%, #000 52%, transparent 100%)"
-          />
-        }
-        strip={[
-          { v: TRADER.indicators, l: 'Indicators, plus drawing tools' },
-          { v: TRADER.timeframes.length, l: 'Timeframes, from one minute to a month' },
-          { v: '1 click', l: 'Trading from the chart, or confirm every order' },
-          { v: 22, l: 'Languages, right to left included' },
-        ]}
-      />
+      >
+        <StatRow items={[
+          { v: String(TRADER.indicators), l: 'Indicators, plus drawing tools' },
+          { v: String(TRADER.timeframes.length), l: 'Timeframes, from one minute to a month' },
+          { v: String('1 click'), l: 'Trading from the chart, or confirm every order' },
+          { v: String(22), l: 'Languages, right to left included' },
+        ]} />
+      </PageHero>
 
       <Section id="trader" labelledBy="trader-title">
         <SectionHead
@@ -142,7 +110,7 @@ export default function PlatformsPage() {
               . SHA-256 <span className="break-all font-mono">{ANDROID_APP.sha256}</span>
             </p>
           </div>
-          <div className="mx-auto mt-10 grid h-[220px] w-[220px] flex-none place-items-center rounded-[52px] bg-k-ink shadow-[10px_10px_0_#7A5D00] lg:mt-0 lg:h-[280px] lg:w-[280px] lg:rounded-[64px]" aria-hidden>
+          <div className="mx-auto mt-10 grid h-[220px] w-[220px] flex-none place-items-center rounded-[52px] bg-white text-[#0b1640] shadow-[0_30px_70px_-30px_rgba(11,22,64,0.6)] lg:mt-0 lg:h-[280px] lg:w-[280px] lg:rounded-[64px]" aria-hidden>
             <KMark className="h-[42%] w-auto -translate-x-[3%] -translate-y-[3%]" />
           </div>
         </div>
@@ -161,7 +129,7 @@ export default function PlatformsPage() {
             </p>
           </div>
           <div className="flex flex-wrap gap-3">
-            <Btn href="/white-label#api" v="ink" arrow>
+            <Btn href="/platforms/api" v="ink" arrow>
               API &amp; algo
             </Btn>
             <Btn href={DEMO_HREF} v="ghost">

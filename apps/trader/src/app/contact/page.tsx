@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
+import { PageHero } from '@/components/kx/PageHero';
 import Link from 'next/link';
 import { ArrowUpRight, Building2, Mail, MessageCircle } from 'lucide-react';
-import { Hero } from '@/components/ui/Hero';
 import { Btn } from '@/components/ui/Button';
 import { Section, SectionHead } from '@/components/ui/Section';
 import { BRAND_SUPPORT_EMAIL } from '@/lib/brand';
@@ -25,19 +25,17 @@ const TOPICS = [
 export default function ContactPage() {
   return (
     <>
-      <Hero
-        tone="plain"
-        compact
+      <PageHero
         kicker="HELP & CONTACT"
         title="We are here to help."
         lede="Clients get the fastest answers in the support chat inside the Client Area. Anyone can write to us by email."
-        style={{ ['--h1' as string]: 'clamp(40px, 4.8vw, 68px)', ['--h1-s' as string]: '38px' }}
+        photo="contact"
       />
 
       <Section label="Ways to reach us" className="!pt-6">
         <div className="grid gap-4 lg:grid-cols-3">
           <div className="card flex flex-col p-6">
-            <span className="grid h-11 w-11 place-items-center rounded-[13px] bg-k-ink text-k-yel">
+            <span className="grid h-11 w-11 place-items-center rounded-[13px] bg-[#e6edff] text-[#2447e0]">
               <MessageCircle size={20} aria-hidden />
             </span>
             <h2 className="t-h3 mt-6">Support chat</h2>
@@ -49,7 +47,7 @@ export default function ContactPage() {
             </div>
           </div>
           <div className="card flex flex-col p-6">
-            <span className="grid h-11 w-11 place-items-center rounded-[13px] bg-k-ink text-k-yel">
+            <span className="grid h-11 w-11 place-items-center rounded-[13px] bg-[#e6edff] text-[#2447e0]">
               <Mail size={20} aria-hidden />
             </span>
             <h2 className="t-h3 mt-6">Email</h2>

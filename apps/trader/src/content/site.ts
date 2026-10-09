@@ -12,7 +12,7 @@ export const NAV_PRIMARY: NavLink[] = [
 /** The "More" mega menu; listed in full in the mobile menu. `icon` keys map to lucide icons in Nav.tsx. */
 export const NAV_MORE: (NavLink & { icon: string })[] = [
   { label: 'Copy trading & PAMM', href: '/copy-trading', note: 'Follow a master, or become one', icon: 'copy' },
-  { label: 'Partners', href: '/partners', note: 'Earn on every lot your network trades', icon: 'partners' },
+  { label: 'Partners', href: '/partners', note: 'Get paid for the lots your clients trade', icon: 'partners' },
   { label: 'Academy', href: '/academy', note: '118 lessons in 9 phases', icon: 'academy' },
   { label: 'White-label & API', href: '/white-label', note: 'Your brokerage on our platform', icon: 'whitelabel' },
   { label: 'About Kalks', href: '/about', note: 'What we build and why', icon: 'about' },
@@ -25,10 +25,10 @@ export const FOOTER_COLUMNS: { title: string; links: NavLink[] }[] = [
     links: [
       { label: 'Kalks FX Options', href: '/options' },
       { label: 'Markets', href: '/markets' },
-      { label: 'Forex', href: '/markets?class=forex' },
-      { label: 'Metals & energies', href: '/markets?class=metals' },
-      { label: 'Indices', href: '/markets?class=indices' },
-      { label: 'Crypto', href: '/markets?class=crypto' },
+      { label: 'Forex', href: '/markets/forex' },
+      { label: 'Metals & energies', href: '/markets/metals-energies' },
+      { label: 'Indices', href: '/markets/indices' },
+      { label: 'Crypto', href: '/markets/crypto' },
     ],
   },
   {
@@ -36,8 +36,8 @@ export const FOOTER_COLUMNS: { title: string; links: NavLink[] }[] = [
     links: [
       { label: 'CFD accounts', href: '/accounts#cfd' },
       { label: 'Options account', href: '/accounts#options' },
-      { label: 'Demo account', href: '/accounts#demo' },
-      { label: 'Funding', href: '/accounts#funding' },
+      { label: 'Demo account', href: '/accounts/demo' },
+      { label: 'Funding', href: '/accounts/funding' },
       { label: 'Prop challenges', href: '/prop' },
       { label: 'Copy trading & PAMM', href: '/copy-trading' },
     ],
@@ -45,10 +45,10 @@ export const FOOTER_COLUMNS: { title: string; links: NavLink[] }[] = [
   {
     title: 'Platforms',
     links: [
-      { label: 'Kalks Trader', href: '/platforms#trader' },
-      { label: 'Client Area', href: '/platforms#client-area' },
-      { label: 'Android app', href: '/platforms#mobile' },
-      { label: 'API & algo trading', href: '/white-label#api' },
+      { label: 'Kalks Trader', href: '/platforms/trader' },
+      { label: 'Client Area', href: '/platforms/client-area' },
+      { label: 'Android app', href: '/platforms/android' },
+      { label: 'API & algo trading', href: '/platforms/api' },
     ],
   },
   {
