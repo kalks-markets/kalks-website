@@ -44,7 +44,7 @@ export function LegalDoc({
 }) {
   return (
     <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_230px] gap-10 lg:gap-14 items-start">
-      <article className="card flex min-w-0 flex-col gap-10 p-6 sm:p-10">
+      <article className="s-card flex min-w-0 flex-col gap-10 p-6 sm:p-10 lg:p-12">
         {updated && (
           <p
             style={{

@@ -2,13 +2,12 @@ import type { Metadata, Viewport } from 'next';
 import { Golos_Text, Be_Vietnam_Pro, Inter_Tight } from 'next/font/google';
 import localFont from 'next/font/local';
 import './globals.css';
-import './kx.css';
-import Nav from '@/components/chrome/Nav';
-import Footer from '@/components/chrome/Footer';
+import './site.css';
+import Nav from '@/components/site/Nav';
+import Footer from '@/components/site/Footer';
 import GoogleTranslate from '@/components/chrome/GoogleTranslate';
 import CampaignForwarder from '@/components/util/CampaignForwarder';
 import { BrandSprite } from '@/components/brand/Logo';
-import { FieldBackdrop } from '@/components/kx/FieldBackdrop';
 import { THEME_BOOT } from '@/lib/theme';
 import { BRAND_NAME, SITE_URL } from '@/lib/brand';
 
@@ -55,8 +54,8 @@ export const viewport: Viewport = {
   width: 'device-width',
   initialScale: 1,
   themeColor: [
-    { media: '(prefers-color-scheme: light)', color: '#2447e0' },
-    { media: '(prefers-color-scheme: dark)', color: '#2447e0' },
+    { media: '(prefers-color-scheme: light)', color: '#050404' },
+    { media: '(prefers-color-scheme: dark)', color: '#050404' },
   ],
   colorScheme: 'dark',
 };
@@ -84,7 +83,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       </head>
       <body suppressHydrationWarning>
         <BrandSprite />
-        <FieldBackdrop />
         <a href="#main" className="skip-link">
           Skip to content
         </a>

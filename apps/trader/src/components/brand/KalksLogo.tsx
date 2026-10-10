@@ -27,22 +27,3 @@ export function KalksMark({ className, title }: { className?: string; title?: st
     </svg>
   );
 }
-
-/** The wordmark filled with a vertical light-blue gradient that fades out (the footer's big closing logo). */
-export function KalksLogoFade({ className, id = 'kx-logo-fade' }: { className?: string; id?: string }) {
-  return (
-    <svg viewBox="0 0 1954 541" className={className} aria-hidden="true" focusable="false">
-      <defs>
-        <linearGradient id={id} x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0" stopColor="#a9c3f3" />
-          <stop offset="0.5" stopColor="#c9d8ff" />
-          <stop offset="0.9" stopColor="#dbe6ff" stopOpacity="0.2" />
-          <stop offset="1" stopColor="#dbe6ff" stopOpacity="0" />
-        </linearGradient>
-      </defs>
-      {LOGO_D.map((d, i) => (
-        <path key={i} fillRule="evenodd" d={d} fill={`url(#${id})`} />
-      ))}
-    </svg>
-  );
-}

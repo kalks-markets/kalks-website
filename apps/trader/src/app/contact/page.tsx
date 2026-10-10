@@ -1,11 +1,11 @@
 import type { Metadata } from 'next';
-import { PageHero } from '@/components/kx/PageHero';
 import Link from 'next/link';
 import { ArrowUpRight, Building2, Mail, MessageCircle } from 'lucide-react';
-import { Btn } from '@/components/ui/Button';
-import { Section, SectionHead } from '@/components/ui/Section';
 import { BRAND_SUPPORT_EMAIL } from '@/lib/brand';
 import { CRM_URL } from '@/lib/crm';
+import { PageHero } from '@/components/site/Heroes';
+import { Btn, Head } from '@/components/site/ui';
+import { Rise } from '@/components/site/Rise';
 
 export const metadata: Metadata = {
   title: 'Help & contact',
@@ -26,88 +26,99 @@ export default function ContactPage() {
   return (
     <>
       <PageHero
-        kicker="HELP & CONTACT"
-        title="We are here to help."
-        lede="Clients get the fastest answers in the support chat inside the Client Area. Anyone can write to us by email."
         photo="contact"
+        compact
+        eyebrow="Help & contact"
+        title={
+          <>
+            We are here <span className="text-white/60">to help.</span>
+          </>
+        }
+        lead="Clients get the fastest answers in the support chat inside the Client Area. Anyone can write to us by email."
       />
 
-      <Section label="Ways to reach us" className="!pt-6">
-        <div className="grid gap-4 lg:grid-cols-3">
-          <div className="card flex flex-col p-6">
-            <span className="grid h-11 w-11 place-items-center rounded-[13px] bg-[#e6edff] text-[#2447e0]">
+      <section className="s-sec" aria-label="Ways to reach us">
+        <div className="s-wrap grid gap-4 lg:grid-cols-3">
+          <Rise className="s-orange flex flex-col p-7 sm:p-8">
+            <span className="grid size-12 place-items-center rounded-full bg-white text-[var(--s-orange)]">
               <MessageCircle size={20} aria-hidden />
             </span>
-            <h2 className="t-h3 mt-6">Support chat</h2>
-            <p className="body mt-2">Open the chat from any page of the Client Area. An instant help assistant answers common questions; our team takes over when you need a person.</p>
-            <div className="mt-auto pt-6">
-              <Btn href={`${CRM_URL}/support`} v="red" arrow>
+            <h2 className="mt-8 text-[28px] font-[500] leading-none tracking-[-0.035em]">Support chat</h2>
+            <p className="mt-3 text-[15px] leading-relaxed text-white/88">
+              Open the chat from any page of the Client Area. An instant help assistant answers common questions; our team takes over when you need a person.
+            </p>
+            <div className="mt-auto pt-8">
+              <Btn href={`${CRM_URL}/support`} variant="light">
                 Open support
               </Btn>
             </div>
-          </div>
-          <div className="card flex flex-col p-6">
-            <span className="grid h-11 w-11 place-items-center rounded-[13px] bg-[#e6edff] text-[#2447e0]">
+          </Rise>
+          <Rise delay={70} className="s-cream flex flex-col p-7 sm:p-8">
+            <span className="grid size-12 place-items-center rounded-full bg-[var(--s-cream-tx)] text-white">
               <Mail size={20} aria-hidden />
             </span>
-            <h2 className="t-h3 mt-6">Email</h2>
-            <p className="body mt-2">For anything else: questions before you open an account, partnerships and data requests.</p>
-            <a href={`mailto:${BRAND_SUPPORT_EMAIL}`} className="link mt-auto self-start pt-6 text-[16px]">
+            <h2 className="mt-8 text-[28px] font-[500] leading-none tracking-[-0.035em]">Email</h2>
+            <p className="mt-3 text-[15px] leading-relaxed text-[var(--s-cream-tx2)]">For anything else: questions before you open an account, partnerships and data requests.</p>
+            <a href={`mailto:${BRAND_SUPPORT_EMAIL}`} className="mt-auto self-start pt-8 text-[17px] font-semibold underline decoration-[var(--s-orange)] decoration-2 underline-offset-4">
               {BRAND_SUPPORT_EMAIL}
             </a>
-          </div>
-          <div className="card flex flex-col p-6">
-            <span className="grid h-11 w-11 place-items-center rounded-[13px] bg-s3 text-tx2">
+          </Rise>
+          <Rise delay={140} className="s-card flex flex-col p-7 sm:p-8">
+            <span className="grid size-12 place-items-center rounded-full bg-white/10 text-white">
               <Building2 size={20} aria-hidden />
             </span>
-            <h2 className="t-h3 mt-6">Company</h2>
-            <dl className="facts mt-3">
+            <h2 className="mt-8 text-[28px] font-[500] leading-none tracking-[-0.035em]">Company</h2>
+            <dl className="mt-5 flex flex-col gap-4 text-[14.5px]">
               <div>
-                <dt>Legal entity</dt>
-                <dd className="!font-medium !text-tx2">[to be provided by Kalks]</dd>
+                <dt className="text-[12px] font-semibold uppercase tracking-[0.08em] text-[var(--s-tx3)]">Legal entity</dt>
+                <dd className="mt-1 text-[var(--s-tx2)]">[to be provided by Kalks]</dd>
               </div>
               <div>
-                <dt>Registered address</dt>
-                <dd className="!font-medium !text-tx2">[to be provided by Kalks]</dd>
+                <dt className="text-[12px] font-semibold uppercase tracking-[0.08em] text-[var(--s-tx3)]">Registered address</dt>
+                <dd className="mt-1 text-[var(--s-tx2)]">[to be provided by Kalks]</dd>
               </div>
             </dl>
-          </div>
+          </Rise>
         </div>
-      </Section>
+      </section>
 
-      <Section labelledBy="topics-title" className="sec-last">
-        <SectionHead id="topics-title" kicker="HELP TOPICS" title="Find an answer now." />
-        <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
-          {TOPICS.map((t) => (
-            <Link key={t.t} href={t.href} className="card flex items-start justify-between gap-6 p-6">
-              <span>
-                <span className="block text-[16px] font-semibold">{t.t}</span>
-                <span className="body mt-1 block !text-[14.5px]">{t.d}</span>
-              </span>
-              <ArrowUpRight size={18} className="mt-1 flex-none text-tx3" aria-hidden />
+      <section className="s-sec !pt-4" aria-labelledby="topics-title">
+        <div className="s-wrap">
+          <Head id="topics-title" index="01" eyebrow="Help topics" title={<>Find an answer <span className="s-mute">now.</span></>} />
+          <ul className="border-t border-[var(--s-line)]">
+            {TOPICS.map((t, i) => (
+              <Rise as="li" key={t.t} delay={i * 40} className="border-b border-[var(--s-line)]">
+                <Link href={t.href} className="group grid items-center gap-2 py-6 sm:grid-cols-[minmax(0,1fr)_minmax(0,1.2fr)_44px] sm:gap-8">
+                  <span className="text-[clamp(20px,2vw,28px)] font-[450] tracking-[-0.03em] transition-colors group-hover:text-[var(--s-orange2)]">{t.t}</span>
+                  <span className="text-[15px] text-[var(--s-tx2)]">{t.d}</span>
+                  <span className="hidden size-11 place-items-center rounded-full border border-[var(--s-line2)] transition-[background-color,transform] group-hover:rotate-45 group-hover:bg-[var(--s-orange)] sm:grid" aria-hidden>
+                    <ArrowUpRight size={18} />
+                  </span>
+                </Link>
+              </Rise>
+            ))}
+          </ul>
+          <p className="mt-10 text-[14px] text-[var(--s-tx3)]">
+            Legal documents:{' '}
+            <Link href="/terms" className="text-white/80 underline underline-offset-2 hover:text-white">
+              Terms
             </Link>
-          ))}
+            ,{' '}
+            <Link href="/privacy" className="text-white/80 underline underline-offset-2 hover:text-white">
+              Privacy
+            </Link>
+            ,{' '}
+            <Link href="/risk-warning" className="text-white/80 underline underline-offset-2 hover:text-white">
+              Risk warning
+            </Link>{' '}
+            and{' '}
+            <Link href="/restricted-countries" className="text-white/80 underline underline-offset-2 hover:text-white">
+              Restricted countries
+            </Link>
+            .
+          </p>
         </div>
-        <p className="mt-8 text-[14px] text-tx3">
-          Legal documents:{' '}
-          <Link href="/terms" className="link">
-            Terms
-          </Link>
-          ,{' '}
-          <Link href="/privacy" className="link">
-            Privacy
-          </Link>
-          ,{' '}
-          <Link href="/risk-warning" className="link">
-            Risk warning
-          </Link>{' '}
-          and{' '}
-          <Link href="/restricted-countries" className="link">
-            Restricted countries
-          </Link>
-          .
-        </p>
-      </Section>
+      </section>
     </>
   );
 }
