@@ -2,18 +2,24 @@ import type { ReactNode } from 'react';
 import { ArrowDown } from 'lucide-react';
 import { KalksLogo } from '@/components/brand/KalksLogo';
 import { HEROES, type HeroKey } from '@/content/heroes';
+import { heroImage } from '@/content/pages';
+import type { HeroCopy, HeroImage } from '@/lib/content';
 import { cn } from '@/lib/cn';
+import { ThemedImage } from './ThemedImage';
+import { Btn } from './ui';
 
 /**
  * Home hero (founder 2026-10-10, RAZE reference): the figure on its own solid orange, the giant white KALKS wordmark
  * across it, a short line top-left, the round "Open account" button in the middle, "Scroll to explore" bottom-right,
  * dotted guide lines, and a three-column intro along the foot (who we are · what we do · get started).
+ * `image` is the hero photo from the content service (default HEROES.home).
  */
 export function WordmarkHero({
   line,
   ring,
   side,
   intro,
+  image,
 }: {
   /** the short line top-left */
   line: ReactNode;
@@ -23,13 +29,13 @@ export function WordmarkHero({
   side?: ReactNode;
   /** the three columns at the foot */
   intro: [ReactNode, ReactNode, ReactNode];
+  image?: HeroImage;
 }) {
-  const h = HEROES.home;
+  const h = image ?? heroImage('home');
   return (
-    <section className="s-whero" style={{ ['--hero-bg' as string]: h.bg }} aria-label="Kalks">
+    <section className="s-whero" style={{ ['--hero-bg' as string]: h.bg ?? HEROES.home.bg }} aria-label="Kalks">
       <div className="s-guides" aria-hidden />
-      {/* eslint-disable-next-line @next/next/no-img-element */}
-      <img src={h.src} alt="" aria-hidden width={h.w} height={h.h} fetchPriority="high" className="s-whero-fig" />
+      <ThemedImage image={h} alt="" aria-hidden fetchPriority="high" className="s-whero-fig" />
       <h1 className="sr-only">Kalks: forex options, CFDs, copy trading and prop</h1>
       <KalksLogo className="s-whero-word" title="Kalks" />
 
@@ -61,12 +67,45 @@ export function WordmarkHero({
   );
 }
 
+/** The two-tone headline of a hero: the title, then its lighter second half. */
+export function HeroTitle({ hero }: { hero: HeroCopy }) {
+  return (
+    <>
+      {hero.title}
+      {hero.accent && (
+        <>
+          {' '}
+          <span className={hero.accentClass ?? 's-mute'}>{hero.accent}</span>
+        </>
+      )}
+    </>
+  );
+}
+
+/** The hero's buttons: the main one, and the second as a ghost. */
+export function HeroActions({ hero }: { hero: HeroCopy }) {
+  if (!hero.cta && !hero.cta2) return null;
+  return (
+    <>
+      {hero.cta && <Btn href={hero.cta.href}>{hero.cta.label}</Btn>}
+      {hero.cta2 && (
+        <Btn href={hero.cta2.href} variant="ghost" icon={false}>
+          {hero.cta2.label}
+        </Btn>
+      )}
+    </>
+  );
+}
+
 /**
  * Inner-page hero (orange agency reference): eyebrow, a big two-tone headline, a lead, buttons and small facts on
  * the left; the page's figure on the right on its own solid colour; optional glass cards beside the figure.
- * `photo={null}` gives the typographic version (legal and help pages): black with an orange glow.
+ * `hero` (from content/pages.ts, merged with the content service) gives the eyebrow, headline, lead, buttons and
+ * photo; the separate props override it. `photo={null}` without `hero.image` gives the typographic version (legal
+ * and help pages): black with an orange glow.
  */
 export function PageHero({
+  hero,
   photo,
   eyebrow,
   title,
@@ -77,9 +116,10 @@ export function PageHero({
   children,
   compact,
 }: {
-  photo: HeroKey | null;
+  hero?: HeroCopy;
+  photo?: HeroKey | null;
   eyebrow?: ReactNode;
-  title: ReactNode;
+  title?: ReactNode;
   lead?: ReactNode;
   actions?: ReactNode;
   facts?: ReactNode[];
@@ -89,19 +129,19 @@ export function PageHero({
   children?: ReactNode;
   compact?: boolean;
 }) {
-  const h = photo ? HEROES[photo] : null;
+  const h: HeroImage | null = hero ? (hero.image ?? null) : photo ? heroImage(photo) : null;
+  const eb = eyebrow ?? hero?.eyebrow;
+  const ld = lead ?? hero?.subtitle;
+  const act = actions ?? (hero && <HeroActions hero={hero} />);
   return (
-    <section className={cn('s-phero', !h && 'flat')} style={h ? { ['--hero-bg' as string]: h.bg } : undefined}>
-      {h && (
-        // eslint-disable-next-line @next/next/no-img-element
-        <img src={h.src} alt="" aria-hidden width={h.w} height={h.h} fetchPriority="high" className="s-phero-fig" />
-      )}
+    <section className={cn('s-phero', !h && 'flat')} style={h?.bg ? { ['--hero-bg' as string]: h.bg } : undefined}>
+      {h && <ThemedImage image={h} alt="" aria-hidden fetchPriority="high" className="s-phero-fig" />}
       <div className={cn('s-wrap relative grid grid-cols-1 gap-10 lg:grid-cols-[minmax(0,1fr)_340px]', compact ? 'pb-14 lg:pb-16' : 'min-h-[min(640px,78svh)] pb-16 lg:pb-24')}>
         <div className="flex flex-col justify-end">
-          {eyebrow && <span className="s-eyebrow mb-6 !text-white/90">{eyebrow}</span>}
-          <h1 className={cn('s-h1 max-w-[13ch] text-white [text-shadow:0_2px_30px_rgba(40,6,0,0.25)]', compact && '!text-[clamp(40px,5.6vw,80px)]')}>{title}</h1>
-          {lead && <p className="mt-7 max-w-[54ch] text-[clamp(16px,1.3vw,19px)] leading-relaxed text-white/90">{lead}</p>}
-          {actions && <div className="mt-9 flex flex-wrap items-center gap-3">{actions}</div>}
+          {eb && <span className="s-eyebrow mb-6 !text-white/90">{eb}</span>}
+          <h1 className={cn('s-h1 max-w-[13ch] text-white [text-shadow:0_2px_30px_rgba(40,6,0,0.25)]', compact && '!text-[clamp(40px,5.6vw,80px)]')}>{title ?? (hero && <HeroTitle hero={hero} />)}</h1>
+          {ld && <p className="mt-7 max-w-[54ch] text-[clamp(16px,1.3vw,19px)] leading-relaxed text-white/90">{ld}</p>}
+          {act && <div className="mt-9 flex flex-wrap items-center gap-3">{act}</div>}
           {facts && facts.length > 0 && (
             <div className="mt-9 flex flex-wrap gap-x-6 gap-y-2 text-[13.5px] font-medium text-white/85">
               {facts.map((f, i) => (

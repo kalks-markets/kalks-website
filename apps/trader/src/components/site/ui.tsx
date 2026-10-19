@@ -1,8 +1,10 @@
 import Link from 'next/link';
 import type { ReactNode } from 'react';
 import { ArrowUpRight, Check, Plus } from 'lucide-react';
+import type { SiteImage } from '@/lib/content';
 import { cn } from '@/lib/cn';
 import { Rise } from './Rise';
+import { ThemedImage } from './ThemedImage';
 
 /* ─────────────────────────────────────────────────────────────── buttons */
 
@@ -198,21 +200,19 @@ export function Faq({ items, className }: { items: { q: string; a: ReactNode }[]
  * The closing band on every page: a big two-tone line, the two buttons, and a row of small facts. On an orange panel
  * with a soft glow, the figure of the page's hero on the right (optional).
  */
-export function Cta({ title, sub, primary, secondary, facts, image }: { title: ReactNode; sub?: ReactNode; primary: { href: string; label: string }; secondary?: { href: string; label: string }; facts?: string[]; image?: { src: string; w: number; h: number } }) {
+export function Cta({ title, sub, primary, secondary, facts, image }: { title: ReactNode; sub?: ReactNode; primary: { href: string; label: string }; secondary?: { href: string; label: string }; facts?: string[]; image?: { src: string; w: number; h: number } | SiteImage }) {
   return (
     <section className="s-sec" aria-label="Get started">
       <div className="s-wrap">
         <Rise className="s-orange relative overflow-hidden px-7 py-14 sm:px-12 lg:px-16 lg:py-20">
           <div aria-hidden className="pointer-events-none absolute -right-24 -top-24 size-[420px] rounded-full bg-[radial-gradient(circle,rgba(255,200,140,0.55),transparent_65%)]" />
           {image && (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img
-              src={image.src}
+            <ThemedImage
+              image={{ alt: '', ...image }}
               alt=""
               aria-hidden
-              width={image.w}
-              height={image.h}
               loading="lazy"
+              sizes="40vw"
               className="pointer-events-none absolute bottom-0 right-0 hidden h-[115%] w-auto max-w-none opacity-90 mix-blend-multiply [mask-image:linear-gradient(90deg,transparent,#000_35%)] lg:block"
             />
           )}

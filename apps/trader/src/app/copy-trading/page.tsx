@@ -9,9 +9,9 @@ import { PSHOTS } from '@/components/site/platforms/shots';
 import { RiskNote } from '@/components/ui/RiskNote';
 import { SOCIAL } from '@/content/facts';
 import { FAQ_GROUPS } from '@/content/faq';
-import { HEROES } from '@/content/heroes';
 import { REGISTER_HREF } from '@/lib/crm';
 import { cn } from '@/lib/cn';
+import { getPage } from '@/content/pages';
 
 export const metadata: Metadata = {
   title: 'Copy trading, PAMM and MAM',
@@ -106,26 +106,13 @@ const FAQ = [
   },
 ];
 
-export default function CopyTradingPage() {
+export default async function CopyTradingPage() {
+  const page = await getPage('copy-trading');
+  const { hero } = page;
   return (
     <>
       <PageHero
-        photo="copy"
-        eyebrow="Copy trading · PAMM · MAM"
-        title={
-          <>
-            Trade alongside <span className="s-mute">someone who has done it.</span>
-          </>
-        }
-        lead="Mirror approved traders with limits you set, invest in a managed fund, or let a manager trade your account. Fees only on new highs."
-        actions={
-          <>
-            <Btn href={REGISTER_HREF}>Start copying</Btn>
-            <Btn href="#master" variant="ghost" icon={false}>
-              Become a master
-            </Btn>
-          </>
-        }
+        hero={hero}
         facts={[`Performance fee ${SOCIAL.perfFee}`, 'On new highs only', `From ${SOCIAL.minAllocation}`]}
         aside={
           <>
@@ -349,7 +336,7 @@ export default function CopyTradingPage() {
             Copying, <span className="s-mute">answered.</span>
           </>
         }
-        items={FAQ}
+        items={page.faq(FAQ)}
         note={
           <>
             <p className="max-w-[110ch] text-[12.5px] leading-relaxed text-[var(--s-tx3)]">Past performance is not a reliable indicator of future results. Copy trading, PAMM and MAM accounts trade CFDs and cannot trade options.</p>
@@ -368,7 +355,7 @@ export default function CopyTradingPage() {
         primary={{ href: REGISTER_HREF, label: 'Start copying' }}
         secondary={{ href: '#master', label: 'Become a master' }}
         facts={[`Fee ${SOCIAL.perfFee}, new highs only`, `${SOCIAL.trackRecordDays}-day track record`, `${SOCIAL.historyDelay} history delay`]}
-        image={HEROES.copy}
+        image={page.ctaImage}
       />
     </>
   );

@@ -5,8 +5,8 @@ import { HeroGlass, PageHero } from '@/components/site/Heroes';
 import { BentoCard, Btn, Cta, Head, StatStrip } from '@/components/site/ui';
 import { Shot } from '@/components/site/Shot';
 import { Rise } from '@/components/site/Rise';
-import { HEROES } from '@/content/heroes';
 import { cn } from '@/lib/cn';
+import { getPage } from '@/content/pages';
 
 export const metadata: Metadata = {
   title: `Kalks Academy: ${ACADEMY.lessons} lessons in ${ACADEMY.phases} phases`,
@@ -21,30 +21,17 @@ const BOOKS = { src: '/site/shots/academy-books.webp', w: 2632, h: 1948, alt: 'T
 const LEVEL_TONE: Record<string, string> = {
   Beginner: 'bg-[#f2600c] text-white',
   Intermediate: 'bg-[#a8582c] text-white',
-  Advanced: 'bg-[#1d1d21] text-white ring-1 ring-white/15',
+  Advanced: 's-isl bg-[#1d1d21] text-white ring-1 ring-white/15',
   Professional: 'bg-[#c8892b] text-[#2a1a04]',
 };
 
-export default function AcademyPage() {
+export default async function AcademyPage() {
+  const page = await getPage('academy');
+  const { hero } = page;
   return (
     <>
       <PageHero
-        photo="academy"
-        eyebrow="Kalks Academy"
-        title={
-          <>
-            Learn it properly. <span className="text-white/60">Then trade it.</span>
-          </>
-        }
-        lead={`${ACADEMY.lessons} lessons in ${ACADEMY.phases} phases, from how markets work to macro regimes and FX options. A quiz after every lesson and certificates anyone can verify.`}
-        actions={
-          <>
-            <Btn href={REGISTER_HREF}>Start learning</Btn>
-            <Btn href="#phases" variant="ghost" icon={false}>
-              See the phases
-            </Btn>
-          </>
-        }
+        hero={hero}
         aside={
           <HeroGlass>
             <div className="s-num text-[56px]">{ACADEMY.passMark}</div>
@@ -130,7 +117,7 @@ export default function AcademyPage() {
         }
         sub="The Academy is in the Client Area. Open an account and begin with Markets and instruments."
         primary={{ href: REGISTER_HREF, label: 'Start learning' }}
-        image={HEROES.academy}
+        image={page.ctaImage}
       />
     </>
   );

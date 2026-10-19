@@ -9,9 +9,9 @@ import { PSHOTS } from '@/components/site/platforms/shots';
 import { RiskNote } from '@/components/ui/RiskNote';
 import { PROP } from '@/content/facts';
 import { FAQ_GROUPS } from '@/content/faq';
-import { HEROES } from '@/content/heroes';
 import { REGISTER_HREF } from '@/lib/crm';
 import { cn } from '@/lib/cn';
+import { getPage } from '@/content/pages';
 
 export const metadata: Metadata = {
   title: 'Prop challenges: Classic 2-Step, Rapid 1-Step and Instant Funding',
@@ -78,26 +78,13 @@ const FAQ = [
 
 const TONES = ['s-orange', 's-cream', 's-card'] as const;
 
-export default function PropPage() {
+export default async function PropPage() {
+  const page = await getPage('prop');
+  const { hero } = page;
   return (
     <>
       <PageHero
-        photo="prop"
-        eyebrow="Prop challenges"
-        title={
-          <>
-            Earn your wings. <span className="s-mute">Keep up to {TOP_SPLIT}.</span>
-          </>
-        }
-        lead={`Pass a one-step or two-step evaluation, or start funded today. Simulated accounts from ${SIZES[0]} to ${LARGEST}, every rule checked live on the server, payouts in USDT.`}
-        actions={
-          <>
-            <Btn href={REGISTER_HREF}>Start a challenge</Btn>
-            <Btn href="#plans" variant="ghost" icon={false}>
-              Compare the plans
-            </Btn>
-          </>
-        }
+        hero={hero}
         facts={[`${PROP.length} plans`, `Fees from ${LOWEST_FEE}`, `Up to ${LARGEST}`, 'Payouts in USDT']}
         aside={
           <HeroGlass>
@@ -300,7 +287,7 @@ export default function PropPage() {
             Prop, <span className="s-mute">answered.</span>
           </>
         }
-        items={FAQ}
+        items={page.faq(FAQ)}
         note={
           <>
             <p className="max-w-[110ch] text-[12.5px] leading-relaxed text-[var(--s-tx3)]">
@@ -321,7 +308,7 @@ export default function PropPage() {
         primary={{ href: REGISTER_HREF, label: 'Start a challenge' }}
         secondary={{ href: '#plans', label: 'Compare the plans' }}
         facts={[`${PROP.length} plans`, `${SIZES[0]} to ${LARGEST}`, 'Payouts in USDT']}
-        image={HEROES.prop}
+        image={page.ctaImage}
       />
     </>
   );

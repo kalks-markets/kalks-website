@@ -9,10 +9,10 @@ import { Payoff, STRATEGY_NOTES } from '@/components/options/Payoff';
 import { LiveList, type LiveRow } from '@/components/market/LiveList';
 import { RiskNote } from '@/components/ui/RiskNote';
 import { DEMO, OPTIONS, OPTIONS_ACCOUNTS } from '@/content/facts';
-import { HEROES } from '@/content/heroes';
 import { DEMO_HREF, REGISTER_HREF } from '@/lib/crm';
 import { getQuotes } from '@/lib/quotes';
 import { cn } from '@/lib/cn';
+import { getPage } from '@/content/pages';
 
 export const revalidate = 60;
 
@@ -151,27 +151,14 @@ const FAQ = [
 ];
 
 export default async function OptionsPage() {
+  const page = await getPage('options');
+  const { hero } = page;
   const quotes = await getQuotes(UNDERLYINGS.filter((u) => !u.soon).map((u) => u.s));
   const [acc, accPro] = OPTIONS_ACCOUNTS;
   return (
     <>
       <PageHero
-        photo="options"
-        eyebrow="Kalks FX Options"
-        title={
-          <>
-            Options on forex, <span className="s-mute">with the risk printed first.</span>
-          </>
-        }
-        lead={`Calls and puts on forex, gold, silver and oil, with daily, weekly and monthly expiries. Buy one and the premium is the most you can lose. ${FEE.replace('per contract', 'a contract')}, ${FEE_CAP}, in an Options account of its own.`}
-        actions={
-          <>
-            <Btn href={REGISTER_HREF}>Open account</Btn>
-            <Btn href="#how" variant="ghost" icon={false}>
-              How it works
-            </Btn>
-          </>
-        }
+        hero={hero}
         facts={[`${OPTIONS.underlyingsLive.length} underlyings`, 'Daily, weekly and monthly expiries', 'Cash-settled in USD']}
         aside={
           <>
@@ -521,7 +508,7 @@ export default async function OptionsPage() {
         primary={{ href: REGISTER_HREF, label: 'Open account' }}
         secondary={{ href: DEMO_HREF, label: 'Try the demo' }}
         facts={[`${OPTIONS.underlyingsLive.length} underlyings`, `${OPTIONS.strategies.length} strategy templates`, `Cut at ${OPTIONS.cut}`]}
-        image={HEROES.options}
+        image={page.ctaImage}
       />
     </>
   );

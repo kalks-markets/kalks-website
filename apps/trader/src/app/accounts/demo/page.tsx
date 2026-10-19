@@ -6,9 +6,8 @@ import { PinTour } from '@/components/site/markets/PinTour';
 import { Rise } from '@/components/site/Rise';
 import { FactTable, FaqSchema, LinkCards, MiniHead } from '@/components/site/markets/bits';
 import { ACADEMY, ACCOUNTS, DEMO, FUNDING, INSTRUMENTS, OPTIONS_ACCOUNTS } from '@/content/facts';
-import { FAQ_GROUPS } from '@/content/faq';
-import { HEROES } from '@/content/heroes';
 import { DEMO_HREF, REGISTER_HREF } from '@/lib/crm';
+import { faqById, getPage } from '@/content/pages';
 
 export const metadata: Metadata = {
   title: 'Demo account: practise free on live prices',
@@ -38,30 +37,16 @@ const DEMO_PINS: Pin[] = [
   { x: 25, y: 96.8, title: 'Real account maths', text: 'Balance, equity, floating P&L, margin and margin level move just as they would on a live account.' },
 ];
 
-const FAQ_PICK = ['Is the demo account free?', 'How do I open an account?', 'Can one account trade CFDs and options?', 'Which accounts are there?'];
-const FAQ = FAQ_PICK.map((q) => FAQ_GROUPS.flatMap((g) => g.items).find((i) => i.q === q)).filter(Boolean) as { q: string; a: string }[];
+const FAQ = faqById(['demo-free', 'open-account', 'cfds-and-options', 'account-types']);
 
-export default function DemoPage() {
+export default async function DemoPage() {
+  const page = await getPage('accounts-demo');
+  const { hero } = page;
   return (
     <>
       <PageHero
-        photo="accounts"
+        hero={hero}
         compact
-        eyebrow="Demo account"
-        title={
-          <>
-            Rehearse on live prices. <span className="s-mute">Risk nothing.</span>
-          </>
-        }
-        lead={`A free demo account with ${DEMO.defaultBalance} of virtual money, every market on real-time prices, and the same Kalks Trader you will use live.`}
-        actions={
-          <>
-            <Btn href={DEMO_HREF}>Start a free demo</Btn>
-            <Btn href={REGISTER_HREF} variant="ghost" icon={false}>
-              Open a live account
-            </Btn>
-          </>
-        }
         facts={[`${DEMO.defaultBalance} virtual funds`, `${TOTAL} markets`, `Refills ${DEMO.refillsPerDay}× a day`]}
         aside={
           <>
@@ -234,8 +219,8 @@ export default function DemoPage() {
             <TextLink href="/faq">Every question, by topic</TextLink>
           </Rise>
           <Rise delay={100}>
-            <Faq items={FAQ} />
-            <FaqSchema items={FAQ} />
+            <Faq items={page.faq(FAQ)} />
+            <FaqSchema items={page.faq(FAQ)} />
           </Rise>
         </div>
       </section>
@@ -250,7 +235,7 @@ export default function DemoPage() {
         primary={{ href: DEMO_HREF, label: 'Start a free demo' }}
         secondary={{ href: '/accounts', label: 'Compare live accounts' }}
         facts={[`${DEMO.defaultBalance} virtual funds`, `${TOTAL} markets`, `Refills ${DEMO.refillsPerDay}× a day`]}
-        image={HEROES.accounts}
+        image={page.ctaImage}
       />
     </>
   );

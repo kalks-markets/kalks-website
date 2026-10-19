@@ -7,8 +7,8 @@ import { Rise } from '@/components/site/Rise';
 import { FactTable, FaqSchema, LinkCards, MiniHead, StepCards } from '@/components/site/markets/bits';
 import { FAQ_GROUPS } from '@/content/faq';
 import { ACCOUNTS, FUNDING } from '@/content/facts';
-import { HEROES } from '@/content/heroes';
 import { REGISTER_HREF } from '@/lib/crm';
+import { getPage } from '@/content/pages';
 
 export const metadata: Metadata = {
   title: 'Funding: deposit and withdraw USDT',
@@ -37,27 +37,14 @@ const WALLET_PINS: Pin[] = [
 
 const FAQ = FAQ_GROUPS.find((g) => g.id === 'funding')?.items ?? [];
 
-export default function FundingPage() {
+export default async function FundingPage() {
+  const page = await getPage('accounts-funding');
+  const { hero } = page;
   return (
     <>
       <PageHero
-        photo="accounts"
+        hero={hero}
         compact
-        eyebrow="Funding"
-        title={
-          <>
-            USDT in. <span className="s-mute">Trading in a minute.</span>
-          </>
-        }
-        lead={`One wallet funds every account. Deposit ${FUNDING.methods}, ${FUNDING.creditTime}, and move money between accounts for free.`}
-        actions={
-          <>
-            <Btn href={REGISTER_HREF}>Open an account</Btn>
-            <Btn href="#deposit" variant="ghost" icon={false}>
-              How to deposit
-            </Btn>
-          </>
-        }
         facts={[`From ${FUNDING.minDeposit}`, 'TRC20 and BEP20', `${FEE} to withdraw`]}
         aside={
           <>
@@ -204,8 +191,8 @@ export default function FundingPage() {
               <TextLink href="/faq">Every question, by topic</TextLink>
             </Rise>
             <Rise delay={100}>
-              <Faq items={FAQ} />
-              <FaqSchema items={FAQ} />
+              <Faq items={page.faq(FAQ)} />
+              <FaqSchema items={page.faq(FAQ)} />
             </Rise>
           </div>
         </section>
@@ -245,7 +232,7 @@ export default function FundingPage() {
         primary={{ href: REGISTER_HREF, label: 'Open an account' }}
         secondary={{ href: '/accounts/demo', label: 'Try the demo first' }}
         facts={[FUNDING.methods, FUNDING.creditTime.replace(/^u/, 'U'), `${FUNDING.withdrawalFee} withdrawal fee`]}
-        image={HEROES.accounts}
+        image={page.ctaImage}
       />
     </>
   );

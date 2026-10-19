@@ -8,9 +8,9 @@ import { PinTour } from '@/components/site/platforms/ShotTours';
 import { PSHOTS } from '@/components/site/platforms/shots';
 import { DEMO, INSTRUMENTS, LANGUAGES, OPTIONS, TRADER } from '@/content/facts';
 import { FAQ_GROUPS } from '@/content/faq';
-import { HEROES } from '@/content/heroes';
 import { TRADER_FEATURES } from '@/content/platforms';
 import { DEMO_HREF, TRADER_URL } from '@/lib/crm';
+import { getPage } from '@/content/pages';
 
 export const metadata: Metadata = {
   title: 'Kalks Trader: the trading terminal',
@@ -103,27 +103,14 @@ const OPTIONS_PINS: Pin[] = [
 
 const FAQ = FAQ_GROUPS.find((g) => g.id === 'platform')!.items;
 
-export default function TraderPage() {
+export default async function TraderPage() {
+  const page = await getPage('platforms-trader');
+  const { hero } = page;
   return (
     <>
       <PageHero
         compact
-        photo="platforms"
-        eyebrow="Kalks Trader"
-        title={
-          <>
-            Every instrument <span className="s-mute">on one screen.</span>
-          </>
-        }
-        lead="A big, quiet chart with the market list beside it and your positions below, for CFDs and options alike. In your browser and on Android, with nothing to install on a computer."
-        actions={
-          <>
-            <Btn href={TRADER_URL}>Open Kalks Trader</Btn>
-            <Btn href={DEMO_HREF} variant="ghost" icon={false}>
-              Try the demo
-            </Btn>
-          </>
-        }
+        hero={hero}
         facts={[`${TRADER.chartTypes} chart types`, `${TRADER.timeframes.length} timeframes`, `${TRADER.indicators} indicators`, `${TRADER.drawingTools} drawing tools`]}
         aside={
           <HeroGlass>
@@ -327,7 +314,7 @@ export default function TraderPage() {
             Kalks Trader, <span className="s-mute">answered.</span>
           </>
         }
-        items={FAQ}
+        items={page.faq(FAQ)}
       />
 
       <Cta
@@ -340,7 +327,7 @@ export default function TraderPage() {
         primary={{ href: TRADER_URL, label: 'Open Kalks Trader' }}
         secondary={{ href: DEMO_HREF, label: 'Try the demo' }}
         facts={[`${TRADER.indicators} indicators`, `${TRADER.timeframes.length} timeframes`, `${LANGUAGES.length} languages`]}
-        image={HEROES.platforms}
+        image={page.ctaImage}
       />
     </>
   );

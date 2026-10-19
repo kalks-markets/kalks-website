@@ -6,6 +6,7 @@ import { CRM_URL } from '@/lib/crm';
 import { PageHero } from '@/components/site/Heroes';
 import { Btn, Head } from '@/components/site/ui';
 import { Rise } from '@/components/site/Rise';
+import { getPage } from '@/content/pages';
 
 export const metadata: Metadata = {
   title: 'Help & contact',
@@ -22,19 +23,14 @@ const TOPICS = [
   { t: 'Partners', d: 'Links, levels, commission and payouts.', href: '/faq#partners' },
 ];
 
-export default function ContactPage() {
+export default async function ContactPage() {
+  const page = await getPage('contact');
+  const { hero } = page;
   return (
     <>
       <PageHero
-        photo="contact"
+        hero={hero}
         compact
-        eyebrow="Help & contact"
-        title={
-          <>
-            We are here <span className="text-white/60">to help.</span>
-          </>
-        }
-        lead="Clients get the fastest answers in the support chat inside the Client Area. Anyone can write to us by email."
       />
 
       <section className="s-sec" aria-label="Ways to reach us">

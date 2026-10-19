@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from 'next';
 import { Golos_Text, Be_Vietnam_Pro, Inter_Tight } from 'next/font/google';
 import localFont from 'next/font/local';
+import { draftMode } from 'next/headers';
 import './globals.css';
 import './site.css';
 import Nav from '@/components/site/Nav';
@@ -8,8 +9,14 @@ import Footer from '@/components/site/Footer';
 import GoogleTranslate from '@/components/chrome/GoogleTranslate';
 import CampaignForwarder from '@/components/util/CampaignForwarder';
 import { BrandSprite } from '@/components/brand/Logo';
-import { THEME_BOOT } from '@/lib/theme';
+import { ContentProvider } from '@/components/site/ContentContext';
+import { PreviewBadge } from '@/components/chrome/PreviewBadge';
+import { PSHOTS } from '@/components/site/platforms/shots';
+import { SHOTS } from '@/content/heroes';
+import { FOOTER_COPY, NAV_COPY } from '@/content/site';
+import { THEME_BOOT, THEME_COLOR } from '@/lib/theme';
 import { BRAND_NAME, SITE_URL } from '@/lib/brand';
+import { getContent, mergeFooter, mergeNav, mergeShot, shotOverrides, type PageContent, type SiteImage } from '@/lib/content';
 
 /* Type: Inter Tight for everything (OFL, self-hosted by next/font; only Latin is preloaded, Latin Extended and
    Cyrillic load when those glyphs appear on a translated page). JetBrains Mono for prices. Be Vietnam Pro covers
@@ -54,10 +61,10 @@ export const viewport: Viewport = {
   width: 'device-width',
   initialScale: 1,
   themeColor: [
-    { media: '(prefers-color-scheme: light)', color: '#050404' },
-    { media: '(prefers-color-scheme: dark)', color: '#050404' },
+    { media: '(prefers-color-scheme: light)', color: THEME_COLOR.light },
+    { media: '(prefers-color-scheme: dark)', color: THEME_COLOR.dark },
   ],
-  colorScheme: 'dark',
+  colorScheme: 'light dark',
 };
 
 const ORG_LD = {
@@ -68,14 +75,25 @@ const ORG_LD = {
   logo: `${SITE_URL}/brand/kalks-mark.svg`,
 };
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+/** screenshots the content service replaced, merged over SHOTS / PSHOTS: key → image (for the client Shot) */
+function shotsFrom(global: PageContent | undefined): Record<string, SiteImage> {
+  const overrides = shotOverrides(global);
+  const out: Record<string, SiteImage> = {};
+  for (const [key, d] of [...Object.entries(SHOTS), ...Object.entries(PSHOTS)]) {
+    const s = mergeShot(overrides, key, d);
+    if (s !== d) out[key] = s;
+  }
+  return out;
+}
+
+export default async function RootLayout({ children }: { children: React.ReactNode }) {
+  // nav, footer and screenshots (page "global"); the defaults when the content service is unreachable
+  const content = await getContent(['global']);
+  const global = content.pages.global;
+  const previewing = (await draftMode()).isEnabled;
+  // html[data-theme] is set by THEME_BOOT before first paint (none in the markup: the CSS default is dark)
   return (
-    <html
-      lang="en"
-      data-theme="dark"
-      className={`${interTight.variable} ${interTightExt.variable} ${jbmono.variable} ${golos.variable} ${beVietnam.variable}`}
-      suppressHydrationWarning
-    >
+    <html lang="en" className={`${interTight.variable} ${interTightExt.variable} ${jbmono.variable} ${golos.variable} ${beVietnam.variable}`} suppressHydrationWarning>
       <head>
         <script dangerouslySetInnerHTML={{ __html: THEME_BOOT }} />
         <link rel="preconnect" href="https://api.kalkstrade.com" crossOrigin="anonymous" />
@@ -86,11 +104,14 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <a href="#main" className="skip-link">
           Skip to content
         </a>
-        <Nav />
-        <main id="main">{children}</main>
-        <Footer />
+        <Nav copy={mergeNav(global, NAV_COPY)} />
+        <ContentProvider shots={shotsFrom(global)}>
+          <main id="main">{children}</main>
+        </ContentProvider>
+        <Footer copy={mergeFooter(global, FOOTER_COPY)} />
         <CampaignForwarder />
         <GoogleTranslate />
+        {previewing && <PreviewBadge state={content.preview ? 'drafts' : content.previewExpired ? 'expired' : 'published'} />}
       </body>
     </html>
   );

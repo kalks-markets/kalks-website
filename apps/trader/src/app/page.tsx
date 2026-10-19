@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 import { ArrowUpRight } from 'lucide-react';
 import { ACADEMY, ACCOUNTS, DEMO, FUNDING, HOURS, IB, INSTRUMENTS, LANGUAGES, LEVERAGE, OPTIONS, OPTIONS_ACCOUNTS, PROP, SOCIAL } from '@/content/facts';
-import { FAQ_GROUPS } from '@/content/faq';
+import { faqById, getPage } from '@/content/pages';
 import { CRM_URL, DEMO_HREF, LOGIN_HREF, REGISTER_HREF } from '@/lib/crm';
 import { NY, ymdIn } from '@/lib/tz';
 import { PriceStrip, type StripRow } from '@/components/market/PriceStrip';
@@ -12,7 +12,6 @@ import { BentoCard, Btn, Checks, Cta, Faq, Head, StatStrip, TextLink } from '@/c
 import { FeatureSplit, Phone, Shot, ShotTour, type Pin } from '@/components/site/Shot';
 import { Rise } from '@/components/site/Rise';
 import { TradingDay, type Slot } from '@/components/site/TradingDay';
-import { HEROES } from '@/content/heroes';
 
 export const revalidate = 60;
 
@@ -78,18 +77,19 @@ const SLOTS: Slot[] = [
 
 const cfd = (id: string) => ACCOUNTS.find((a) => a.id === id)!;
 
-const FAQ_PICK = ['Which accounts are there?', 'Can one account trade CFDs and options?', 'How do I deposit?', 'What is the most I can lose?', 'Is the demo account free?', 'Which prop plans are there?', 'Is there a mobile app?'];
-const FAQ_ITEMS = FAQ_PICK.map((q) => FAQ_GROUPS.flatMap((g) => g.items).find((i) => i.q === q)).filter(Boolean) as { q: string; a: string }[];
+const FAQ_ITEMS = faqById(['account-types', 'cfds-and-options', 'deposit', 'options-max-loss', 'demo-free', 'prop-plans', 'mobile-app']);
 
 export default async function HomePage() {
   const ymd = ymdIn(Date.now(), NY);
-  const quotes = await getQuotes(STRIP.map((r) => r.s));
+  const [quotes, page] = await Promise.all([getQuotes(STRIP.map((r) => r.s)), getPage('home')]);
+  const { hero } = page;
   return (
     <>
       <WordmarkHero
-        line="Options, CFDs and copy trading, funded from one USDT wallet."
-        side={`${LANGUAGES.length} languages · Android app · USDT on TRON and BNB Chain`}
-        ring={{ href: REGISTER_HREF, label: 'Open account' }}
+        line={hero.title}
+        side={hero.subtitle}
+        ring={hero.cta ?? { href: REGISTER_HREF, label: 'Open account' }}
+        image={hero.image ?? undefined}
         intro={[
           <h2 key="a" className="text-[clamp(36px,3.6vw,56px)] font-[500] leading-[0.98] tracking-[-0.045em] text-white">
             Who we
@@ -422,7 +422,7 @@ export default async function HomePage() {
             <TextLink href="/faq">Every question, by topic</TextLink>
           </Rise>
           <Rise delay={100}>
-            <Faq items={FAQ_ITEMS} />
+            <Faq items={page.faq(FAQ_ITEMS)} />
           </Rise>
         </div>
       </section>
@@ -437,7 +437,7 @@ export default async function HomePage() {
         primary={{ href: `${CRM_URL}/register`, label: 'Open account' }}
         secondary={{ href: DEMO_HREF, label: 'Try the demo' }}
         facts={[`${PROP.length} prop plans`, `${ACADEMY.lessons} Academy lessons`, `${FUNDING.withdrawalFee} withdrawal fee`]}
-        image={HEROES.options}
+        image={page.ctaImage}
       />
     </>
   );

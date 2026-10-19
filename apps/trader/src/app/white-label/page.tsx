@@ -6,9 +6,9 @@ import { Rise } from '@/components/site/Rise';
 import { MiniHead, Related } from '@/components/site/platforms/bits';
 import { API_FEATURES as API } from '@/content/platforms';
 import { ALGO, LANGUAGES, TRADER } from '@/content/facts';
-import { HEROES } from '@/content/heroes';
 import { BRAND_SUPPORT_EMAIL } from '@/lib/brand';
 import { REGISTER_HREF } from '@/lib/crm';
+import { getPage } from '@/content/pages';
 
 export const metadata: Metadata = {
   title: 'White-label brokerage and API & algo trading',
@@ -27,27 +27,14 @@ const WL: [string, string][] = [
 ];
 const TONES: BentoTone[] = ['orange', 'cream', 'glass', 'glass', 'cream', 'orange'];
 
-export default function WhiteLabelPage() {
+export default async function WhiteLabelPage() {
+  const page = await getPage('white-label');
+  const { hero } = page;
   const mailto = `mailto:${BRAND_SUPPORT_EMAIL}?subject=${encodeURIComponent('White-label enquiry')}`;
   return (
     <>
       <PageHero
-        photo="whitelabel"
-        eyebrow="For business"
-        title={
-          <>
-            Your brokerage. <span className="s-mute">Our platform.</span>
-          </>
-        }
-        lead="Launch a broker under your own brand and domains, with forex options, CFDs, prop, copy trading and partners built in. Or connect your systems through the API."
-        actions={
-          <>
-            <Btn href={mailto}>Talk to us</Btn>
-            <Btn href="#api" variant="ghost" icon={false}>
-              API &amp; algo
-            </Btn>
-          </>
-        }
+        hero={hero}
         facts={['4 apps under your brand', `${LANGUAGES.length} languages`, 'Modules on or off per broker', 'Data isolated per broker']}
         aside={
           <HeroGlass>
@@ -206,7 +193,7 @@ export default function WhiteLabelPage() {
         primary={{ href: mailto, label: 'Talk to us' }}
         secondary={{ href: '/platforms/api', label: 'API & algo' }}
         facts={['4 apps under your brand', `${LANGUAGES.length} languages`, 'Modules on or off per broker']}
-        image={HEROES.whitelabel}
+        image={page.ctaImage}
       />
     </>
   );

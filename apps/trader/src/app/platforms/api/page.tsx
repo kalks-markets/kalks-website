@@ -7,10 +7,10 @@ import { FeatureGrid, Related } from '@/components/site/platforms/bits';
 import { PinTour } from '@/components/site/platforms/ShotTours';
 import { PSHOTS } from '@/components/site/platforms/shots';
 import { ALGO, DEMO } from '@/content/facts';
-import { HEROES } from '@/content/heroes';
 import { API_FEATURES } from '@/content/platforms';
 import { BRAND_SUPPORT_EMAIL } from '@/lib/brand';
 import { REGISTER_HREF } from '@/lib/crm';
+import { getPage } from '@/content/pages';
 
 export const metadata: Metadata = {
   title: 'API & algo trading',
@@ -32,28 +32,15 @@ const BUILDER_PINS: Pin[] = [
   { x: 78, y: 4.1, title: 'Backtest and running strategies', text: `Test on history with ${ALGO.indicatorSeries} indicator series that match Kalks Trader; stop everything at once with the kill switch.` },
 ];
 
-export default function ApiPage() {
+export default async function ApiPage() {
+  const page = await getPage('platforms-api');
+  const { hero } = page;
   const mailto = `mailto:${BRAND_SUPPORT_EMAIL}?subject=${encodeURIComponent('API question')}`;
   return (
     <>
       <PageHero
         compact
-        photo="platforms"
-        eyebrow="API & algo"
-        title={
-          <>
-            Write the rules once. <span className="s-mute">Let them run.</span>
-          </>
-        }
-        lead="Webhook alerts, a REST API with scoped keys, a visual strategy builder and backtests, all running on Kalks servers around the clock, on demo or live accounts. Algo trading covers CFDs; options stay manual for now."
-        actions={
-          <>
-            <Btn href={REGISTER_HREF}>Create an account</Btn>
-            <Btn href={mailto} variant="ghost" icon={false}>
-              Ask a question
-            </Btn>
-          </>
-        }
+        hero={hero}
         facts={[ALGO.rateLimit.charAt(0).toUpperCase() + ALGO.rateLimit.slice(1), `Up to ${ALGO.webhookRoutes} accounts per webhook`, `${ALGO.indicatorSeries} indicator series`, '24/7 deployments']}
       />
 
@@ -173,7 +160,7 @@ export default function ApiPage() {
         primary={{ href: REGISTER_HREF, label: 'Create an account' }}
         secondary={{ href: mailto, label: 'Ask a question' }}
         facts={[ALGO.rateLimit, `${ALGO.indicatorSeries} indicator series`, '24/7 deployments']}
-        image={HEROES.platforms}
+        image={page.ctaImage}
       />
     </>
   );

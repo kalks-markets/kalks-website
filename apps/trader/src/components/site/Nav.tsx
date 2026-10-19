@@ -5,10 +5,11 @@ import { usePathname } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
 import { ArrowUpRight, BookOpen, Building2, ChevronDown, Copy, LifeBuoy, Menu, Network, Smartphone, Users, X } from 'lucide-react';
 import { Wordmark } from '@/components/brand/Logo';
-import { NAV_MORE, NAV_PRIMARY } from '@/content/site';
+import { NAV_COPY } from '@/content/site';
 import { ANDROID_APP, RISK_WARNING } from '@/content/facts';
-import { DEMO_HREF, LOGIN_HREF, REGISTER_HREF } from '@/lib/crm';
 import { LanguagePicker, LanguageSelect } from '@/components/chrome/LanguagePicker';
+import { ThemeSelect, ThemeToggle } from '@/components/chrome/ThemeToggle';
+import type { NavCopy } from '@/lib/content';
 import { cn } from '@/lib/cn';
 
 const ICONS: Record<string, JSX.Element> = {
@@ -22,10 +23,10 @@ const ICONS: Record<string, JSX.Element> = {
 
 /**
  * Site navigation (Formix / RAZE references): the white wordmark, the page links in one frosted pill (the current
- * page filled cream), "More" opens a panel, then language, Log in and the orange "Open account" pill. Phones get a
- * full-screen menu.
+ * page filled cream), "More" opens a panel, then language, theme, Log in and the orange "Open account" pill. Phones
+ * get a full-screen menu. `copy` is NAV_COPY merged with the content service by the root layout.
  */
-export default function Nav() {
+export default function Nav({ copy = NAV_COPY }: { copy?: NavCopy }) {
   const pathname = usePathname();
   const [scrolled, setScrolled] = useState(false);
   const [sheet, setSheet] = useState(false);
@@ -77,35 +78,35 @@ export default function Nav() {
 
           <nav aria-label="Main" className="s-pill mx-auto hidden lg:flex">
             <Link href="/" aria-current={pathname === '/' ? 'page' : undefined}>
-              Home
+              {copy.home}
             </Link>
-            {NAV_PRIMARY.map((l) => (
+            {copy.primary.map((l) => (
               <Link key={l.href} href={l.href} aria-current={isActive(l.href) ? 'page' : undefined}>
                 {l.label}
-                {l.tag && <span className="rounded-full bg-[var(--s-orange)] px-1.5 py-px text-[10px] font-bold uppercase text-white">{l.tag}</span>}
+                {l.tag && <span className="rounded-full bg-[var(--s-orange)] px-1.5 py-px text-[10px] font-bold uppercase text-[#fff]">{l.tag}</span>}
               </Link>
             ))}
             <div ref={moreRef} className="relative">
               <button type="button" aria-expanded={more} aria-haspopup="true" onClick={() => setMore((v) => !v)}>
-                More <ChevronDown size={14} aria-hidden className={cn('transition-transform duration-200', more && 'rotate-180')} />
+                {copy.more} <ChevronDown size={14} aria-hidden className={cn('transition-transform duration-200', more && 'rotate-180')} />
               </button>
               {more && (
                 <div className="s-mega">
-                  {NAV_MORE.map((l) => (
+                  {copy.moreItems.map((l) => (
                     <Link key={l.href} href={l.href} aria-current={isActive(l.href) ? 'page' : undefined}>
-                      <span className="grid size-10 shrink-0 place-items-center rounded-full bg-[rgba(242,96,12,0.14)] text-[var(--s-orange2)]">{ICONS[l.icon]}</span>
+                      <span className="grid size-10 shrink-0 place-items-center rounded-full bg-[rgba(242,96,12,0.14)] text-[var(--s-orange2)]">{ICONS[l.icon ?? '']}</span>
                       <span className="flex flex-col">
                         <b className="text-[14.5px] font-semibold text-white">{l.label}</b>
                         <small className="text-[12.5px] text-white/55">{l.note}</small>
                       </span>
                     </Link>
                   ))}
-                  <Link href="/platforms/android" className="col-span-2 mt-1 !items-center !bg-[var(--s-orange)] !text-white hover:!bg-[var(--s-orange2)]">
+                  <Link href="/platforms/android" className="s-isl col-span-2 mt-1 !items-center !bg-[var(--s-orange)] !text-white hover:!bg-[var(--s-orange2)]">
                     <span className="grid size-10 shrink-0 place-items-center rounded-full bg-white text-[var(--s-orange)]">
                       <Smartphone size={18} aria-hidden />
                     </span>
                     <span className="flex flex-col">
-                      <b className="text-[14.5px] font-semibold">Kalks for Android</b>
+                      <b className="text-[14.5px] font-semibold">{copy.android}</b>
                       <small className="text-[12.5px] text-white/80">
                         Version {ANDROID_APP.version} · {ANDROID_APP.sizeMb} MB
                       </small>
@@ -119,11 +120,12 @@ export default function Nav() {
 
           <div className="flex items-center gap-2 lg:ms-0">
             <LanguagePicker className="hidden lg:block" />
-            <a href={LOGIN_HREF} className="hidden h-11 items-center rounded-full px-4 text-[14px] font-semibold text-white/90 hover:text-white lg:inline-flex">
-              Log in
+            <ThemeToggle className="hidden lg:grid" />
+            <a href={copy.login.href} className="hidden h-11 items-center rounded-full px-4 text-[14px] font-semibold text-white/90 hover:text-white lg:inline-flex">
+              {copy.login.label}
             </a>
-            <a href={REGISTER_HREF} className="s-btn sm">
-              Open account
+            <a href={copy.register.href} className="s-btn sm">
+              {copy.register.label}
               <span className="s-btn-ic" aria-hidden>
                 <ArrowUpRight size={15} strokeWidth={2.2} />
               </span>
@@ -147,7 +149,7 @@ export default function Nav() {
           </div>
           <nav aria-label="Mobile" className="flex flex-1 flex-col gap-8 px-5 pb-10 pt-2">
             <ul className="flex flex-col">
-              {[{ label: 'Home', href: '/' }, ...NAV_PRIMARY, ...NAV_MORE].map((l) => {
+              {[{ label: copy.home, href: '/' }, ...copy.primary, ...copy.moreItems].map((l) => {
                 const on = l.href === '/' ? pathname === '/' : isActive(l.href);
                 return (
                   <li key={l.href} className="border-b border-white/10">
@@ -160,17 +162,18 @@ export default function Nav() {
               })}
             </ul>
             <div className="flex flex-col gap-3">
-              <a href={REGISTER_HREF} className="s-btn no-ic justify-center">
-                Open account
+              <a href={copy.register.href} className="s-btn no-ic justify-center">
+                {copy.register.label}
               </a>
-              <a href={DEMO_HREF} className="s-btn ghost no-ic justify-center">
-                Try the demo
+              <a href={copy.demo.href} className="s-btn ghost no-ic justify-center">
+                {copy.demo.label}
               </a>
-              <a href={LOGIN_HREF} className="py-2 text-center text-[15px] font-medium text-white/70">
-                Log in
+              <a href={copy.login.href} className="py-2 text-center text-[15px] font-medium text-white/70">
+                {copy.login.label}
               </a>
             </div>
             <LanguageSelect />
+            <ThemeSelect className="self-start" />
             <p className="text-[12px] leading-relaxed text-white/55">
               <span className="font-semibold text-white/75">Risk warning:</span> {RISK_WARNING}
             </p>

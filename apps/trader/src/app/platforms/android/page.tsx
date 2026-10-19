@@ -6,9 +6,8 @@ import { Rise } from '@/components/site/Rise';
 import { DownloadBtn, FactRows, FaqSection, MiniHead, Related, StepCards } from '@/components/site/platforms/bits';
 import { PhoneTour } from '@/components/site/platforms/ShotTours';
 import { ANDROID_APP, DEMO, LANGUAGES, OPTIONS } from '@/content/facts';
-import { FAQ_GROUPS } from '@/content/faq';
-import { HEROES, SHOTS } from '@/content/heroes';
 import { REGISTER_HREF, TRADER_URL } from '@/lib/crm';
+import { faqGroup, getPage } from '@/content/pages';
 
 export const metadata: Metadata = {
   title: 'Kalks for Android',
@@ -26,26 +25,21 @@ const PHONE_PINS: Pin[] = [
   { x: 20, y: 97.5, title: 'Five tabs', text: 'Watchlist, chart, trade, history and account, one tap each.' },
 ];
 
-const FAQ = FAQ_GROUPS.find((g) => g.id === 'platform')!.items;
+const FAQ = faqGroup('platform');
 
-export default function AndroidPage() {
+export default async function AndroidPage() {
+  const page = await getPage('platforms-android');
+  const { hero } = page;
   return (
     <>
       <PageHero
         compact
-        photo="platforms"
-        eyebrow="Android app"
-        title={
-          <>
-            The whole platform, <span className="s-mute">in your pocket.</span>
-          </>
-        }
-        lead={`Kalks Trader, the Client Area and Kalks FX Options in one app, in all ${LANGUAGES.length} languages, with biometric sign-in. Download the APK here; the Play Store listing follows.`}
+        hero={hero}
         actions={
           <>
-            <DownloadBtn href={ANDROID_APP.href}>Download for Android</DownloadBtn>
-            <Btn href={TRADER_URL} variant="ghost" icon={false}>
-              Open in the browser
+            <DownloadBtn href={hero.cta?.href ?? ANDROID_APP.href}>{hero.cta?.label ?? 'Download for Android'}</DownloadBtn>
+            <Btn href={hero.cta2?.href ?? TRADER_URL} variant="ghost" icon={false}>
+              {hero.cta2?.label ?? 'Open in the browser'}
             </Btn>
           </>
         }
@@ -65,7 +59,7 @@ export default function AndroidPage() {
       <section className="s-sec" aria-labelledby="app-title">
         <div className="s-wrap">
           <PhoneTour
-            shot={SHOTS.traderPhone}
+            shot="traderPhone"
             pins={PHONE_PINS}
             flip
             intro={
@@ -164,7 +158,7 @@ export default function AndroidPage() {
             The app, <span className="s-mute">answered.</span>
           </>
         }
-        items={FAQ}
+        items={page.faq(FAQ)}
       />
 
       <Cta
@@ -177,7 +171,7 @@ export default function AndroidPage() {
         primary={{ href: REGISTER_HREF, label: 'Open account' }}
         secondary={{ href: TRADER_URL, label: 'Open in the browser' }}
         facts={[`Version ${ANDROID_APP.version}`, `${ANDROID_APP.sizeMb} MB`, `${ANDROID_APP.minAndroid} or newer`]}
-        image={HEROES.platforms}
+        image={page.ctaImage}
       />
     </>
   );

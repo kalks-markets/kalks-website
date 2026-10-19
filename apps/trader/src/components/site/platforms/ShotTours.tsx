@@ -1,7 +1,8 @@
 'use client';
 
 import { useState, type ReactNode } from 'react';
-import { Shot, type Pin, type ShotDef } from '@/components/site/Shot';
+import { Shot, useShot, type Pin, type ShotDef } from '@/components/site/Shot';
+import { ThemedImage } from '@/components/site/ThemedImage';
 import type { ShotKey } from '@/content/heroes';
 import { Rise } from '@/components/site/Rise';
 import { cn } from '@/lib/cn';
@@ -105,15 +106,15 @@ export function PinTour({
 }
 
 /** The phone screenshot in its frame, with numbered pins, and the legend beside it (or above it on phones). */
-export function PhoneTour({ shot, pins, intro, outro, flip }: { shot: ShotDef; pins: Pin[]; intro?: ReactNode; outro?: ReactNode; flip?: boolean }) {
+export function PhoneTour({ shot: ref, pins, intro, outro, flip }: { shot: ShotKey | ShotDef; pins: Pin[]; intro?: ReactNode; outro?: ReactNode; flip?: boolean }) {
   const [on, setOn] = useState<number | null>(null);
+  const shot = useShot(ref);
   return (
     <div className="grid grid-cols-[minmax(0,1fr)] items-center gap-12 lg:grid-cols-[minmax(0,0.85fr)_minmax(0,1fr)] lg:gap-20">
       <Rise className={cn(flip && 'lg:order-2')}>
         <div className="s-phone mx-auto">
           <div className="relative">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src={shot.src} alt={shot.alt} width={shot.w} height={shot.h} loading="lazy" decoding="async" />
+            <ThemedImage image={shot} sizes="320px" loading="lazy" decoding="async" />
             {pins.map((p, i) => (
               <button
                 key={i}

@@ -26,6 +26,34 @@ Other scripts: `build`, `start`, `lint`.
 
 Copy the block in [.env.example](.env.example) to `apps/trader/.env.local`. This file is git-ignored, so a fresh clone has none. Without it, `next dev` falls back to the white-label defaults in `src/lib/brand.ts` and shows the name "Bullza".
 
+### Content service (copy and images from the Back Office)
+
+The website reads published copy and images from the platform's content service (`services/content`, surface
+`website`) and lays them over the bundled defaults in `apps/trader/src/content/*`. If the service can't be reached, or
+a slot is empty, the page shows exactly the bundled copy, and `npm run build` works without it.
+
+| Variable | Default | |
+|---|---|---|
+| `CONTENT_URL` | `http://127.0.0.1:8105` | Base URL of the content service (server side only; public read, no token) |
+| `CONTENT_TENANT` | `kalks` | Broker slug whose content is read |
+
+- **What can be edited**: `apps/trader/src/content/manifest.ts` lists every slot with its default: page heroes
+  (`hero.*`, `cta.image`), nav and footer (`global` page), screenshots (`global` / `shots.*`) and the FAQ (`faq` page).
+  `PAGE_PATHS` in `src/content/pages.ts` maps page keys to paths. `node scripts/seed-website-content.mjs` in the
+  platform repo imports the current copy and images.
+- **Caching**: published reads are cached for 60 seconds (ISR), so an edit shows within a minute.
+- **Preview**: the Back Office opens `/api/content-preview?token=…&path=/about`. That turns on draft mode, and the page
+  shows drafts with a "Preview" badge. `/api/content-preview?exit=1&path=/about` leaves it.
+- **Images** from the service come with their own URLs and `srcset` (plain `<img>`, no `next/image` domain setup).
+  An image can have a dark-theme file.
+
+### Theme
+
+Auto (follows the device, the default), Light or Dark, with a switch in the nav (wide screens), the phone menu and the
+footer. The choice is stored in `localStorage` (`kalks-theme`). `THEME_BOOT` in `src/lib/theme.ts` sets
+`html[data-theme]` before first paint. Light tokens are in `src/app/site.css`. Heroes, orange and cream panels and the
+price strip stay dark "islands" in the light theme. Tailwind's `white` is the theme's foreground (`--fg`).
+
 ## Design and content
 
 The site follows the **Kalks 2** style sheet (`docs/design/KALKS2.md` in the platform repo): tokens for light and dark

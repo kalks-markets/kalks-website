@@ -5,7 +5,7 @@ import { Rise } from '@/components/site/Rise';
 import { LiveList, type LiveRow } from '@/components/market/LiveList';
 import { RiskNote } from '@/components/ui/RiskNote';
 import { ACCOUNTS, DEMO, FUNDING } from '@/content/facts';
-import { HEROES } from '@/content/heroes';
+import { getPage, type HeroPage } from '@/content/pages';
 import { DEMO_HREF, REGISTER_HREF } from '@/lib/crm';
 import { getQuotes } from '@/lib/quotes';
 import { FactTable, FaqSchema, LinkCards, MARKET_PAGES, MiniHead } from './bits';
@@ -16,9 +16,7 @@ import { FactTable, FaqSchema, LinkCards, MARKET_PAGES, MiniHead } from './bits'
  */
 export async function ClassPage({
   self,
-  eyebrow,
-  title,
-  lead,
+  page: key,
   heroFacts,
   glass,
   statement,
@@ -30,13 +28,12 @@ export async function ClassPage({
   terms,
   hours,
   trader,
-  faq,
+  faq: faqDefaults,
 }: {
   /** this page's path (left out of "more markets") */
   self: string;
-  eyebrow: string;
-  title: ReactNode;
-  lead: string;
+  /** content key: the hero (eyebrow, headline, lead, buttons, photo) comes from content/pages.ts and the service */
+  page: HeroPage;
   heroFacts: string[];
   glass: { v: ReactNode; l: ReactNode }[];
   statement: ReactNode;
@@ -49,26 +46,17 @@ export async function ClassPage({
   hours: [ReactNode, ReactNode][];
   /** section 03: the class in Kalks Trader */
   trader: { eyebrow: string; title: ReactNode; lead: string; body: ReactNode };
-  faq: { q: string; a: string }[];
+  faq: { id?: string; q: string; a: string }[];
 }) {
-  const quotes = await getQuotes(rows.filter((r) => !r.soon).map((r) => r.s));
+  const [quotes, page] = await Promise.all([getQuotes(rows.filter((r) => !r.soon).map((r) => r.s)), getPage(key)]);
+  const { hero } = page;
+  const faq = page.faq(faqDefaults);
   const related = MARKET_PAGES.filter((l) => l.href !== self).slice(0, 4);
   return (
     <>
       <PageHero
-        photo="markets"
+        hero={hero}
         compact
-        eyebrow={eyebrow}
-        title={title}
-        lead={lead}
-        actions={
-          <>
-            <Btn href={REGISTER_HREF}>Open an account</Btn>
-            <Btn href="#prices" variant="ghost" icon={false}>
-              Live prices
-            </Btn>
-          </>
-        }
         facts={heroFacts}
         aside={glass.map((g, i) => (
           <HeroGlass key={i}>
@@ -85,7 +73,7 @@ export async function ClassPage({
             <div className="flex flex-col gap-6">
               <div className="flex items-center gap-4">
                 <span className="s-index">01</span>
-                <span className="s-eyebrow">{eyebrow}</span>
+                <span className="s-eyebrow">{hero.eyebrow}</span>
               </div>
               <div className="flex flex-wrap gap-2">
                 {chips.map((c) => (
@@ -181,7 +169,7 @@ export async function ClassPage({
         primary={{ href: REGISTER_HREF, label: 'Open an account' }}
         secondary={{ href: DEMO_HREF, label: 'Try the demo' }}
         facts={[`Fund with ${FUNDING.minDeposit}`, `${FUNDING.withdrawalFee} withdrawal fee`, 'Free demo']}
-        image={HEROES.markets}
+        image={page.ctaImage}
       />
     </>
   );

@@ -8,9 +8,9 @@ import { FaqSection, MiniHead, NumberedRows, Related } from '@/components/site/p
 import { PinTour } from '@/components/site/platforms/ShotTours';
 import { ACADEMY, DEMO, FUNDING, IB, LANGUAGES, PROP, SOCIAL } from '@/content/facts';
 import { FAQ_GROUPS } from '@/content/faq';
-import { HEROES } from '@/content/heroes';
 import { CLIENT_FEATURES } from '@/content/platforms';
 import { CRM_URL, LOGIN_HREF, REGISTER_HREF } from '@/lib/crm';
+import { getPage } from '@/content/pages';
 
 export const metadata: Metadata = {
   title: 'The Client Area',
@@ -47,27 +47,14 @@ const WALLET_PINS: Pin[] = [
 
 const FAQ = FAQ_GROUPS.find((g) => g.id === 'platform')!.items;
 
-export default function ClientAreaPage() {
+export default async function ClientAreaPage() {
+  const page = await getPage('platforms-client-area');
+  const { hero } = page;
   return (
     <>
       <PageHero
         compact
-        photo="platforms"
-        eyebrow="Client Area"
-        title={
-          <>
-            Everything <span className="s-mute">around the trade.</span>
-          </>
-        }
-        lead={`Accounts, money, copy trading, prop challenges, partner earnings and learning, side by side, in ${LANGUAGES.length} languages.`}
-        actions={
-          <>
-            <Btn href={REGISTER_HREF}>Open an account</Btn>
-            <Btn href={LOGIN_HREF} variant="ghost" icon={false}>
-              Log in
-            </Btn>
-          </>
-        }
+        hero={hero}
         facts={['One USDT wallet for every account', `${LANGUAGES.length} languages`, `${ACADEMY.lessons} Academy lessons`, 'Support chat from any page']}
       />
 
@@ -223,7 +210,7 @@ export default function ClientAreaPage() {
             The Client Area, <span className="s-mute">answered.</span>
           </>
         }
-        items={FAQ}
+        items={page.faq(FAQ)}
       />
 
       <Cta
@@ -236,7 +223,7 @@ export default function ClientAreaPage() {
         primary={{ href: REGISTER_HREF, label: 'Open an account' }}
         secondary={{ href: LOGIN_HREF, label: 'Log in' }}
         facts={[`${LANGUAGES.length} languages`, `Fund with ${FUNDING.minDeposit}`, `${FUNDING.withdrawalFee} withdrawal fee`]}
-        image={HEROES.platforms}
+        image={page.ctaImage}
       />
     </>
   );

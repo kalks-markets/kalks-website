@@ -7,11 +7,16 @@
    Classes are prefixed s-. The older components still in use read the legacy variables at the bottom.
    ═════════════════════════════════════════════════════════════════════════════ */
 
-:root,
-:root[data-theme='dark'] {
+:root {
   --f-disp: var(--font-inter-tight), var(--font-inter-tight-ext), var(--font-golos), ui-sans-serif, system-ui, sans-serif;
   --f-text: var(--font-inter-tight), var(--font-inter-tight-ext), var(--font-golos), ui-sans-serif, system-ui, sans-serif;
 
+  --gutter: 20px;
+}
+/* The dark theme, the default. The same tokens apply to the "dark islands" in the light theme (see below). */
+:root,
+:root[data-theme='dark'],
+:root[data-theme='light'] :is(.s-whero, .s-phero, .s-orange, .s-cream, .s-isl, .s-nav:not([data-scrolled='true'])) {
   --s-black: #050404;
   --s-ink: #0c0a09;
   --s-ink2: #141110;
@@ -79,8 +84,93 @@
   --glass-strong: rgba(14, 11, 10, 0.88);
   --bloom-a: rgba(242, 96, 12, 0.18);
   --bloom-b: rgba(255, 160, 64, 0.06);
-  --gutter: 20px;
+  /* the foreground as r g b: Tailwind's `white` and every translucent white below read it, so they turn to ink
+     in the light theme (and back to white on the dark islands) */
+  --fg: 255 255 255;
+  /* sticky table cells and the markets table card */
+  --s-stick: #100d0c;
+  --s-stick2: #121010;
+  --s-card-bg: linear-gradient(180deg, rgba(255, 255, 255, 0.045), rgba(255, 255, 255, 0.02));
   color-scheme: dark;
+}
+
+/* ─────────────────────────────────────────────────────────────── light theme
+   html[data-theme] is the resolved theme (Auto follows the device; THEME_BOOT in lib/theme.ts sets it before first
+   paint). Warm paper, near-black ink and the same Kalks orange; small orange text uses a deeper orange (≥ 4.5:1 on
+   the page). Heroes, orange and cream panels, the price strip and the nav over a hero stay "dark islands": they
+   keep the dark tokens below, so their white type on photos and orange keeps working. */
+:root[data-theme='light'] {
+  --s-black: #fbf8f4;
+  --s-ink: #f3ede5;
+  --s-ink2: #ebe3d8;
+  --s-ink3: #e0d6c9;
+  --s-line: rgba(26, 20, 16, 0.1);
+  --s-line2: rgba(26, 20, 16, 0.18);
+  --s-tx: #1a1410;
+  --s-tx2: rgba(26, 20, 16, 0.76);
+  --s-tx3: rgba(26, 20, 16, 0.62);
+  --s-orange2: #c2470a;
+  --s-cream: #f3e7d6;
+  --s-up: #1d64d8;
+  --s-down: #d4342a;
+
+  --page: #fbf8f4;
+  --bg: #fbf8f4;
+  --bg2: #f3ede5;
+  --s1: #ffffff;
+  --s2: #f7f2ec;
+  --s3: rgba(26, 20, 16, 0.05);
+  --s4: rgba(26, 20, 16, 0.09);
+  --line: rgba(26, 20, 16, 0.1);
+  --line2: rgba(26, 20, 16, 0.18);
+  --tx: #1a1410;
+  --tx2: rgba(26, 20, 16, 0.76);
+  --tx3: rgba(26, 20, 16, 0.62);
+  --red-tx: #b8420a;
+  --red-soft: rgba(242, 96, 12, 0.1);
+  --yel-tx: #9a4f05;
+  --yel-soft: rgba(255, 160, 64, 0.14);
+  --up: #1d64d8;
+  --up-tx: #1a56c4;
+  --up-face: #1d64d8;
+  --up-soft: rgba(29, 100, 216, 0.1);
+  --dn: #d4342a;
+  --dn-tx: #c02a20;
+  --dn-soft: rgba(212, 52, 42, 0.1);
+  --ok: #137a45;
+  --ok-soft: rgba(19, 122, 69, 0.1);
+  --ma: #c2470a;
+  --focus: #c2470a;
+  --focus-halo: rgba(242, 96, 12, 0.25);
+  --chart-bg: #ffffff;
+  --glass: rgba(255, 255, 255, 0.72);
+  --glass-line: rgba(26, 20, 16, 0.1);
+  --glass-strong: rgba(255, 255, 255, 0.92);
+  --bloom-a: rgba(242, 96, 12, 0.12);
+  --bloom-b: rgba(255, 160, 64, 0.08);
+  --grid: rgba(26, 20, 16, 0.06);
+  --s-stick: #f3ede5;
+  --s-stick2: #ffffff;
+  --s-card-bg: #ffffff;
+  --fg: 26 20 16;
+  color-scheme: light;
+}
+/* the price strip carries the older dark tokens itself (globals.css .theme-dark); it only needs the foreground */
+:root[data-theme='light'] .theme-dark {
+  --fg: 255 255 255;
+  --s-tx2: rgba(255, 255, 255, 0.74);
+  --s-tx3: rgba(255, 255, 255, 0.5);
+  --s-line: rgba(255, 255, 255, 0.09);
+  --s-orange2: #ff7a2e;
+}
+/* type that inherits the body colour follows the island's own foreground */
+:root[data-theme='light'] :is(.s-whero, .s-phero, .s-orange, .s-isl, .s-nav) {
+  color: rgb(var(--fg));
+}
+/* no transitions while the theme switches (ThemeToggle sets this for one frame) */
+.theme-switching,
+.theme-switching * {
+  transition: none !important;
 }
 @media (min-width: 640px) {
   :root {
@@ -206,13 +296,13 @@ body {
   line-height: 1.7;
 }
 .s-prose h2 {
-  color: #fff;
+  color: rgb(var(--fg));
   font: 500 26px/1.2 var(--f-disp);
   letter-spacing: -0.025em;
   margin: 48px 0 14px;
 }
 .s-prose h3 {
-  color: #fff;
+  color: rgb(var(--fg));
   font: 600 18px/1.3 var(--f-disp);
   margin: 30px 0 10px;
 }
@@ -239,7 +329,7 @@ body {
   text-decoration-color: rgba(255, 122, 46, 0.4);
 }
 .s-prose strong {
-  color: #fff;
+  color: rgb(var(--fg));
   font-weight: 600;
 }
 .s-prose table {
@@ -255,7 +345,7 @@ body {
   border-bottom: 1px solid var(--s-line);
 }
 .s-prose th {
-  color: #fff;
+  color: rgb(var(--fg));
   font-weight: 600;
 }
 
@@ -296,18 +386,19 @@ body {
   padding: 0 22px;
 }
 .s-btn.ghost {
-  background: rgba(255, 255, 255, 0.04);
-  border: 1px solid rgba(255, 255, 255, 0.28);
+  color: rgb(var(--fg));
+  background: rgb(var(--fg) / 0.04);
+  border: 1px solid rgb(var(--fg) / 0.28);
   box-shadow: none;
   backdrop-filter: blur(14px);
 }
 .s-btn.ghost:hover {
-  background: rgba(255, 255, 255, 0.1);
-  border-color: rgba(255, 255, 255, 0.5);
+  background: rgb(var(--fg) / 0.1);
+  border-color: rgb(var(--fg) / 0.5);
 }
 .s-btn.ghost .s-btn-ic {
-  background: rgba(255, 255, 255, 0.12);
-  color: #fff;
+  background: rgb(var(--fg) / 0.12);
+  color: rgb(var(--fg));
 }
 .s-btn.light {
   background: #fff;
@@ -342,8 +433,8 @@ body {
   gap: 6px;
   font-weight: 600;
   font-size: 14.5px;
-  color: #fff;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+  color: rgb(var(--fg));
+  border-bottom: 1px solid rgb(var(--fg) / 0.3);
   padding-bottom: 2px;
   transition: color 0.2s ease, border-color 0.2s ease;
 }
@@ -356,7 +447,7 @@ body {
 .s-card {
   position: relative;
   border-radius: var(--s-r);
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.045), rgba(255, 255, 255, 0.02));
+  background: linear-gradient(180deg, rgb(var(--fg) / 0.045), rgb(var(--fg) / 0.02));
   border: 1px solid var(--s-line);
 }
 .s-card.pad {
@@ -449,7 +540,7 @@ body {
   padding: 5px;
   border-radius: 999px;
   background: rgba(20, 14, 12, 0.32);
-  border: 1px solid rgba(255, 255, 255, 0.22);
+  border: 1px solid rgb(var(--fg) / 0.22);
   backdrop-filter: blur(20px) saturate(1.4);
   -webkit-backdrop-filter: blur(20px) saturate(1.4);
   transition: background-color 0.25s ease;
@@ -467,13 +558,13 @@ body {
   border-radius: 999px;
   font-size: 14px;
   font-weight: 500;
-  color: rgba(255, 255, 255, 0.86);
+  color: rgb(var(--fg) / 0.86);
   transition: background-color 0.2s ease, color 0.2s ease;
 }
 .s-pill a:hover,
 .s-pill button:hover {
-  background: rgba(255, 255, 255, 0.1);
-  color: #fff;
+  background: rgb(var(--fg) / 0.1);
+  color: rgb(var(--fg));
 }
 .s-pill a[aria-current='page'] {
   background: var(--s-cream);
@@ -503,7 +594,7 @@ body {
   height: auto;
 }
 .s-mega a:hover {
-  background: rgba(255, 255, 255, 0.06);
+  background: rgb(var(--fg) / 0.06);
 }
 /* the page you are on: a soft orange tint, never the cream pill of the top links */
 .s-pill .s-mega a[aria-current='page'] {
@@ -617,7 +708,7 @@ body {
     position: absolute;
     inset: 0;
     border-radius: 999px;
-    border: 1px solid rgba(255, 255, 255, 0.5);
+    border: 1px solid rgb(var(--fg) / 0.5);
     animation: s-pulse 2.8s ease-out infinite;
   }
 }
@@ -677,7 +768,7 @@ body {
   position: relative;
   border-radius: 20px;
   padding: 6px;
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.14), rgba(255, 255, 255, 0.04));
+  background: linear-gradient(180deg, rgb(var(--fg) / 0.14), rgb(var(--fg) / 0.04));
   box-shadow: 0 50px 120px -50px rgba(242, 96, 12, 0.55), 0 20px 50px -30px rgba(0, 0, 0, 0.9);
 }
 .s-shot img {
@@ -795,8 +886,8 @@ a.s-bento-card:hover {
   color: var(--s-cream-tx);
 }
 .s-bento-card.s-card .s-arrow {
-  background: rgba(255, 255, 255, 0.1);
-  color: #fff;
+  background: rgb(var(--fg) / 0.1);
+  color: rgb(var(--fg));
 }
 a.s-bento-card:hover .s-arrow {
   transform: rotate(45deg);
@@ -901,8 +992,8 @@ a.s-bento-card:hover .s-arrow {
   transition: background-color 0.25s, box-shadow 0.25s, color 0.25s;
 }
 .td-chip:hover {
-  color: #fff;
-  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.35);
+  color: rgb(var(--fg));
+  box-shadow: inset 0 0 0 1px rgb(var(--fg) / 0.35);
 }
 .td-chip[aria-pressed='true'] {
   color: var(--s-cream-tx);
@@ -920,7 +1011,7 @@ a.s-bento-card:hover .s-arrow {
   gap: 10px;
   padding: 5px 5px 5px 14px;
   border-radius: 999px;
-  background: rgba(255, 255, 255, 0.05);
+  background: rgb(var(--fg) / 0.05);
   box-shadow: inset 0 0 0 1px var(--s-line);
   font-size: 13px;
   color: var(--s-tx2);
@@ -928,7 +1019,7 @@ a.s-bento-card:hover .s-arrow {
 .td-saved b {
   min-width: 1ch;
   font-weight: 600;
-  color: #fff;
+  color: rgb(var(--fg));
   font-variant-numeric: tabular-nums;
 }
 .td-agenda {
@@ -956,7 +1047,7 @@ a.s-bento-card:hover .s-arrow {
   transition: background-color 0.25s;
 }
 .td-row-btn:hover {
-  background: rgba(255, 255, 255, 0.03);
+  background: rgb(var(--fg) / 0.03);
 }
 .td-row-time {
   display: flex;
@@ -1011,8 +1102,8 @@ a.s-bento-card:hover .s-arrow {
   transition: color 0.2s, background-color 0.2s;
 }
 .td-save:hover {
-  color: #fff;
-  background: rgba(255, 255, 255, 0.06);
+  color: rgb(var(--fg));
+  background: rgb(var(--fg) / 0.06);
 }
 .td-save[aria-pressed='true'] {
   color: var(--s-orange2);
@@ -1059,4 +1150,106 @@ a.s-bento-card:hover .s-arrow {
   .td-row-btn .td-tag {
     display: none;
   }
+}
+
+/* ─────────────────────────────────────────────────────────────── light theme: surfaces */
+:root[data-theme='light'] .s-card {
+  background: #fff;
+  box-shadow: 0 1px 2px rgba(26, 20, 16, 0.04), 0 24px 48px -36px rgba(26, 20, 16, 0.3);
+}
+:root[data-theme='light'] .s-cream {
+  box-shadow: inset 0 0 0 1px rgba(26, 20, 16, 0.06);
+}
+:root[data-theme='light'] .s-shot {
+  background: linear-gradient(180deg, rgba(26, 20, 16, 0.1), rgba(26, 20, 16, 0.03));
+  box-shadow: 0 50px 110px -60px rgba(242, 96, 12, 0.5), 0 24px 50px -36px rgba(26, 20, 16, 0.35);
+}
+:root[data-theme='light'] .s-shot.flat {
+  box-shadow: 0 26px 60px -40px rgba(26, 20, 16, 0.35);
+}
+:root[data-theme='light'] .s-phone {
+  box-shadow: 0 50px 110px -50px rgba(242, 96, 12, 0.5), inset 0 0 0 1px rgba(255, 255, 255, 0.12);
+}
+/* the nav: over the hero it is a dark island (white type); once the page scrolls under it, a paper bar */
+:root[data-theme='light'] .s-nav[data-scrolled='true'] {
+  padding-bottom: 8px;
+  background: rgba(251, 248, 244, 0.86);
+  border-bottom: 1px solid var(--s-line);
+  backdrop-filter: blur(18px) saturate(1.3);
+  -webkit-backdrop-filter: blur(18px) saturate(1.3);
+}
+:root[data-theme='light'] .s-nav[data-scrolled='true'] .s-pill {
+  background: rgba(255, 255, 255, 0.78);
+}
+:root[data-theme='light'] .s-mega {
+  background: rgba(255, 255, 255, 0.98);
+  box-shadow: 0 30px 80px -34px rgba(26, 20, 16, 0.4);
+}
+:root[data-theme='light'] .s-pill .s-mega a[aria-current='page'] {
+  background: rgba(242, 96, 12, 0.08);
+}
+
+/* ─────────────────────────────────────────────────────────────── themed images (components/site/ThemedImage.tsx) */
+/* an image with a dark file renders both; the resolved theme hides one (no attribute = dark, the CSS default) */
+:root[data-theme='light'] .th-d,
+:root:not([data-theme='light']) .th-l {
+  display: none !important;
+}
+
+/* ─────────────────────────────────────────────────────────────── theme switch and content preview badge */
+.s-theme {
+  display: inline-flex;
+  gap: 2px;
+  padding: 3px;
+  border-radius: 999px;
+  box-shadow: inset 0 0 0 1px var(--s-line2);
+}
+.s-theme button {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 34px;
+  padding: 0 12px;
+  border-radius: 999px;
+  font-size: 13.5px;
+  font-weight: 500;
+  color: var(--s-tx2);
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+.s-theme button[aria-pressed='true'] {
+  background: var(--s-cream);
+  color: var(--s-cream-tx);
+}
+.s-preview {
+  position: fixed;
+  z-index: 90;
+  left: 16px;
+  bottom: calc(16px + env(safe-area-inset-bottom, 0px));
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 6px 6px 6px 14px;
+  border-radius: 999px;
+  background: #1a1410;
+  color: #fff;
+  font-size: 13px;
+  font-weight: 500;
+  box-shadow: 0 16px 40px -16px rgba(0, 0, 0, 0.6), inset 0 0 0 1px rgba(255, 255, 255, 0.12);
+}
+.s-preview b {
+  color: #ffa040;
+  font-size: 11.5px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+.s-preview a {
+  display: inline-flex;
+  align-items: center;
+  height: 30px;
+  padding: 0 12px;
+  border-radius: 999px;
+  background: var(--s-orange);
+  color: #fff;
+  font-weight: 600;
 }

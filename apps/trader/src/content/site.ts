@@ -1,3 +1,7 @@
+import { OPTIONS_RISK, RISK_WARNING } from '@/content/facts';
+import type { FooterCopy, NavCopy } from '@/lib/content';
+import { DEMO_HREF, LOGIN_HREF, REGISTER_HREF } from '@/lib/crm';
+
 export type NavLink = { label: string; href: string; note?: string; tag?: string };
 
 /** Primary navigation (desktop bar). */
@@ -80,4 +84,32 @@ export const HERO = {
   headline: ['Options on forex,', 'made simple.'] as const,
   subline: 'Calls and puts on forex, gold, silver and oil. Buy an option and the premium is the most you can lose.',
   facts: '$10 to start · Fund with USDT · 22 languages',
+};
+
+/**
+ * Navigation and footer copy as the content service sees it (page "global"; mergeNav / mergeFooter in
+ * lib/content.ts lay published slots over these defaults).
+ */
+export const NAV_COPY: NavCopy = {
+  home: 'Home',
+  more: 'More',
+  primary: NAV_PRIMARY,
+  moreItems: NAV_MORE,
+  login: { label: 'Log in', href: LOGIN_HREF },
+  register: { label: 'Open account', href: REGISTER_HREF },
+  demo: { label: 'Try the demo', href: DEMO_HREF },
+  android: 'Kalks for Android',
+};
+
+export const FOOTER_COPY: FooterCopy = {
+  tagline: 'Forex options, CFDs, copy trading and prop challenges, on technology we build ourselves. One USDT wallet funds every account.',
+  cta: { label: 'Open account', href: REGISTER_HREF },
+  columns: FOOTER_COLUMNS,
+  legal: LEGAL_LINKS,
+  riskTitle: 'Risk warning',
+  risk: `${RISK_WARNING} ${OPTIONS_RISK} Past performance is not a reliable indicator of future results. Nothing on this website is investment advice.`,
+  restrictedTitle: 'Restricted regions',
+  restricted:
+    'Kalks does not provide services to citizens or residents of the USA, Cuba, Iraq, Myanmar, North Korea and Sudan. Our services are not intended for distribution to, or use by, any person in any country or jurisdiction where such distribution or use would be contrary to local law or regulation.',
+  restrictedLink: { label: 'Full list', href: '/restricted-countries' },
 };

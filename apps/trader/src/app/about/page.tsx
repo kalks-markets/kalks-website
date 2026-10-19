@@ -4,7 +4,7 @@ import { REGISTER_HREF } from '@/lib/crm';
 import { HeroGlass, PageHero } from '@/components/site/Heroes';
 import { BentoCard, Btn, Cta, Head, StatStrip } from '@/components/site/ui';
 import { Rise } from '@/components/site/Rise';
-import { HEROES } from '@/content/heroes';
+import { getPage } from '@/content/pages';
 
 export const metadata: Metadata = {
   title: 'About Kalks',
@@ -28,26 +28,13 @@ const PRINCIPLES = [
   { t: 'Made for every market', d: 'Kalks Trader and the Client Area speak 22 languages, right to left included, and run in any modern browser and on Android.' },
 ];
 
-export default function AboutPage() {
+export default async function AboutPage() {
+  const page = await getPage('about');
+  const { hero } = page;
   return (
     <>
       <PageHero
-        photo="about"
-        eyebrow="About Kalks"
-        title={
-          <>
-            Built in-house, <span className="text-white/60">for traders everywhere.</span>
-          </>
-        }
-        lead="Forex options, CFDs, prop challenges, copy trading and a partner programme in one place, on technology we write ourselves, in 22 languages."
-        actions={
-          <>
-            <Btn href={REGISTER_HREF}>Open an account</Btn>
-            <Btn href="/contact" variant="ghost" icon={false}>
-              Talk to us
-            </Btn>
-          </>
-        }
+        hero={hero}
         aside={
           <HeroGlass>
             <div className="s-num text-[56px]">{INSTRUMENTS.liveMarkets}</div>
@@ -119,7 +106,7 @@ export default function AboutPage() {
         sub="Open an account in a couple of minutes, or start on a free demo with live prices."
         primary={{ href: REGISTER_HREF, label: 'Open an account' }}
         secondary={{ href: '/contact', label: 'Talk to us' }}
-        image={HEROES.markets}
+        image={page.ctaImage}
       />
     </>
   );

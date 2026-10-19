@@ -7,9 +7,9 @@ import { DownloadBtn, FaqSection, FeatureGrid } from '@/components/site/platform
 import { PSHOTS } from '@/components/site/platforms/shots';
 import { ACADEMY, ALGO, ANDROID_APP, DEMO, LANGUAGES, TRADER } from '@/content/facts';
 import { FAQ_GROUPS } from '@/content/faq';
-import { HEROES } from '@/content/heroes';
 import { CLIENT_FEATURES, TRADER_FEATURES } from '@/content/platforms';
 import { CRM_URL, DEMO_HREF, REGISTER_HREF, TRADER_URL } from '@/lib/crm';
+import { getPage } from '@/content/pages';
 
 export const metadata: Metadata = {
   title: 'Platforms: Kalks Trader, the Client Area and the Android app',
@@ -20,26 +20,13 @@ export const metadata: Metadata = {
 
 const FAQ = FAQ_GROUPS.find((g) => g.id === 'platform')!.items;
 
-export default function PlatformsPage() {
+export default async function PlatformsPage() {
+  const page = await getPage('platforms');
+  const { hero } = page;
   return (
     <>
       <PageHero
-        photo="platforms"
-        eyebrow="Platforms"
-        title={
-          <>
-            Your screen <span className="s-mute">for every market.</span>
-          </>
-        }
-        lead="Kalks Trader in your browser and on Android, with the Client Area around it for accounts, money, copy trading, prop and learning."
-        actions={
-          <>
-            <Btn href={TRADER_URL}>Open Kalks Trader</Btn>
-            <Btn href="#mobile" variant="ghost" icon={false}>
-              Get the app
-            </Btn>
-          </>
-        }
+        hero={hero}
         facts={[`${TRADER.indicators} indicators`, `${TRADER.timeframes.length} timeframes`, `${LANGUAGES.length} languages`, `Android ${ANDROID_APP.version}`]}
         aside={
           <HeroGlass>
@@ -261,7 +248,7 @@ export default function PlatformsPage() {
             Platforms, <span className="s-mute">answered.</span>
           </>
         }
-        items={FAQ}
+        items={page.faq(FAQ)}
       />
 
       <Cta
@@ -274,7 +261,7 @@ export default function PlatformsPage() {
         primary={{ href: TRADER_URL, label: 'Open Kalks Trader' }}
         secondary={{ href: REGISTER_HREF, label: 'Open account' }}
         facts={[`${TRADER.indicators} indicators`, `${LANGUAGES.length} languages`, `Android ${ANDROID_APP.version}`]}
-        image={HEROES.platforms}
+        image={page.ctaImage}
       />
     </>
   );

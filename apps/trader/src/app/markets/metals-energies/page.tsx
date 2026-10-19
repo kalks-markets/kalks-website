@@ -35,13 +35,7 @@ export default function MetalsPage() {
   return (
     <ClassPage
       self="/markets/metals-energies"
-      eyebrow="Metals & energies"
-      title={
-        <>
-          Gold, silver, oil. <span className="s-mute">Long or short.</span>
-        </>
-      }
-      lead={`${INSTRUMENTS.byClass.metals.live} metals and ${INSTRUMENTS.byClass.energies.live} energies on real money, from gold and silver to copper, crude and natural gas. Options on gold, silver and both oils.`}
+      page="markets-metals-energies"
       heroFacts={[`${INSTRUMENTS.byClass.metals.live} metals live`, `${INSTRUMENTS.byClass.energies.live} energies live`, 'Options on gold, silver and oil']}
       glass={[
         { v: `1:${LEVERAGE.coreCaps.metals}`, l: 'Highest leverage on metals' },

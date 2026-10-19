@@ -11,9 +11,9 @@ import { MarketsTable } from '@/components/market/MarketsTable';
 import { RiskNote } from '@/components/ui/RiskNote';
 import { ACCOUNTS, DEMO, FUNDING, INSTRUMENTS, LEVERAGE } from '@/content/facts';
 import { FAQ_GROUPS } from '@/content/faq';
-import { HEROES } from '@/content/heroes';
 import { DEMO_HREF, REGISTER_HREF } from '@/lib/crm';
 import { getQuotes } from '@/lib/quotes';
+import { getPage } from '@/content/pages';
 
 export const revalidate = 60;
 
@@ -138,26 +138,13 @@ const CONDITIONS = [
 const FAQ = FAQ_GROUPS.find((g) => g.id === 'trading')!.items;
 
 export default async function MarketsPage() {
+  const page = await getPage('markets');
+  const { hero } = page;
   const quotes = await getQuotes(BOARD.map((r) => r.s));
   return (
     <>
       <PageHero
-        photo="markets"
-        eyebrow="Markets"
-        title={
-          <>
-            {INSTRUMENTS.liveMarkets} markets, <span className="s-mute">live on real money.</span>
-          </>
-        }
-        lead={`Forex, metals, energies, indices and crypto, long or short, from ${ACCOUNTS[0].minDeposit}. The full catalogue of ${INSTRUMENTS.total.toLocaleString('en-US')} markets, stocks included, is open on a free demo.`}
-        actions={
-          <>
-            <Btn href={REGISTER_HREF}>Open an account</Btn>
-            <Btn href="#list" variant="ghost" icon={false}>
-              Search the markets
-            </Btn>
-          </>
-        }
+        hero={hero}
         facts={[`${INSTRUMENTS.total.toLocaleString('en-US')} on demo`, `Leverage up to 1:${LEVERAGE.accountMax}`, 'Crypto 24/7']}
         aside={<LiveBoard rows={BOARD} initial={quotes} />}
       />
@@ -242,7 +229,7 @@ export default async function MarketsPage() {
             }
             lead="Filter by class or search by symbol or name. Live markets stream their prices; demo-only stocks show their latest snapshot."
           />
-          <Rise className="[&_.card]:!rounded-[var(--s-r)] [&_.card]:!bg-[linear-gradient(180deg,rgba(255,255,255,0.045),rgba(255,255,255,0.02))] [&_.overflow-x-auto]:max-h-[660px] [&_.overflow-x-auto]:overflow-y-auto [&_thead_th]:sticky [&_thead_th]:top-0 [&_thead_th]:z-[1] [&_thead_th]:bg-[#121010]">
+          <Rise className="[&_.card]:!rounded-[var(--s-r)] [&_.card]:![background:var(--s-card-bg)] [&_.overflow-x-auto]:max-h-[660px] [&_.overflow-x-auto]:overflow-y-auto [&_thead_th]:sticky [&_thead_th]:top-0 [&_thead_th]:z-[1] [&_thead_th]:bg-[var(--s-stick2)]">
             <Suspense fallback={null}>
               <MarketsTable />
             </Suspense>
@@ -305,8 +292,8 @@ export default async function MarketsPage() {
             <TextLink href="/faq">Every question, by topic</TextLink>
           </Rise>
           <Rise delay={100}>
-            <Faq items={FAQ} />
-            <FaqSchema items={FAQ} />
+            <Faq items={page.faq(FAQ)} />
+            <FaqSchema items={page.faq(FAQ)} />
           </Rise>
         </div>
       </section>
@@ -321,7 +308,7 @@ export default async function MarketsPage() {
         primary={{ href: REGISTER_HREF, label: 'Open an account' }}
         secondary={{ href: DEMO_HREF, label: 'Try the demo' }}
         facts={[`${INSTRUMENTS.liveMarkets} live markets`, `Fund with ${FUNDING.minDeposit}`, `${FUNDING.withdrawalFee} withdrawal fee`]}
-        image={HEROES.markets}
+        image={page.ctaImage}
       />
     </>
   );

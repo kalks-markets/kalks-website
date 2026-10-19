@@ -30,13 +30,7 @@ export default function IndicesPage() {
   return (
     <ClassPage
       self="/markets/indices"
-      eyebrow="Indices"
-      title={
-        <>
-          Whole markets, <span className="s-mute">in one trade.</span>
-        </>
-      }
-      lead={`${INSTRUMENTS.byClass.indices.live} stock indices from the US, Europe and Asia on real money, with leverage up to 1:${LEVERAGE.coreCaps.indices}. Take a view on an economy rather than a single company.`}
+      page="markets-indices"
       heroFacts={[`${INSTRUMENTS.byClass.indices.live} indices live`, `Leverage up to 1:${LEVERAGE.coreCaps.indices}`, 'With the forex week']}
       glass={[
         { v: INSTRUMENTS.byClass.indices.live, l: 'Indices live, US, Europe and Asia' },

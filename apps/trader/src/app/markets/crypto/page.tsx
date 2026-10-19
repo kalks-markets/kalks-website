@@ -30,13 +30,7 @@ export default function CryptoPage() {
   return (
     <ClassPage
       self="/markets/crypto"
-      eyebrow="Crypto"
-      title={
-        <>
-          Crypto that <span className="s-mute">never closes.</span>
-        </>
-      }
-      lead={`${INSTRUMENTS.byClass.crypto.live} coins as CFDs on real money, from Bitcoin and Ether to newer names, long or short, every hour of every day. No wallet or exchange account needed.`}
+      page="markets-crypto"
       heroFacts={[`${INSTRUMENTS.byClass.crypto.live} coins live`, '24/7, weekends included', `Leverage up to 1:${LEVERAGE.coreCaps.crypto}`]}
       glass={[
         { v: '24/7', l: 'Weekends included' },

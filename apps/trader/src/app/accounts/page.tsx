@@ -7,9 +7,9 @@ import { Rise } from '@/components/site/Rise';
 import { FaqSchema, MiniHead, StepCards } from '@/components/site/markets/bits';
 import { RiskNote } from '@/components/ui/RiskNote';
 import { ACCOUNTS, DEMO, FUNDING, LEVERAGE, OPTIONS_ACCOUNTS, type AccountType } from '@/content/facts';
-import { HEROES } from '@/content/heroes';
 import { DEMO_HREF, REGISTER_HREF } from '@/lib/crm';
 import { cn } from '@/lib/cn';
+import { getPage } from '@/content/pages';
 
 export const metadata: Metadata = {
   title: 'Accounts: five CFD accounts, an Options account and free demo',
@@ -129,31 +129,18 @@ function AccountCard({ a, delay }: { a: AccountType; delay: number }) {
 const MONO = new Set(['Minimum deposit', 'Leverage', 'Spread', 'Commission', 'Margin call / stop out']);
 
 const th = 'px-4 py-3.5 text-start text-[11.5px] font-semibold uppercase tracking-[0.08em] text-[var(--s-tx3)]';
-const rowHead = 'sticky left-0 z-[1] bg-[#100d0c] px-4 py-3.5 text-start text-[13.5px] font-medium text-[var(--s-tx3)]';
+const rowHead = 'sticky left-0 z-[1] bg-[var(--s-stick)] px-4 py-3.5 text-start text-[13.5px] font-medium text-[var(--s-tx3)]';
 const cell = 'px-4 py-3.5 align-top text-[14px] leading-relaxed text-white';
 
-export default function AccountsPage() {
+export default async function AccountsPage() {
+  const page = await getPage('accounts');
+  const { hero } = page;
   const [optStd, optPro] = OPTIONS_ACCOUNTS;
   const vip = ACCOUNTS.find((a) => a.id === 'vip')!;
   return (
     <>
       <PageHero
-        photo="accounts"
-        eyebrow="Accounts"
-        title={
-          <>
-            Two kinds of account. <span className="s-mute">One wallet.</span>
-          </>
-        }
-        lead={`Five CFD accounts, priced all-in or raw plus commission, and an Options account of its own. Fund every one of them from the same USDT wallet, from ${ACCOUNTS[0].minDeposit}.`}
-        actions={
-          <>
-            <Btn href={REGISTER_HREF}>Open an account</Btn>
-            <Btn href="#compare" variant="ghost" icon={false}>
-              Compare accounts
-            </Btn>
-          </>
-        }
+        hero={hero}
         facts={[`${ACCOUNTS[0].minDeposit} to open Standard or Cent`, `Leverage up to 1:${LEVERAGE.accountMax}`, `${DEMO.defaultBalance} free demo funds`]}
         aside={
           <>
@@ -321,7 +308,7 @@ export default function AccountsPage() {
                 <caption className="sr-only">CFD accounts compared</caption>
                 <thead>
                   <tr className="border-b border-[var(--s-line2)]">
-                    <th scope="col" className={cn(th, 'sticky left-0 z-[1] w-[200px] bg-[#100d0c]')}>
+                    <th scope="col" className={cn(th, 'sticky left-0 z-[1] w-[200px] bg-[var(--s-stick)]')}>
                       CFD accounts
                     </th>
                     {ACCOUNTS.map((a) => (
@@ -356,7 +343,7 @@ export default function AccountsPage() {
                 <caption className="sr-only">Options accounts compared</caption>
                 <thead>
                   <tr className="border-b border-[var(--s-line2)]">
-                    <th scope="col" className={cn(th, 'sticky left-0 z-[1] w-[200px] bg-[#100d0c]')}>
+                    <th scope="col" className={cn(th, 'sticky left-0 z-[1] w-[200px] bg-[var(--s-stick)]')}>
                       Options accounts
                     </th>
                     <th scope="col" className={cn(th, '!text-[15px] !normal-case !tracking-[-0.01em] !text-white')}>
@@ -495,7 +482,7 @@ export default function AccountsPage() {
         primary={{ href: REGISTER_HREF, label: 'Open an account' }}
         secondary={{ href: DEMO_HREF, label: 'Try the demo' }}
         facts={[`${ACCOUNTS.length} CFD accounts`, `${OPTIONS_ACCOUNTS[0].name}`, `${FUNDING.withdrawalFee} withdrawal fee`]}
-        image={HEROES.accounts}
+        image={page.ctaImage}
       />
     </>
   );

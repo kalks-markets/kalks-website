@@ -1,10 +1,10 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
-import { FAQ_GROUPS as GROUPS } from '@/content/faq';
 import { BRAND_SUPPORT_EMAIL } from '@/lib/brand';
 import { PageHero } from '@/components/site/Heroes';
 import { Faq } from '@/components/site/ui';
 import { RiskNote } from '@/components/ui/RiskNote';
+import { getPage } from '@/content/pages';
 
 export const metadata: Metadata = {
   title: 'FAQ',
@@ -13,26 +13,19 @@ export const metadata: Metadata = {
   alternates: { canonical: '/faq' },
 };
 
-const LD = {
-  '@context': 'https://schema.org',
-  '@type': 'FAQPage',
-  mainEntity: GROUPS.flatMap((g) => g.items).map((i) => ({ '@type': 'Question', name: i.q, acceptedAnswer: { '@type': 'Answer', text: i.a } })),
-};
-
-export default function FaqPage() {
+export default async function FaqPage() {
+  const page = await getPage('faq');
+  const { hero } = page;
+  // every group and question, with the wording edited in the content service
+  const GROUPS = page.faqGroups;
+  const LD = {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: GROUPS.flatMap((g) => g.items).map((i) => ({ '@type': 'Question', name: i.q, acceptedAnswer: { '@type': 'Answer', text: i.a } })),
+  };
   return (
     <>
-      <PageHero
-        photo={null}
-        compact
-        eyebrow="FAQ"
-        title={
-          <>
-            Questions, <span className="text-white/55">answered.</span>
-          </>
-        }
-        lead="Accounts, funding, trading conditions, options, prop, copy trading, partners and the platform."
-      />
+      <PageHero hero={hero} compact />
       <section className="s-sec !pt-8" aria-label="Frequently asked questions">
         <div className="s-wrap grid grid-cols-1 gap-10 lg:grid-cols-[240px_minmax(0,1fr)] lg:gap-16">
           <nav aria-label="FAQ topics" className="min-w-0 lg:sticky lg:top-28 lg:self-start">

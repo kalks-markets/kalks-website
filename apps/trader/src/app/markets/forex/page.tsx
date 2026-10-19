@@ -33,13 +33,7 @@ export default function ForexPage() {
   return (
     <ClassPage
       self="/markets/forex"
-      eyebrow="Forex"
-      title={
-        <>
-          {INSTRUMENTS.byClass.forex.live} currency pairs, <span className="s-mute">priced to the pip.</span>
-        </>
-      }
-      lead={`Majors, minors and exotics on real money, long or short, with leverage up to 1:${LEVERAGE.coreCaps.forex} on Standard and Cent. Calls and puts on ${OPTIONS.fxPairsLive} of the majors as well.`}
+      page="markets-forex"
       heroFacts={[`${INSTRUMENTS.byClass.forex.live} pairs live`, `Leverage up to 1:${LEVERAGE.coreCaps.forex}`, 'Sunday to Friday']}
       glass={[
         { v: '0.3 pip', l: 'Over raw on Pro, no commission' },

@@ -2,23 +2,34 @@
 
 import { useState, type ReactNode } from 'react';
 import { SHOTS, type ShotKey } from '@/content/heroes';
+import type { SiteImage } from '@/lib/content';
 import { cn } from '@/lib/cn';
 import { Rise } from './Rise';
+import { useShotOverrides } from './ContentContext';
+import { ThemedImage } from './ThemedImage';
 
 export type Pin = { x: number; y: number; title: string; text: string };
-/** a screenshot: a key of SHOTS, or a page's own image ({ src, w, h, alt }) */
-export type ShotDef = { src: string; w: number; h: number; alt: string };
-type ShotRef = ShotKey | ShotDef;
-const resolve = (s: ShotRef): ShotDef => (typeof s === 'string' ? SHOTS[s] : s);
+/**
+ * a screenshot: a key of SHOTS, or a page's own image ({ src, w, h, alt }). `key` (SHOTS / PSHOTS keys) lets the
+ * content service replace it (shots.<key>); `dark` is an optional dark-theme file.
+ */
+export type ShotDef = SiteImage & { key?: string };
+export type ShotRef = ShotKey | ShotDef;
+
+/** the screenshot, or its replacement from the content service */
+export function useShot(s: ShotRef): ShotDef {
+  const overrides = useShotOverrides();
+  const def: ShotDef = typeof s === 'string' ? { ...SHOTS[s], key: s } : s;
+  return (def.key && overrides[def.key]) || def;
+}
 
 /** A real screenshot in a thin frame with an orange glow. `pins` (x/y in % of the image) number the parts. */
 export function Shot({ shot, pins, active, onPin, className, flat, priority }: { shot: ShotRef; pins?: Pin[]; active?: number | null; onPin?: (i: number | null) => void; className?: string; flat?: boolean; priority?: boolean }) {
-  const s = resolve(shot);
+  const s = useShot(shot);
   return (
     <div className={cn('s-shot', flat && 'flat', className)}>
       <div className="relative">
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src={s.src} alt={s.alt} width={s.w} height={s.h} loading={priority ? 'eager' : 'lazy'} decoding="async" />
+        <ThemedImage image={s} sizes="(min-width: 1024px) 60vw, 100vw" loading={priority ? 'eager' : 'lazy'} decoding="async" />
         {pins?.map((p, i) => (
           <button
             key={i}
@@ -114,11 +125,10 @@ export function FeatureSplit({ index, eyebrow, title, text, points, action, medi
 
 /** A phone frame around the mobile screenshot. */
 export function Phone({ shot = 'traderPhone', className }: { shot?: ShotRef; className?: string }) {
-  const s = resolve(shot);
+  const s = useShot(shot);
   return (
     <div className={cn('s-phone mx-auto', className)}>
-      {/* eslint-disable-next-line @next/next/no-img-element */}
-      <img src={s.src} alt={s.alt} width={s.w} height={s.h} loading="lazy" decoding="async" />
+      <ThemedImage image={s} sizes="320px" loading="lazy" decoding="async" />
     </div>
   );
 }

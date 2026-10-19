@@ -8,9 +8,9 @@ import { PinTour } from '@/components/site/platforms/ShotTours';
 import { PSHOTS } from '@/components/site/platforms/shots';
 import { IB, IB_LEVELS } from '@/content/facts';
 import { FAQ_GROUPS } from '@/content/faq';
-import { HEROES } from '@/content/heroes';
 import { REGISTER_HREF } from '@/lib/crm';
 import { cn } from '@/lib/cn';
+import { getPage } from '@/content/pages';
 
 export const metadata: Metadata = {
   title: 'Partners: get paid for the lots your clients trade',
@@ -45,26 +45,13 @@ const FAQ = [
   { q: 'How do levels work?', a: `You start at ${IB_LEVELS[0].name}. Levels rise with your active clients and the lots they trade each month, and every level raises your per-lot rates.` },
 ];
 
-export default function PartnersPage() {
+export default async function PartnersPage() {
+  const page = await getPage('partners');
+  const { hero } = page;
   return (
     <>
       <PageHero
-        photo="partners"
-        eyebrow="Partners"
-        title={
-          <>
-            Get paid for the lots <span className="s-mute">your clients trade.</span>
-          </>
-        }
-        lead={`Every Kalks client is a partner from day one. Share your link, earn per lot on ${IB.tiers} tiers of referrals, and get paid every Monday in USDT.`}
-        actions={
-          <>
-            <Btn href={REGISTER_HREF}>Become a partner</Btn>
-            <Btn href="#levels" variant="ghost" icon={false}>
-              See the rates
-            </Btn>
-          </>
-        }
+        hero={hero}
         facts={[`${IB.tiers} tiers deep`, 'Paid every Monday', `From ${IB.minPayout}`]}
         aside={
           <HeroGlass>
@@ -245,7 +232,7 @@ export default function PartnersPage() {
             Partners, <span className="s-mute">answered.</span>
           </>
         }
-        items={FAQ}
+        items={page.faq(FAQ)}
       />
 
       <Cta
@@ -258,7 +245,7 @@ export default function PartnersPage() {
         primary={{ href: REGISTER_HREF, label: 'Become a partner' }}
         secondary={{ href: '#levels', label: 'See the rates' }}
         facts={[`Up to $${TOP.fxMajor} per FX major lot`, `${IB.tiers} tiers deep`, 'Weekly in USDT']}
-        image={HEROES.partners}
+        image={page.ctaImage}
       />
     </>
   );

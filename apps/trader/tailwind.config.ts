@@ -20,7 +20,8 @@ const config: Config = {
     colors: {
       transparent: 'transparent',
       current: 'currentColor',
-      white: '#ffffff',
+      /* the foreground (site.css --fg): white in the dark theme and on the dark islands, ink in the light theme */
+      white: 'rgb(var(--fg) / <alpha-value>)',
       black: '#000000',
       page: v('page'),
       bg: v('bg'),
