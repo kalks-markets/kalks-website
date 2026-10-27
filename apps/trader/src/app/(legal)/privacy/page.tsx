@@ -4,7 +4,7 @@ import { Section, PageHero, CtaBanner } from '../_legal/components';
 import {
   LegalDoc, LegalSection, LegalSubheading, LegalP, LegalList, LegalCallout, legalAnchor,
 } from '../_legal/LegalDoc';
-import { BRAND_NAME, BRAND_SUPPORT_EMAIL } from '@/lib/brand';
+import { BRAND_NAME, BRAND_SUPPORT_EMAIL, COMPANY } from '@/lib/brand';
 
 export const metadata: Metadata = {
   title: 'Privacy policy',
@@ -38,6 +38,7 @@ type PolicySection = {
 const INTRO: PolicySection = {
   h: `Privacy Policy of ${BRAND_NAME}`,
   lead: [
+    `This Privacy Policy is issued by ${COMPANY.name}, an ${COMPANY.type} incorporated in ${COMPANY.jurisdiction} under the ${COMPANY.act} (Company No. ${COMPANY.number}), with its registered office at ${COMPANY.registeredOffice}.`,
     `At ${BRAND_NAME} ("${BRAND_NAME}", "Company", "we", "our", or "us"), protecting your privacy and personal information is one of our highest priorities. We are committed to collecting, processing, storing, and protecting your personal data responsibly and in accordance with applicable data protection laws and industry best practices.`,
     `By accessing our website, opening an account, or using any ${BRAND_NAME} products and services, you consent to the collection and processing of your personal information as described in this Privacy Policy.`,
   ],
@@ -231,6 +232,13 @@ export default function PrivacyPage() {
               For questions, concerns, requests, or complaints regarding this Privacy Policy, please contact:
             </LegalP>
             <LegalCallout>
+              <span style={{ color: 'var(--mk-text)', fontWeight: 700 }}>{COMPANY.name}</span>
+              <br />
+              {COMPANY.type} · Company No. {COMPANY.number} · {COMPANY.jurisdiction}
+              <br />
+              Registered office: {COMPANY.registeredOffice}
+              <br />
+              <br />
               <span style={{ color: 'var(--mk-text)', fontWeight: 700 }}>{BRAND_NAME} Support Team</span>
               <br />
               Email:{' '}

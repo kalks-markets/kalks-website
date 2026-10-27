@@ -19,3 +19,17 @@ export const SITE_URL = (process.env.NEXT_PUBLIC_SITE_URL || `https://${BRAND_DO
 export const BRAND_SUPPORT_EMAIL = process.env.NEXT_PUBLIC_BRAND_SUPPORT_EMAIL || `support@${BRAND_DOMAIN}`;
 
 export const BRAND_COPYRIGHT = `© ${new Date().getFullYear()} ${BRAND_NAME}. All rights reserved.`;
+
+/**
+ * The legal entity behind the site (Certificate of Incorporation, Saint Lucia, 20 October 2026). Company facts only:
+ * no individual's name is published.
+ */
+export const COMPANY = {
+  name: 'Kalks Ltd.',
+  type: 'International Business Company',
+  number: '2026-00796',
+  jurisdiction: 'Saint Lucia',
+  act: 'International Business Companies Act, Cap 12.14 of the Revised Laws of Saint Lucia',
+  incorporated: '20 October 2026',
+  registeredOffice: 'c/o ACE Corporate Services Inc., Ground Floor, Rodney Court Building, Rodney Bay, Gros Islet, Saint Lucia',
+} as const;
