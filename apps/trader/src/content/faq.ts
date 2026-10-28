@@ -99,7 +99,7 @@ export const FAQ_GROUPS: FaqGroup[] = [
       {
         id: 'what-are-options',
         q: 'What are Kalks FX Options?',
-        a: `Calls and puts on ${OPTIONS.fxPairsLive} FX pairs, gold, silver, WTI and Brent, with daily, weekly and monthly expiries. European style, settled in cash in US dollars, in an Options account.`,
+        a: `Calls and puts on ${OPTIONS.fxPairsLive} FX pairs, gold, silver, WTI and Brent, with daily and weekly expiries. European style, settled in cash in US dollars, in an Options account.`,
       },
       {
         id: 'options-max-loss',

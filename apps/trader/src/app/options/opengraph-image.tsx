@@ -5,5 +5,5 @@ export const size = OG_SIZE;
 export const contentType = OG_TYPE;
 
 export default function Image() {
-  return og({ tone: 'red', kicker: 'KALKS FX OPTIONS', title: 'Calls and puts on forex. Settled in dollars.', sub: 'Daily, weekly and monthly expiries. $0.25 a contract.' });
+  return og({ tone: 'red', kicker: 'KALKS FX OPTIONS', title: 'Calls and puts on forex. Settled in dollars.', sub: 'Daily and weekly expiries. $0.25 a contract.' });
 }

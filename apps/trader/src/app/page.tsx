@@ -11,6 +11,7 @@ import { WordmarkHero } from '@/components/site/Heroes';
 import { BentoCard, Btn, Checks, Cta, Faq, Head, StatStrip, TextLink } from '@/components/site/ui';
 import { FeatureSplit, Phone, Shot, ShotTour, type Pin } from '@/components/site/Shot';
 import { Rise } from '@/components/site/Rise';
+import { OptionsOdds } from '@/components/site/OptionsOdds';
 import { TradingDay, type Slot } from '@/components/site/TradingDay';
 
 export const revalidate = 60;
@@ -38,7 +39,7 @@ const TRADER_PINS: Pin[] = [
 ];
 
 const OPTIONS_PINS: Pin[] = [
-  { x: 27, y: 10.5, title: 'Expiries', text: `Daily, weekly and monthly: ${OPTIONS.expiries.daily}, ${OPTIONS.expiries.weekly} and ${OPTIONS.expiries.monthly}.` },
+  { x: 27, y: 10.5, title: 'Expiries', text: `Daily and weekly: ${OPTIONS.expiries.daily} and ${OPTIONS.expiries.weekly}.` },
   { x: 12, y: 36, title: 'Calls and puts by strike', text: 'Buy and sell prices for every strike, around the money, with the current price marked in the middle.' },
   { x: 9.5, y: 22.5, title: 'Chance and breakeven', text: 'The chance of finishing in the money and the price you need at expiry, on every row.' },
   { x: 33, y: 5, title: 'Quick trade and strategy builder', text: `One tap for a call or a put, or ${OPTIONS.strategies.length} ready-made strategies of up to ${OPTIONS.maxLegs} legs, with the most you can lose shown first.` },
@@ -47,7 +48,7 @@ const OPTIONS_PINS: Pin[] = [
 const ROLES = [
   { role: 'New trader', pitch: `Start on a demo with ${DEMO.defaultBalance} of virtual money and live prices. When it clicks, go live from ${ACCOUNTS[0].minDeposit} on a Standard or Cent account, and keep learning with ${ACADEMY.lessons} lessons in the Academy.`, href: '/accounts/demo' },
   { role: 'Active trader', pitch: 'Raw spreads with a fixed commission on ECN and VIP, one-click trading, a depth ladder beside the chart, and stops you drag along the price axis.', href: '/platforms/trader' },
-  { role: 'Options trader', pitch: `Chains on ${OPTIONS.underlyingsLive.length} markets with daily, weekly and monthly expiries, ${OPTIONS.strategies.length} ready-made strategies of up to ${OPTIONS.maxLegs} legs, and a card that states your maximum loss before every order.`, href: '/options' },
+  { role: 'Options trader', pitch: `Chains on ${OPTIONS.underlyingsLive.length} markets with daily and weekly expiries, ${OPTIONS.strategies.length} ready-made strategies of up to ${OPTIONS.maxLegs} legs, and a card that states your maximum loss before every order.`, href: '/options' },
   { role: 'Money manager', pitch: `Run a PAMM fund or a MAM account, or become a copy master after ${SOCIAL.trackRecordDays} days of track record. Your performance fee is charged only on new highs.`, href: '/copy-trading' },
   { role: 'Partner', pitch: `Share your link and get paid for the lots your clients trade, ${IB.tiers} tiers deep, across five levels from Bronze to Diamond. Commission arrives in your USDT wallet every Monday.`, href: '/partners' },
 ];
@@ -70,7 +71,7 @@ const SLOTS: Slot[] = [
   { id: 'newyork', title: 'New York session', start: '08:00', end: '17:00', tz: NY, who: '08:00 to 17:00 in New York', desc: 'New York overlaps London until midday: the deepest hours of the day for the dollar pairs and oil.', tags: ['Forex', 'Energies'], days: WEEKDAYS },
   { id: 'window', title: 'Options settlement window', start: '09:30', end: '10:00', tz: NY, who: 'The 30 minutes that set the settlement price', desc: `${OPTIONS.settlement}. Averaging over half an hour keeps a single spike from deciding the result.`, tags: ['Options'], days: WEEKDAYS },
   { id: 'stocks', title: 'US stock market', start: '09:30', end: '16:00', tz: NY, who: HOURS.usStocks, desc: 'US stock CFDs trade during the exchange’s own hours. Index CFDs keep trading through the forex week.', tags: ['Stocks'], days: WEEKDAYS },
-  { id: 'cut', title: 'Options cut', start: '10:00', end: '10:15', tz: NY, who: 'Daily, weekly and monthly expiries settle', desc: `Options expiring today settle in cash, in US dollars, straight to your balance. Daily expiries cover ${OPTIONS.expiries.daily}, weekly ones ${OPTIONS.expiries.weekly}.`, tags: ['Options'], days: WEEKDAYS, cal: true },
+  { id: 'cut', title: 'Options cut', start: '10:00', end: '10:15', tz: NY, who: 'Daily and weekly expiries settle', desc: `Options expiring today settle in cash, in US dollars, straight to your balance. Daily expiries cover ${OPTIONS.expiries.daily}, weekly ones ${OPTIONS.expiries.weekly}.`, tags: ['Options'], days: WEEKDAYS, cal: true },
   { id: 'crypto', title: 'Crypto never closes', who: 'Bitcoin, Ether and more, around the clock', desc: 'Crypto CFDs trade 24 hours a day, 7 days a week. Financing is charged every night, weekends included.', tags: ['Crypto'] },
   { id: 'weekend', title: 'The forex week closes', start: HOURS.rolloverNy, tz: NY, who: 'Fridays · it reopens Sunday at 17:00 New York', desc: `Forex, metals, energies and index CFDs trade ${HOURS.fxWeek}. Crypto keeps going through the weekend.`, tags: ['Forex', 'Metals'], days: 'FR' },
 ];
@@ -124,13 +125,34 @@ export default async function HomePage() {
         <PriceStrip rows={STRIP} initial={quotes} />
       </section>
 
-      {/* 01 the platform in numbers */}
+      {/* 01 options */}
+      <section className="s-sec s-band" aria-labelledby="o-title">
+        <div className="s-wrap">
+          <Head
+            id="o-title"
+            index="01"
+            eyebrow="Kalks FX Options"
+            title={
+              <>
+                Options, <span className="s-hot">made simple.</span>
+              </>
+            }
+            lead={`Calls and puts on ${OPTIONS.fxPairsLive} FX pairs, gold, silver and oil. Buy an option and the premium is the most you can lose. Cash-settled in US dollars at ${OPTIONS.cut}.`}
+            action={<Btn href="/options">How options work</Btn>}
+          />
+          <ShotTour shot="traderOptions" pins={OPTIONS_PINS} side="right" />
+          {/* both sides, plainly: what a buyer can gain and what anyone can lose (founder 2026-10-28) */}
+          <OptionsOdds className="mt-10" />
+        </div>
+      </section>
+
+      {/* 02 the platform in numbers */}
       <section className="s-sec" aria-labelledby="p-title">
         <div className="s-wrap">
           <Rise className="s-card pad grid gap-12 lg:grid-cols-[0.8fr_1.6fr] lg:gap-16">
             <div className="flex flex-col gap-6">
               <div className="flex items-center gap-4">
-                <span className="s-index">01</span>
+                <span className="s-index">02</span>
                 <span className="s-eyebrow">The platform</span>
               </div>
               <div className="flex gap-2">
@@ -158,12 +180,12 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* 02 Kalks Trader, part by part */}
+      {/* 03 Kalks Trader, part by part */}
       <section className="s-sec !pt-8" aria-labelledby="t-title">
         <div className="s-wrap">
           <Head
             id="t-title"
-            index="02"
+            index="03"
             eyebrow="Kalks Trader"
             title={
               <>
@@ -177,11 +199,11 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* 03 order ticket */}
+      {/* 04 order ticket */}
       <section className="s-sec" aria-label="The order ticket">
         <div className="s-wrap">
           <FeatureSplit
-            index="03"
+            index="04"
             eyebrow="Order ticket"
             title={
               <>
@@ -204,13 +226,13 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* 04 positions */}
+      {/* 05 positions */}
       <section className="s-sec !pt-0" aria-labelledby="pos-title">
         <div className="s-wrap">
           <Rise className="mb-10 grid gap-6 lg:grid-cols-[1fr_1fr] lg:items-end">
             <div className="flex flex-col gap-5">
               <div className="flex items-center gap-4">
-                <span className="s-index">04</span>
+                <span className="s-index">05</span>
                 <span className="s-eyebrow">Positions</span>
               </div>
               <h2 id="pos-title" className="s-h2 !text-[clamp(30px,3.4vw,50px)]">
@@ -222,25 +244,6 @@ export default async function HomePage() {
           <Rise>
             <Shot shot="traderPositions" />
           </Rise>
-        </div>
-      </section>
-
-      {/* 05 options */}
-      <section className="s-sec s-band" aria-labelledby="o-title">
-        <div className="s-wrap">
-          <Head
-            id="o-title"
-            index="05"
-            eyebrow="Kalks FX Options"
-            title={
-              <>
-                Options, <span className="s-hot">made simple.</span>
-              </>
-            }
-            lead={`Calls and puts on ${OPTIONS.fxPairsLive} FX pairs, gold, silver and oil. Buy an option and the premium is the most you can lose. Cash-settled in US dollars at ${OPTIONS.cut}.`}
-            action={<Btn href="/options">How options work</Btn>}
-          />
-          <ShotTour shot="traderOptions" pins={OPTIONS_PINS} side="right" />
         </div>
       </section>
 

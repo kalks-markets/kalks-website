@@ -89,7 +89,7 @@ export const HERO_COPY: Record<HeroPage, HeroCopy> = {
     eyebrow: 'Kalks FX Options',
     title: 'Options on forex,',
     accent: 'with the risk printed first.',
-    subtitle: `Calls and puts on forex, gold, silver and oil, with daily, weekly and monthly expiries. Buy one and the premium is the most you can lose. ${OPT_FEE.replace('per contract', 'a contract')}, ${OPT_FEE_CAP}, in an Options account of its own.`,
+    subtitle: `Calls and puts on forex, gold, silver and oil, with daily and weekly expiries. Buy one and the premium is the most you can lose. ${OPT_FEE.replace('per contract', 'a contract')}, ${OPT_FEE_CAP}, in an Options account of its own.`,
     cta: { label: 'Open account', href: REGISTER_HREF },
     cta2: { label: 'How it works', href: '#how' },
     image: heroImage('options'),

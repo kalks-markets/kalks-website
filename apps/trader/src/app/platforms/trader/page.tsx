@@ -94,7 +94,7 @@ const OPTIONS_PINS: Pin[] = [
   { x: 34, y: 8.9, title: 'Expiry, cut and volatility', text: `The expiry on screen, the time left to the ${OPTIONS.cut} cut, and at-the-money volatility.` },
   { x: 60.7, y: 8.9, title: 'Quick trade and strategy builder', text: `One call or put in a tap, or ${OPTIONS.strategies.length} ready-made strategies of up to ${OPTIONS.maxLegs} legs.` },
   { x: 35.5, y: 13.9, title: 'Chain, charts and analytics', text: 'Switch between the chain, the underlying chart, the option chart, both, and analytics.' },
-  { x: 5.4, y: 18.6, title: 'Expiries', text: `Daily, weekly and monthly: ${OPTIONS.expiries.daily}, ${OPTIONS.expiries.weekly} and ${OPTIONS.expiries.monthly}.` },
+  { x: 5.4, y: 18.6, title: 'Expiries', text: `Daily and weekly: ${OPTIONS.expiries.daily} and ${OPTIONS.expiries.weekly}.` },
   { x: 31.2, y: 28, title: 'Calls and puts', text: 'Calls profit if the price rises, puts if it falls. Buy and sell prices for every strike.' },
   { x: 18.5, y: 30.9, title: 'Chance and breakeven', text: 'The chance of finishing in the money and the price you need at expiry, on every row.' },
   { x: 44, y: 52.8, title: 'Where the price is now', text: 'The current price is marked between the strikes; the at-the-money strike is flagged.' },

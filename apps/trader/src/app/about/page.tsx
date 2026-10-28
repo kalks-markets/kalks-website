@@ -13,7 +13,7 @@ export const metadata: Metadata = {
 };
 
 const PRODUCTS = [
-  { t: 'Kalks FX Options', d: `Calls and puts on ${OPTIONS.fxPairsLive} FX pairs, gold, silver and oil, with daily, weekly and monthly expiries.`, href: '/options', tone: 'orange' as const },
+  { t: 'Kalks FX Options', d: `Calls and puts on ${OPTIONS.fxPairsLive} FX pairs, gold, silver and oil, with daily and weekly expiries.`, href: '/options', tone: 'orange' as const },
   { t: 'CFDs', d: `${INSTRUMENTS.liveMarkets} live markets in forex, metals, energies, indices, crypto and stocks.`, href: '/markets', tone: 'cream' as const },
   { t: 'Prop challenges', d: 'Classic 2-Step, Rapid 1-Step and Instant Funding, with rules checked live on the server.', href: '/prop', tone: 'glass' as const },
   { t: 'Copy trading, PAMM, MAM', d: 'Follow approved masters with your own limits, invest in managed funds, or become a master.', href: '/copy-trading', tone: 'glass' as const },

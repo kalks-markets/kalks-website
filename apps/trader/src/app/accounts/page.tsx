@@ -245,7 +245,7 @@ export default async function AccountsPage() {
               <div className="s-bento-card s-cream h-full">
                 <span className="text-[12.5px] font-semibold uppercase tracking-[0.08em] text-[var(--s-orange)]">Options · live</span>
                 <h3 className="mt-3 text-[clamp(30px,2.8vw,40px)] font-[500] leading-none tracking-[-0.04em]">{optStd.name}</h3>
-                <p className="mt-3 max-w-[52ch] text-[15px] leading-relaxed text-[var(--s-cream-tx2)]">{optStd.tagline} Daily, weekly and monthly expiries, settled in cash in US dollars.</p>
+                <p className="mt-3 max-w-[52ch] text-[15px] leading-relaxed text-[var(--s-cream-tx2)]">{optStd.tagline} Daily and weekly expiries, settled in cash in US dollars.</p>
                 <dl className="mt-7">
                   {[
                     ['Minimum deposit', optStd.minDeposit],

@@ -8,6 +8,7 @@ import { FactTable, FaqSchema, MiniHead, NumberedRows } from '@/components/site/
 import { Payoff, STRATEGY_NOTES } from '@/components/options/Payoff';
 import { LiveList, type LiveRow } from '@/components/market/LiveList';
 import { RiskNote } from '@/components/ui/RiskNote';
+import { OptionsOdds } from '@/components/site/OptionsOdds';
 import { DEMO, OPTIONS, OPTIONS_ACCOUNTS } from '@/content/facts';
 import { DEMO_HREF, REGISTER_HREF } from '@/lib/crm';
 import { getQuotes } from '@/lib/quotes';
@@ -19,7 +20,7 @@ export const revalidate = 60;
 export const metadata: Metadata = {
   title: 'Kalks FX Options: calls and puts on forex, gold, silver and oil',
   description:
-    'Buy or sell calls and puts on 8 FX pairs, gold, silver and oil with daily, weekly and monthly expiries. Settled in cash in US dollars. $0.25 a contract, capped at 10% of the premium.',
+    'Buy or sell calls and puts on 8 FX pairs, gold, silver and oil with daily and weekly expiries. Settled in cash in US dollars. $0.25 a contract, capped at 10% of the premium.',
   alternates: { canonical: '/options' },
 };
 
@@ -46,7 +47,7 @@ const CHAIN_PINS: Pin[] = [
   { x: 31.2, y: 6.4, title: 'Expiry, cut and volatility', text: `The expiry on screen, the countdown to the ${OPTIONS.cut} cut, and the at-the-money implied volatility.` },
   { x: 60.6, y: 11.8, title: 'Quick trade and strategy builder', text: `Turn a view into an option in a few taps, or build spreads, straddles and condors of up to ${OPTIONS.maxLegs} legs. Shift-click prices on the chain to add legs.` },
   { x: 35, y: 13.8, title: 'Chain, charts and analytics', text: 'Switch between the chain, the underlying’s chart, the option’s own chart, both side by side, and analytics.' },
-  { x: 26.1, y: 21.9, title: 'Expiries', text: `Daily for ${OPTIONS.expiries.daily}, weekly (W) for ${OPTIONS.expiries.weekly} and monthly (M) for ${OPTIONS.expiries.monthly}.` },
+  { x: 26.1, y: 21.9, title: 'Expiries', text: `Daily for ${OPTIONS.expiries.daily} and weekly (W) for ${OPTIONS.expiries.weekly}.` },
   { x: 84.3, y: 19.4, title: 'Underlyings', text: `${OPTIONS.fxPairsLive} FX pairs, gold, silver, WTI and Brent, with live spot prices. ${OPTIONS.underlyingsSoon.join(', ')} is next.` },
   { x: 22.5, y: 27.5, title: 'Calls', text: 'On the left: profit if the price rises. A buy and a sell price for every strike; tap one to see what you would pay, risk and make.' },
   { x: 55.7, y: 27.5, title: 'Puts', text: 'On the right: profit if the price falls, priced the same way.' },
@@ -66,7 +67,7 @@ const EXPIRY_DAY = [
 const QUICK = [
   { a: 'Up', b: 'Buys a call' },
   { a: 'Down', b: 'Buys a put' },
-  { a: 'Today, tomorrow, later', b: 'A daily, weekly or monthly expiry' },
+  { a: 'Today, tomorrow, later', b: 'A daily or weekly expiry' },
   { a: 'What happens', b: 'The outcome in plain words, before you confirm' },
 ];
 
@@ -159,7 +160,7 @@ export default async function OptionsPage() {
     <>
       <PageHero
         hero={hero}
-        facts={[`${OPTIONS.underlyingsLive.length} underlyings`, 'Daily, weekly and monthly expiries', 'Cash-settled in USD']}
+        facts={[`${OPTIONS.underlyingsLive.length} underlyings`, 'Daily and weekly expiries', 'Cash-settled in USD']}
         aside={
           <>
             <HeroGlass>
@@ -198,13 +199,20 @@ export default async function OptionsPage() {
               <StatStrip
                 items={[
                   { v: OPTIONS.underlyingsLive.length, l: 'Underlyings', sub: `${OPTIONS.fxPairsLive} FX pairs, gold, silver, WTI and Brent` },
-                  { v: OPTIONS.dailyPerWeek, l: 'Daily expiries a week', sub: 'Plus weekly and monthly expiries' },
+                  { v: OPTIONS.dailyPerWeek, l: 'Daily expiries a week', sub: 'Plus weekly expiries' },
                   { v: OPTIONS.strategies.length, l: 'Strategy templates', sub: `Up to ${OPTIONS.maxLegs} legs per order` },
                   { v: FEE.split(' ')[0], l: 'A contract', sub: FEE_CAP.replace(/^c/, 'C') },
                 ]}
               />
             </div>
           </Rise>
+        </div>
+      </section>
+
+      {/* the opportunity and the risk, side by side (founder 2026-10-28) */}
+      <section className="s-sec !pt-4" aria-label="Opportunity and risk">
+        <div className="s-wrap">
+          <OptionsOdds />
         </div>
       </section>
 
@@ -390,7 +398,7 @@ export default async function OptionsPage() {
                 title="Contract terms"
                 rows={[
                   ['Style', 'European, cash-settled in USD'],
-                  ['Expiries', `Daily (${OPTIONS.expiries.daily}), weekly (${OPTIONS.expiries.weekly}), monthly (${OPTIONS.expiries.monthly})`],
+                  ['Expiries', `Daily (${OPTIONS.expiries.daily}) and weekly (${OPTIONS.expiries.weekly})`],
                   ['Cut', OPTIONS.cut],
                   ['Settlement price', 'Average of 1-second mids over the last 30 minutes'],
                   ['FX contract', OPTIONS.contract.fx],
@@ -432,7 +440,7 @@ export default async function OptionsPage() {
                 <div className="s-bento-card s-cream !min-h-0">
                   <span className="text-[12.5px] font-semibold uppercase tracking-[0.08em] text-[var(--s-orange)]">Options account</span>
                   <h3 className="mt-3 text-[clamp(28px,2.6vw,36px)] font-[500] leading-[1.02] tracking-[-0.035em]">{acc.name}</h3>
-                  <p className="mt-2 text-[15px] leading-relaxed text-[var(--s-cream-tx2)]">{acc.tagline} Daily, weekly and monthly expiries, settled in cash in US dollars.</p>
+                  <p className="mt-2 text-[15px] leading-relaxed text-[var(--s-cream-tx2)]">{acc.tagline} Daily and weekly expiries, settled in cash in US dollars.</p>
                   <dl className="mt-6">
                     {[
                       ['Minimum deposit', acc.minDeposit],

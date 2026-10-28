@@ -85,7 +85,7 @@ export default function MetalsPage() {
             Gold and oil, <span className="s-mute">as options too.</span>
           </>
         ),
-        lead: `Switch Kalks Trader to Options and gold, silver, WTI and Brent sit beside the ${OPTIONS.fxPairsLive} FX pairs, with daily, weekly and monthly expiries settled in cash at ${OPTIONS.cut}.`,
+        lead: `Switch Kalks Trader to Options and gold, silver, WTI and Brent sit beside the ${OPTIONS.fxPairsLive} FX pairs, with daily and weekly expiries settled in cash at ${OPTIONS.cut}.`,
         body: (
           <PinTour
             shot={UNDERLYINGS}
