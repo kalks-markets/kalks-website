@@ -37,7 +37,6 @@ export function PinTour({
   cols = 'lg:grid-cols-[minmax(0,1.35fr)_minmax(0,1fr)]',
   legendCols = 'sm:grid-cols-2 lg:grid-cols-3',
   flip,
-  maxW,
   scrollMin,
   intro,
   outro,
@@ -49,7 +48,6 @@ export function PinTour({
   cols?: string;
   legendCols?: string;
   flip?: boolean;
-  maxW?: string;
   scrollMin?: string;
   intro?: ReactNode;
   outro?: ReactNode;
@@ -57,13 +55,13 @@ export function PinTour({
 }) {
   const [on, setOn] = useState<number | null>(null);
   const image = (
-    <div className={cn('mx-auto w-full', maxW)}>
+    <div className="mx-auto w-full">
       {scrollMin ? (
         <>
           <div className={cn('no-sb max-lg:-mx-[var(--gutter)] max-lg:overflow-x-auto max-lg:px-[var(--gutter)] max-lg:pb-3', pins.some((p) => p.y < 0) ? 'max-lg:pt-9' : 'max-lg:pt-4')}>
             <div className={cn(scrollMin, 'lg:min-w-0')}>
               {/* the orange glow would be cut square by the scroller: no shadow while it scrolls */}
-              <Shot shot={shot} pins={pins} active={on} onPin={setOn} className="max-lg:!shadow-none" />
+              <Shot shot={shot} pins={pins} active={on} onPin={setOn} className="max-lg:![filter:none]" />
             </div>
           </div>
           <p className="mt-1.5 text-[12px] text-[var(--s-tx3)] sm:hidden">Swipe sideways to see the whole screen.</p>

@@ -1,0 +1,753 @@
+/* ═════════════════════════════════════════════════════════════════════════════
+   "The same terminal in your pocket." — a pinned scroll story (founder 2026-10-30, reference: an app landing page
+   with a phone rising out of a tile mosaic and notification cards around it; the phone's screen is drawn, PocketScreens.tsx,
+   founder 2026-10-30: "professional, minimalist"). pocket-terminal.ts drives every moving
+   part from the page scroll; this file only sets the start state (also the reduced-motion / no-JS state).
+   The brief's tokens, mapped onto the site theme (site.css): brand-deep = the deep tone of the Kalks orange (ember on
+   dark pages, where the headline itself stays white), brand-accent = the Kalks orange.
+   ═════════════════════════════════════════════════════════════════════════════ */
+
+.pt {
+  --brand-deep: var(--k-deep);
+  --brand-accent: #f2600c;
+  --surface: var(--k-card);
+  --surface-light: var(--k-paper);
+  --text: rgb(var(--fg));
+  --muted: rgb(var(--fg) / 0.64);
+  --line: rgb(var(--fg) / 0.08);
+  /* the floating pill nav: 16 px from the top + 64 px tall */
+  --nav-h: 80px;
+  --device-w: min(clamp(250px, 25vw, 380px), calc((100svh - var(--nav-h) - 40px) / 2.17));
+  --frame-w: clamp(400px, 42vw, 640px);
+  position: relative;
+  background: var(--surface-light);
+}
+:root:not([data-theme='light']) .pt {
+  --brand-deep: #7a2606;
+}
+.pt.is-js {
+  height: 320vh;
+}
+.pt-sticky {
+  position: relative;
+  height: 100svh;
+  min-height: 640px;
+  overflow: hidden;
+}
+.pt.is-js .pt-sticky {
+  position: sticky;
+  top: 0;
+}
+
+.pt-gridlines {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background-image: linear-gradient(to right, var(--line) 1px, transparent 1px);
+  background-size: calc(100% / 7) 100%;
+  -webkit-mask-image: linear-gradient(to bottom, transparent, #000 20%);
+  mask-image: linear-gradient(to bottom, transparent, #000 20%);
+}
+
+/* ─────────────────────────────────────────────────────────────── head */
+.pt-head {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  max-width: 960px;
+  margin: 0 auto;
+  padding: calc(var(--nav-h) + 48px) 24px 0;
+  text-align: center;
+  will-change: transform, opacity;
+}
+.pt-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  height: 32px;
+  margin-bottom: 24px;
+  padding: 0 14px;
+  border-radius: 999px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text);
+}
+.pt-chip > svg {
+  color: var(--brand-accent);
+}
+.pt-chip > b {
+  font: 600 12px/1 var(--f-mono);
+  color: var(--s-orange2);
+}
+/* the headline takes --k-deep, which equals --brand-deep on light pages and stays white on dark ones */
+.pt-head h2 {
+  font-family: var(--f-disp);
+  font-size: clamp(38px, 5.2vw, 80px);
+  font-weight: 600;
+  letter-spacing: -0.025em;
+  line-height: 1.08;
+  color: var(--k-deep);
+  text-wrap: balance;
+}
+.pt-hl {
+  color: var(--brand-accent);
+}
+.pt-sub {
+  max-width: 600px;
+  margin: 20px auto 0;
+  font-size: 18px;
+  line-height: 1.6;
+  color: var(--muted);
+}
+.pt-cta {
+  margin-top: 32px;
+}
+.pt .s-btn {
+  height: 52px;
+  padding: 0 28px;
+  font-size: 16px;
+  font-weight: 500;
+}
+
+/* ─────────────────────────────────────────────────────────────── mosaic */
+.pt-mosaic {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 0;
+  height: 32svh;
+  overflow: hidden;
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  grid-auto-rows: calc(100vw / 7 * 0.875);
+}
+.t-a {
+  background: linear-gradient(180deg, color-mix(in srgb, var(--brand-accent) 45%, white), var(--brand-accent));
+}
+.t-d {
+  background: linear-gradient(180deg, color-mix(in srgb, var(--brand-deep) 60%, white), var(--brand-deep));
+}
+.t-s {
+  background: var(--brand-deep);
+}
+.t-n {
+  background: var(--surface);
+  box-shadow: inset 0 0 0 0.5px var(--line);
+}
+.t-l {
+  background: var(--surface-light);
+  box-shadow: inset 0 0 0 0.5px var(--line);
+}
+
+/* ─────────────────────────────────────────────────────────────── device */
+.pt-device {
+  position: absolute;
+  left: 50%;
+  top: calc(var(--nav-h) + 24px);
+  z-index: 2;
+  transform: translate3d(-50%, 52svh, 0) scale(0.92);
+  transform-origin: 50% 0;
+  will-change: transform;
+}
+
+/* CSS phone frame */
+.pt-device--css {
+  --bz: calc(var(--device-w) * 0.03);
+  width: var(--device-w);
+  aspect-ratio: 9 / 19.5;
+  border-radius: calc(var(--device-w) * 0.14);
+  background: #0b0b0f;
+  box-shadow: inset 0 0 0 1.5px #3a3a42, 0 50px 80px -30px rgb(0 0 0 / 0.35), 0 20px 40px -20px rgb(0 0 0 / 0.2);
+}
+.pt-device--css .pt-screen {
+  position: absolute;
+  inset: var(--bz);
+  border-radius: calc(var(--device-w) * 0.14 - var(--bz));
+}
+
+/* Photo frame (hand + phone), when IMAGES.pocketTerminalFrame is set */
+.pt-device--photo {
+  width: var(--frame-w);
+}
+.pt-frame {
+  position: relative;
+  z-index: 2;
+  display: block;
+  width: 100%;
+  height: auto;
+  pointer-events: none;
+  user-select: none;
+}
+.pt-device--photo .pt-screen {
+  position: absolute;
+  z-index: 1;
+  left: var(--sx, 22%);
+  top: var(--sy, 4%);
+  width: var(--sw, 56%);
+  height: var(--sh, 90%);
+  border-radius: 13% / 6%;
+}
+.pt-device--photo.is-overlay .pt-screen {
+  z-index: 3;
+}
+
+/* Screen: a container, so the drawn app (.ps, PocketScreens.tsx) sizes itself in em off the screen's width */
+.pt-screen {
+  --ps-bg: #f6f5f3;
+  --ps-card: #ffffff;
+  --ps-ink: #16110e;
+  --ps-mute: #8b837d;
+  --ps-line: #ebe7e3;
+  --ps-up: #1d64d8;
+  --ps-dn: #d4342a;
+  container-type: inline-size;
+  overflow: hidden;
+  background: var(--ps-bg);
+  isolation: isolate;
+  -webkit-mask-image: -webkit-radial-gradient(white, black); /* Safari radius-clip fix */
+}
+/* a fixed status bar under the camera, so the app scrolls beneath it as on a real phone */
+.pt-screen::before {
+  content: '';
+  position: absolute;
+  z-index: 3;
+  inset: 0 0 auto 0;
+  height: 6.4%;
+  background: var(--ps-bg);
+  pointer-events: none;
+}
+.pt-pages {
+  display: flex;
+  height: 100%;
+  will-change: transform;
+}
+.pt-page {
+  position: relative;
+  flex: 0 0 100%;
+  height: 100%;
+  overflow: hidden;
+}
+.pt-page-track {
+  min-height: 100%;
+  display: flex;
+  will-change: transform;
+}
+
+/* ─────────────────────────────────────────────────────────────── the drawn app */
+.ps,
+.ps-tabs {
+  font-size: calc(100cqw / 25);
+}
+.ps {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding: 3.9em 1.15em 5.6em;
+  font-family: var(--f-text);
+  font-variant-numeric: tabular-nums;
+  color: var(--ps-ink);
+  line-height: 1.25;
+  text-align: start;
+  user-select: none;
+}
+.ps .up {
+  color: var(--ps-up);
+}
+.ps .dn {
+  color: var(--ps-dn);
+}
+.ps-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.6em;
+  min-height: 2.4em;
+  margin-bottom: 0.9em;
+}
+.ps-acct {
+  display: flex;
+  align-items: center;
+  gap: 0.5em;
+}
+.ps-acct b {
+  font-size: 1.02em;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+.ps-tag {
+  padding: 0.25em 0.55em;
+  border-radius: 999px;
+  background: color-mix(in srgb, #f2600c 12%, white);
+  color: #c2470a;
+  font-size: 0.62em;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+.ps-ic {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 2.3em;
+  height: 2.3em;
+  border-radius: 999px;
+  background: var(--ps-card);
+  border: 1px solid var(--ps-line);
+  color: var(--ps-ink);
+}
+.ps-ic svg {
+  width: 1.05em;
+  height: 1.05em;
+  stroke-width: 1.8;
+}
+.ps-card {
+  border-radius: 1.1em;
+  background: var(--ps-card);
+  border: 1px solid var(--ps-line);
+}
+.ps-k {
+  font-size: 0.7em;
+  color: var(--ps-mute);
+}
+.ps-big {
+  font-size: 1.95em;
+  font-weight: 600;
+  letter-spacing: -0.025em;
+  line-height: 1.1;
+}
+.ps-big small {
+  font-size: 0.42em;
+  font-weight: 500;
+  letter-spacing: 0;
+  color: var(--ps-mute);
+}
+.ps-eq {
+  padding: 1.05em 1.1em 1em;
+}
+.ps-eq .ps-big {
+  margin-top: 0.25em;
+}
+.ps-kv {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.6em;
+  margin-top: 0.95em;
+  padding-top: 0.85em;
+  border-top: 1px solid var(--ps-line);
+}
+.ps-kv > div {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2em;
+  min-width: 0;
+}
+.ps-kv b {
+  font-size: 0.8em;
+  font-weight: 600;
+  white-space: nowrap;
+}
+.ps-title {
+  margin: 1.5em 0 0.7em;
+  font-size: 0.95em;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+.ps-chips {
+  display: flex;
+  gap: 0.4em;
+  margin-bottom: 0.4em;
+  overflow: hidden;
+}
+.ps-chips span {
+  flex: none;
+  padding: 0.38em 0.85em;
+  border-radius: 999px;
+  background: var(--ps-card);
+  border: 1px solid var(--ps-line);
+  font-size: 0.7em;
+  font-weight: 500;
+  color: var(--ps-mute);
+}
+.ps-chips span.on {
+  background: var(--ps-ink);
+  border-color: var(--ps-ink);
+  color: #fff;
+}
+.ps-list li {
+  display: grid;
+  grid-template-columns: 2.75em minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 0.2em;
+  padding: 0.78em 0;
+  border-bottom: 1px solid var(--ps-line);
+}
+.ps-list li:last-child {
+  border-bottom: 0;
+}
+.ps-mark {
+  display: flex;
+  font-size: 1.55em;
+}
+.ps-name {
+  display: flex;
+  flex-direction: column;
+  gap: 0.18em;
+  min-width: 0;
+}
+.ps-name b {
+  font-size: 0.86em;
+  font-weight: 600;
+}
+.ps-name > span {
+  overflow: hidden;
+  font-size: 0.66em;
+  color: var(--ps-mute);
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+.ps-px {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.18em;
+}
+.ps-px b {
+  font-size: 0.86em;
+  font-weight: 600;
+}
+.ps-px span {
+  font-size: 0.66em;
+  font-weight: 500;
+}
+
+/* screen 2: the chart */
+.ps-sym {
+  display: flex;
+  flex: 1;
+  align-items: center;
+  justify-content: center;
+  gap: 0.55em;
+}
+.ps-sym .ps-mark {
+  font-size: 1.35em;
+}
+.ps-quote {
+  display: flex;
+  align-items: baseline;
+  gap: 0.55em;
+}
+.ps-quote > span {
+  font-size: 0.78em;
+  font-weight: 600;
+}
+.ps-tf {
+  display: flex;
+  gap: 0.3em;
+  margin: 0.9em 0 0.5em;
+}
+.ps-tf span {
+  padding: 0.35em 0.75em;
+  border-radius: 0.55em;
+  font-size: 0.7em;
+  font-weight: 500;
+  color: var(--ps-mute);
+}
+.ps-tf span.on {
+  background: var(--ps-card);
+  box-shadow: inset 0 0 0 1px var(--ps-line);
+  color: var(--ps-ink);
+  font-weight: 600;
+}
+.ps-chart {
+  display: block;
+  width: 100%;
+  height: auto;
+  overflow: visible;
+}
+.ps-chart .grid {
+  stroke: var(--ps-line);
+  stroke-width: 1;
+}
+.ps-chart .ax {
+  fill: var(--ps-mute);
+  font: 500 7.5px var(--f-text);
+}
+.ps-chart .cu {
+  stroke: var(--ps-up);
+  fill: var(--ps-up);
+}
+.ps-chart .cd {
+  stroke: var(--ps-dn);
+  fill: var(--ps-dn);
+}
+.ps-chart .cu line,
+.ps-chart .cd line {
+  stroke-width: 0.9;
+}
+.ps-chart .pos {
+  stroke: var(--ps-up);
+  stroke-width: 0.9;
+  stroke-dasharray: 3 3;
+}
+.ps-chart .pos-tag {
+  fill: var(--ps-up);
+}
+.ps-chart .pos-tx,
+.ps-chart .last-tx {
+  fill: #fff;
+  font: 600 7.5px var(--f-text);
+}
+.ps-chart .last {
+  stroke: var(--ps-ink);
+  stroke-width: 0.6;
+  stroke-dasharray: 1.5 2;
+  opacity: 0.6;
+}
+.ps-chart .last-tag {
+  fill: var(--ps-ink);
+}
+.ps-pos {
+  display: grid;
+  grid-template-columns: 2.75em minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 0.2em;
+  padding: 0.85em 1em 0.85em 0.9em;
+}
+.ps-pos em {
+  font-style: normal;
+  font-weight: 500;
+}
+.ps-pl {
+  font-size: 0.86em;
+  font-weight: 600;
+}
+.ps-trade {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  gap: 0.45em;
+  margin-top: auto;
+  padding-top: 1em;
+}
+.ps-trade .sell,
+.ps-trade .buy {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15em;
+  padding: 0.62em 0.85em;
+  border-radius: 0.85em;
+  color: #fff;
+}
+.ps-trade .sell {
+  background: var(--ps-dn);
+}
+.ps-trade .buy {
+  align-items: flex-end;
+  background: var(--ps-up);
+}
+.ps-trade small {
+  font-size: 0.64em;
+  font-weight: 500;
+  opacity: 0.85;
+}
+.ps-trade b {
+  font-size: 0.98em;
+  font-weight: 600;
+}
+.ps-trade .vol {
+  display: flex;
+  align-items: center;
+  gap: 0.45em;
+  padding: 0 0.65em;
+  border-radius: 0.85em;
+  background: var(--ps-card);
+  border: 1px solid var(--ps-line);
+}
+.ps-trade .vol svg {
+  width: 0.8em;
+  height: 0.8em;
+  color: var(--ps-mute);
+}
+.ps-trade .vol b {
+  font-size: 0.82em;
+}
+
+/* the tab bar and the home indicator, fixed at the foot of the screen */
+.ps-tabs {
+  position: absolute;
+  z-index: 3;
+  inset: auto 0 0 0;
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  padding: 0.55em 0.6em 1.6em;
+  background: rgb(255 255 255 / 0.96);
+  border-top: 1px solid var(--ps-line);
+}
+.ps-tabs span {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.3em;
+  font: 500 0.58em/1 var(--f-text);
+  color: var(--ps-mute);
+}
+.ps-tabs svg {
+  width: 1.95em;
+  height: 1.95em;
+  stroke-width: 1.7;
+}
+.ps-tabs::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  bottom: 0.55em;
+  width: 34%;
+  height: 0.28em;
+  translate: -50% 0;
+  border-radius: 999px;
+  background: var(--ps-ink);
+}
+.pt:not([data-pt-page]) .ps-tabs [data-tab='0'],
+.pt[data-pt-page='0'] .ps-tabs [data-tab='0'],
+.pt[data-pt-page='1'] .ps-tabs [data-tab='1'] {
+  color: #f2600c;
+}
+.pt-island {
+  position: absolute;
+  z-index: 4;
+  top: 2.2%;
+  left: 50%;
+  translate: -50% 0;
+  width: 31%;
+  height: 4%;
+  border-radius: 999px;
+  background: #000;
+}
+
+/* ─────────────────────────────────────────────────────────────── notification cards (always light, dark text) */
+.pt-note {
+  --text: #1a1410;
+  --muted: rgb(26 20 16 / 0.62);
+  --line: rgb(26 20 16 / 0.08);
+  position: absolute;
+  z-index: 5;
+  width: clamp(240px, 19vw, 300px);
+  padding: 12px 14px;
+  border-radius: 14px;
+  background: rgb(255 255 255 / 0.92);
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
+  border: 1px solid var(--line);
+  box-shadow: 0 1px 2px rgb(0 0 0 / 0.04), 0 16px 40px -16px rgb(0 0 0 / 0.22);
+  text-align: start;
+  opacity: 0;
+  visibility: hidden;
+  will-change: transform, opacity;
+}
+.pt-note--1 {
+  left: 5vw;
+  top: calc(var(--nav-h) + 2svh);
+}
+.pt-note--2 {
+  right: 6vw;
+  top: 24svh;
+}
+.pt-note--3 {
+  left: 7vw;
+  top: 50svh;
+}
+.pt-note__head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+/* the Kalks mark, white on the deep tile */
+.pt-note__icon {
+  position: relative;
+  flex: none;
+  width: 20px;
+  height: 20px;
+  border-radius: 6px;
+  background: var(--brand-deep);
+}
+.pt-note__icon::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: #fff;
+  -webkit-mask: url('/brand/kalks-mark.svg') center / 64% no-repeat;
+  mask: url('/brand/kalks-mark.svg') center / 64% no-repeat;
+}
+.pt-note__title {
+  flex: 1;
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.3;
+  color: var(--text);
+}
+.pt-note__time {
+  font-size: 12px;
+  color: var(--muted);
+  white-space: nowrap;
+}
+.pt-note__body {
+  margin-top: 6px;
+  font-size: 13px;
+  line-height: 1.45;
+  color: var(--muted);
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* ?pt-debug: outline the screen area, to tune --sx / --sy / --sw / --sh of a photo frame */
+.pt-debug .pt-screen {
+  outline: 2px solid red;
+}
+
+@media (max-width: 767px) {
+  .pt {
+    --nav-h: 80px;
+    --device-w: min(66vw, 300px, calc((100svh - var(--nav-h) - 32px) / 2.17));
+    --frame-w: min(108vw, 460px);
+  }
+  .pt.is-js {
+    height: 260vh;
+  }
+  .pt-br {
+    display: none;
+  }
+  .pt-gridlines {
+    background-size: 25% 100%;
+  }
+  .pt-mosaic {
+    height: 30svh;
+    grid-template-columns: repeat(4, 1fr);
+    grid-auto-rows: calc(100vw / 4 * 0.875);
+  }
+  .pt-mosaic > :nth-child(7n + 1),
+  .pt-mosaic > :nth-child(7n + 6),
+  .pt-mosaic > :nth-child(7n) {
+    display: none;
+  }
+  .pt-note {
+    left: 50%;
+    right: auto;
+    top: calc(var(--nav-h) + 8px);
+    width: min(92vw, 360px);
+  }
+}
+
+/* dark pages: the tiles start from the page's own black, not from white, so they glow instead of glare */
+:root:not([data-theme='light']) .pt .t-a {
+  background: linear-gradient(180deg, color-mix(in srgb, var(--brand-accent) 45%, var(--surface-light)), var(--brand-accent));
+}
+:root:not([data-theme='light']) .pt .t-d {
+  background: linear-gradient(180deg, color-mix(in srgb, var(--brand-deep) 50%, var(--surface-light)), var(--brand-deep));
+}

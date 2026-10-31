@@ -7,11 +7,12 @@ import { CRM_URL, DEMO_HREF, LOGIN_HREF, REGISTER_HREF } from '@/lib/crm';
 import { NY, ymdIn } from '@/lib/tz';
 import { PriceStrip, type StripRow } from '@/components/market/PriceStrip';
 import { getQuotes } from '@/lib/quotes';
-import { WordmarkHero } from '@/components/site/Heroes';
-import { BentoCard, Btn, Checks, Cta, Faq, Head, StatStrip, TextLink } from '@/components/site/ui';
-import { FeatureSplit, Phone, Shot, ShotTour, type Pin } from '@/components/site/Shot';
+import { HomeHero } from '@/components/site/Heroes';
+import { BentoCard, Btn, Checks, Cta, Faq, Head, Label, StatTiles, TextLink } from '@/components/site/ui';
+import { FeatureSplit, IPhone, Shot, ShotTour, type Pin } from '@/components/site/Shot';
+import { PocketTerminal, type PocketNote } from '@/components/site/pocket-terminal/PocketTerminal';
 import { Rise } from '@/components/site/Rise';
-import { OptionsOdds } from '@/components/site/OptionsOdds';
+import { OptionsBento } from '@/components/site/options-bento/OptionsBento';
 import { TradingDay, type Slot } from '@/components/site/TradingDay';
 
 export const revalidate = 60;
@@ -43,6 +44,16 @@ const OPTIONS_PINS: Pin[] = [
   { x: 12, y: 36, title: 'Calls and puts by strike', text: 'Buy and sell prices for every strike, around the money, with the current price marked in the middle.' },
   { x: 9.5, y: 22.5, title: 'Chance and breakeven', text: 'The chance of finishing in the money and the price you need at expiry, on every row.' },
   { x: 33, y: 5, title: 'Quick trade and strategy builder', text: `One tap for a call or a put, or ${OPTIONS.strategies.length} ready-made strategies of up to ${OPTIONS.maxLegs} legs, with the most you can lose shown first.` },
+];
+
+/* the phone section's notification cards, in the platform's own words: the in-app templates (Back Office ›
+   Notifications: "Deposit received" with its sample values, "Price alert") and Kalks Trader's fill toast, with the
+   numbers shown on the phone's screens (the gold bid in the watchlist, the buy line on the chart); times are the
+   terminal's "{n}m ago" / "Just now" */
+const POCKET_NOTES: PocketNote[] = [
+  { title: 'Deposit received', time: '5m ago', body: '2,500.00 USDT via USDT · TRC20 is now in your wallet.' },
+  { title: 'XAUUSD reached 3,994.24', time: '2m ago', body: 'Your alert was triggered. Tap to open the chart.' },
+  { title: 'Buy 1.00 XAUUSD filled', time: 'Just now', body: '1.00 at 3,984.13' },
 ];
 
 const ROLES = [
@@ -86,44 +97,43 @@ export default async function HomePage() {
   const { hero } = page;
   return (
     <>
-      <WordmarkHero
+      <HomeHero
         line={hero.title}
-        side={hero.subtitle}
+        sub={<>Start trading from {ACCOUNTS[0].minDeposit}</>}
+        actions={
+          <>
+            <Btn href={LOGIN_HREF} variant="dark">
+              Log in
+            </Btn>
+            <Btn href={DEMO_HREF} variant="ghost" icon={false}>
+              Try the demo
+            </Btn>
+          </>
+        }
         ring={hero.cta ?? { href: REGISTER_HREF, label: 'Open account' }}
         image={hero.image ?? undefined}
+        band={
+          // live prices: a full-bleed band, edge to edge, right under the hero (founder 2026-10-31)
+          <section className="relative z-[2]" aria-label="Live prices">
+            <PriceStrip rows={STRIP} initial={quotes} />
+          </section>
+        }
+        stats={[
+          { v: INSTRUMENTS.liveMarkets, l: 'Live markets', sub: 'Forex, metals, energies, indices, crypto' },
+          { v: OPTIONS.underlyingsLive.length, l: 'Underlyings for options', sub: 'Daily and weekly expiries, cash-settled in USD' },
+          { v: ACADEMY.lessons, l: 'Academy lessons', sub: `In ${ACADEMY.phases} phases` },
+        ]}
         intro={[
-          <h2 key="a" className="text-[clamp(36px,3.6vw,56px)] font-[500] leading-[0.98] tracking-[-0.045em] text-white">
-            Who we
-            <br />
-            are?
+          <h2 key="a" className="s-h2">
+            Who we <span className="s-hot">are?</span>
           </h2>,
-          <p key="b" className="max-w-[46ch] text-[clamp(17px,1.45vw,21px)] leading-[1.6] text-white/92">
-            <span className="text-[1.5em] font-[500] leading-none">K</span>alks is a broker built on its own technology:{' '}
-            <b className="font-semibold text-white">Kalks FX Options</b>, CFDs on {INSTRUMENTS.liveMarkets} live markets, copy trading and prop
+          <p key="b" className="max-w-[46ch] text-[clamp(20px,2vw,28px)] leading-[1.45] tracking-[-0.015em] text-[rgb(var(--fg)/0.66)] lg:pt-3">
+            <span className="text-[1.5em] font-[500] leading-none text-[var(--k-deep)]">K</span>alks is a broker built on its own technology:{' '}
+            <b className="font-semibold text-[var(--k-deep)]">Kalks FX Options</b>, CFDs on {INSTRUMENTS.liveMarkets} live markets, copy trading and prop
             challenges, all in one Client Area.
           </p>,
-          <div key="c" className="flex flex-col gap-5">
-            <p className="text-[clamp(26px,2.3vw,36px)] font-[300] leading-[1.08] tracking-[-0.035em] text-white">
-              Start trading
-              <br />
-              from {ACCOUNTS[0].minDeposit}
-            </p>
-            <div className="flex flex-wrap gap-2.5">
-              <Btn href={LOGIN_HREF} variant="dark" size="sm">
-                Log in
-              </Btn>
-              <Btn href={DEMO_HREF} variant="ghost" size="sm" icon={false}>
-                Try the demo
-              </Btn>
-            </div>
-          </div>,
         ]}
       />
-
-      {/* live prices */}
-      <section className="s-wrap relative z-[2] -mt-2 pb-4" aria-label="Live prices">
-        <PriceStrip rows={STRIP} initial={quotes} />
-      </section>
 
       {/* 01 options */}
       <section className="s-sec s-band" aria-labelledby="o-title">
@@ -140,21 +150,18 @@ export default async function HomePage() {
             lead={`Calls and puts on ${OPTIONS.fxPairsLive} FX pairs, gold, silver and oil. Buy an option and the premium is the most you can lose. Cash-settled in US dollars at ${OPTIONS.cut}.`}
             action={<Btn href="/options">How options work</Btn>}
           />
-          <ShotTour shot="traderOptions" pins={OPTIONS_PINS} side="right" />
-          {/* both sides, plainly: what a buyer can gain and what anyone can lose (founder 2026-10-28) */}
-          <OptionsOdds className="mt-10" />
+          {/* a bento of the chain, both sides plainly (what a buyer can gain, what anyone can lose; founder 2026-10-28)
+              and the worked example (founder 2026-10-31, reference: an app landing page of rounded cards) */}
+          <OptionsBento pins={OPTIONS_PINS} />
         </div>
       </section>
 
       {/* 02 the platform in numbers */}
       <section className="s-sec" aria-labelledby="p-title">
-        <div className="s-wrap">
-          <Rise className="s-card pad grid gap-12 lg:grid-cols-[0.8fr_1.6fr] lg:gap-16">
+        <div className="s-wrap grid gap-5">
+          <Rise className="s-tile calm pad grid gap-12 lg:grid-cols-[0.8fr_1.6fr] lg:gap-16">
             <div className="flex flex-col gap-6">
-              <div className="flex items-center gap-4">
-                <span className="s-index">02</span>
-                <span className="s-eyebrow">The platform</span>
-              </div>
+              <Label index="02">The platform</Label>
               <div className="flex gap-2">
                 {['TRC20', 'BEP20', 'Android'].map((c) => (
                   <span key={c} className="s-chip">
@@ -166,17 +173,16 @@ export default async function HomePage() {
             <h2 id="p-title" className="s-statement">
               We build the platform we trade on. <span className="s-mute">Options where the premium is the most you can lose, CFDs priced two ways, and copy trading with limits you set, in one Client Area on one wallet.</span>
             </h2>
-            <div className="lg:col-span-2">
-              <StatStrip
-                items={[
-                  { v: INSTRUMENTS.liveMarkets, l: 'Live markets', sub: 'Forex, metals, energies, indices, crypto' },
-                  { v: `1:${LEVERAGE.accountMax}`, l: 'Maximum leverage', sub: 'Standard and Cent accounts' },
-                  { v: ACCOUNTS[0].minDeposit, l: 'To open a live account', sub: `Fund with ${FUNDING.minDeposit}` },
-                  { v: LANGUAGES.length, l: 'Languages', sub: 'Arabic, Urdu and Persian right to left' },
-                ]}
-              />
-            </div>
           </Rise>
+          {/* the figures as tiles under it, opening an account the one bright tile (founder 2026-11-01) */}
+          <StatTiles
+            items={[
+              { v: INSTRUMENTS.liveMarkets, l: 'Live markets', sub: 'Forex, metals, energies, indices, crypto' },
+              { v: `1:${LEVERAGE.accountMax}`, l: 'Maximum leverage', sub: 'Standard and Cent accounts' },
+              { v: ACCOUNTS[0].minDeposit, l: 'To open a live account', sub: `Fund with ${FUNDING.minDeposit}`, href: REGISTER_HREF, accent: true },
+              { v: LANGUAGES.length, l: 'Languages', sub: 'Arabic, Urdu and Persian right to left' },
+            ]}
+          />
         </div>
       </section>
 
@@ -203,6 +209,7 @@ export default async function HomePage() {
       <section className="s-sec" aria-label="The order ticket">
         <div className="s-wrap">
           <FeatureSplit
+            framed
             index="04"
             eyebrow="Order ticket"
             title={
@@ -217,10 +224,7 @@ export default async function HomePage() {
               />
             }
             media={
-              <div className="relative mx-auto max-w-[460px]">
-                <div aria-hidden className="absolute -inset-4 -z-10 rounded-full bg-[radial-gradient(circle,rgba(242,96,12,0.35),transparent_65%)] sm:-inset-10" />
-                <Shot shot="traderTicket" />
-              </div>
+              <IPhone shot="traderTicket" trim={18} />
             }
           />
         </div>
@@ -231,10 +235,7 @@ export default async function HomePage() {
         <div className="s-wrap">
           <Rise className="mb-10 grid gap-6 lg:grid-cols-[1fr_1fr] lg:items-end">
             <div className="flex flex-col gap-5">
-              <div className="flex items-center gap-4">
-                <span className="s-index">05</span>
-                <span className="s-eyebrow">Positions</span>
-              </div>
+              <Label index="05">Positions</Label>
               <h2 id="pos-title" className="s-h2 !text-[clamp(30px,3.4vw,50px)]">
                 Live P&amp;L, <span className="s-mute">one click to close.</span>
               </h2>
@@ -242,30 +243,19 @@ export default async function HomePage() {
             <p className="s-lead lg:justify-self-end">Open price to current price, stops and targets you can add inline, swap and commission, and bulk actions: close all, close profitable, close losing, close by symbol or move every stop to breakeven.</p>
           </Rise>
           <Rise>
-            <Shot shot="traderPositions" />
+            <Shot shot="traderPositionsFull" />
           </Rise>
         </div>
       </section>
 
-      {/* 06 phone */}
-      <section className="s-sec" aria-label="On your phone">
-        <div className="s-wrap">
-          <FeatureSplit
-            index="06"
-            eyebrow="On your phone"
-            title={
-              <>
-                The same terminal <span className="s-mute">in your pocket.</span>
-              </>
-            }
-            text="Kalks Trader on Android and in any phone browser: the chart with your lines, Sell and Buy at the bottom, watchlist, positions and history one tap away."
-            points={<Checks items={['Android app for Kalks Trader and the Client Area', `Translated in full, ${LANGUAGES.length} languages`, 'Sign in once, switch accounts in a tap']} />}
-            action={<Btn href="/platforms/android">Get the Android app</Btn>}
-            media={<Phone />}
-            flip
-          />
-        </div>
-      </section>
+      {/* 06 phone: "The same terminal in your pocket.", a pinned scroll story (founder 2026-10-30) */}
+      <PocketTerminal
+        index="06"
+        eyebrow="On your phone"
+        sub="Kalks Trader on Android and in any phone browser: the chart with your lines, Sell and Buy at the bottom, watchlist, positions and history one tap away."
+        cta={{ href: '/platforms/android', label: 'Get the Android app' }}
+        notes={POCKET_NOTES}
+      />
 
       {/* 07 Client Area */}
       <section className="s-sec s-band" aria-labelledby="c-title">
@@ -283,21 +273,27 @@ export default async function HomePage() {
             action={<TextLink href="/platforms/client-area">Tour the Client Area</TextLink>}
           />
           <div className="grid gap-5 lg:grid-cols-3">
-            <Rise className="s-card overflow-hidden p-3 lg:col-span-2">
-              <Shot shot="caDashboard" flat />
-              <div className="px-3 pb-2 pt-5">
-                <div className="text-[18px] font-semibold tracking-[-0.02em]">Home</div>
-                <p className="mt-1 text-[14px] text-[var(--s-tx2)]">Ask the AI assistant, see every balance, and hide the amounts with one tap.</p>
+            <Rise className="lg:col-span-2">
+              <div className="s-card s-lift h-full overflow-hidden p-3">
+                <Shot shot="caDashboard" flat />
+                <div className="px-3 pb-2 pt-5">
+                  <div className="text-[18px] font-semibold tracking-[-0.02em]">Home</div>
+                  <p className="mt-1 text-[14px] text-[var(--s-tx2)]">Ask the AI assistant, see every balance, and hide the amounts with one tap.</p>
+                </div>
               </div>
             </Rise>
             <div className="grid gap-5">
-              <Rise delay={80} className="s-card overflow-hidden p-3">
-                <Shot shot="caAccounts" flat />
-                <div className="px-3 pb-2 pt-4 text-[15px] font-semibold">Accounts as cards</div>
+              <Rise delay={80}>
+                <div className="s-card s-lift h-full overflow-hidden p-3">
+                  <Shot shot="caAccounts" flat />
+                  <div className="px-3 pb-2 pt-4 text-[15px] font-semibold">Accounts as cards</div>
+                </div>
               </Rise>
-              <Rise delay={140} className="s-card overflow-hidden p-3">
-                <Shot shot="caCopy" flat />
-                <div className="px-3 pb-2 pt-4 text-[15px] font-semibold">Copy trading masters</div>
+              <Rise delay={140}>
+                <div className="s-card s-lift h-full overflow-hidden p-3">
+                  <Shot shot="caCopy" flat />
+                  <div className="px-3 pb-2 pt-4 text-[15px] font-semibold">Copy trading masters</div>
+                </div>
               </Rise>
             </div>
           </div>
@@ -307,11 +303,13 @@ export default async function HomePage() {
               { shot: 'caPamm' as const, t: 'PAMM funds', d: 'Invest by units at the next rollover NAV; fees only above the high-water mark.' },
               { shot: 'caTypes' as const, t: 'Account types as cards', d: 'Every account type side by side, with its minimum deposit and maximum leverage.' },
             ].map((c, i) => (
-              <Rise key={c.t} delay={i * 70} className="s-card overflow-hidden p-3">
-                <Shot shot={c.shot} flat />
-                <div className="px-3 pb-2 pt-4">
-                  <div className="text-[15px] font-semibold">{c.t}</div>
-                  <p className="mt-1 text-[13.5px] leading-relaxed text-[var(--s-tx2)]">{c.d}</p>
+              <Rise key={c.t} delay={i * 80}>
+                <div className="s-card s-lift h-full overflow-hidden p-3">
+                  <Shot shot={c.shot} flat />
+                  <div className="px-3 pb-2 pt-4">
+                    <div className="text-[15px] font-semibold">{c.t}</div>
+                    <p className="mt-1 text-[13.5px] leading-relaxed text-[var(--s-tx2)]">{c.d}</p>
+                  </div>
                 </div>
               </Rise>
             ))}
@@ -415,10 +413,7 @@ export default async function HomePage() {
       <section className="s-sec !pt-4" aria-labelledby="f-title">
         <div className="s-wrap grid gap-12 lg:grid-cols-[0.8fr_1.6fr]">
           <Rise className="flex flex-col items-start gap-6">
-            <div className="flex items-center gap-4">
-              <span className="s-index">11</span>
-              <span className="s-eyebrow">Questions</span>
-            </div>
+            <Label index="11">Questions</Label>
             <h2 id="f-title" className="s-h2">
               On your <span className="s-mute">mind.</span>
             </h2>

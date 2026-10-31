@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import type { ReactNode } from 'react';
-import { ArrowUpRight, Check, Plus } from 'lucide-react';
+import { ArrowRight, ArrowUpRight, Check, Command, Plus, Zap } from 'lucide-react';
 import type { SiteImage } from '@/lib/content';
 import { cn } from '@/lib/cn';
 import { Rise } from './Rise';
@@ -8,19 +8,26 @@ import { ThemedImage } from './ThemedImage';
 
 /* ─────────────────────────────────────────────────────────────── buttons */
 
-type BtnVariant = 'primary' | 'ghost' | 'light' | 'dark';
+type BtnVariant = 'primary' | 'ghost' | 'light' | 'dark' | 'deep';
 /**
- * Pill button with the arrow in a white circle (Formix style). Hand-offs to the Client Area (/auth/*) and external
- * URLs are plain anchors so the redirect and the campaign forwarder keep query strings; site pages use Link.
+ * One button, two looks by context (site.css): in the sections a REF-2 pill with a small arrow; inside a hero, the
+ * header over it or the menu (.s-ref1) a REF-1 square in monospace capitals, the main one with the ⌘ glyph. Hand-offs
+ * to the Client Area (/auth/*) and external URLs are plain anchors so the redirect and the campaign forwarder keep
+ * query strings; site pages use Link.
  */
 export function Btn({ href, children, variant = 'primary', size, icon = true, className }: { href: string; children: ReactNode; variant?: BtnVariant; size?: 'sm'; icon?: boolean; className?: string }) {
   const cls = cn('s-btn', variant !== 'primary' && variant, size, !icon && 'no-ic', className);
   const inner = (
     <>
+      {variant === 'primary' && (
+        <span className="s-btn-cmd" aria-hidden>
+          <Command size={size === 'sm' ? 15 : 17} strokeWidth={2} />
+        </span>
+      )}
       {children}
       {icon && (
         <span className="s-btn-ic" aria-hidden>
-          <ArrowUpRight size={size === 'sm' ? 15 : 17} strokeWidth={2.2} />
+          <ArrowUpRight size={size === 'sm' ? 16 : 18} strokeWidth={2.2} />
         </span>
       )}
     </>
@@ -59,8 +66,28 @@ export function TextLink({ href, children, className }: { href: string; children
 /* ─────────────────────────────────────────────────────────────── headings */
 
 /**
- * Section head: an index ("01") and eyebrow on one line, a two-tone title (pass <span className="s-mute"> or
- * "s-hot" inside), an optional lead and an action on the right.
+ * REF-2 pill label above a heading: the section's number (or a small icon) on the left, the label, an arrow on the
+ * right (drawn by site.css).
+ */
+export function Label({ index, children, icon, className }: { index?: string; children?: ReactNode; icon?: ReactNode; className?: string }) {
+  return (
+    <span className={cn('s-label', className)}>
+      {index ? (
+        <span className="s-index">{index}</span>
+      ) : (
+        <span className="s-label-ic" aria-hidden>
+          {icon ?? <Zap size={14} strokeWidth={2.2} />}
+        </span>
+      )}
+      {children}
+    </span>
+  );
+}
+
+/**
+ * Section head (REF-2): the pill label, a two-tone title (the <span className="s-mute"> or "s-hot"
+ * phrase inside turns orange), an optional lead and the action under it, centred. `align="left"` keeps it left with
+ * the action on the right, for split layouts.
  */
 export function Head({
   index,
@@ -68,7 +95,7 @@ export function Head({
   title,
   lead,
   action,
-  center,
+  align = 'center',
   id,
   className,
 }: {
@@ -77,25 +104,23 @@ export function Head({
   title: ReactNode;
   lead?: ReactNode;
   action?: ReactNode;
+  align?: 'center' | 'left';
+  /** kept for older call sites: centred is the default now */
   center?: boolean;
   id?: string;
   className?: string;
 }) {
+  const left = align === 'left';
   return (
-    <Rise className={cn('mb-12 flex flex-col gap-6 lg:mb-16', !center && 'lg:flex-row lg:items-end lg:justify-between', center && 'items-center text-center', className)}>
-      <div className={cn('flex flex-col gap-5', center && 'items-center')}>
-        {(index || eyebrow) && (
-          <div className="flex items-center gap-4">
-            {index && <span className="s-index">{index}</span>}
-            {eyebrow && <span className="s-eyebrow">{eyebrow}</span>}
-          </div>
-        )}
-        <h2 id={id} className="s-h2 max-w-[18ch]">
+    <Rise className={cn('mb-12 flex flex-col gap-6 lg:mb-16', left ? 'lg:flex-row lg:items-end lg:justify-between' : 'items-center text-center', className)}>
+      <div className={cn('flex flex-col gap-6', !left && 'items-center')}>
+        {(index || eyebrow) && <Label index={index}>{eyebrow}</Label>}
+        <h2 id={id} className={cn('s-h2', left ? 'max-w-[18ch]' : 'max-w-[20ch]')}>
           {title}
         </h2>
-        {lead && <p className={cn('s-lead', center && 'mx-auto')}>{lead}</p>}
+        {lead && <p className={cn('s-lead', !left && 'mx-auto')}>{lead}</p>}
       </div>
-      {action && <div className="shrink-0">{action}</div>}
+      {action && <div className={cn('shrink-0', !left && 'pt-2')}>{action}</div>}
     </Rise>
   );
 }
@@ -161,7 +186,7 @@ export function StatStrip({ items, className, size }: { items: { v: ReactNode; l
     <div className={cn('grid grid-cols-2 gap-x-8 gap-y-12', items.length >= 4 ? 'lg:grid-cols-4' : 'lg:grid-cols-3', className)}>
       {items.map((s, i) => (
         <Rise key={i} delay={i * 80} className="flex flex-col">
-          <div className={cn('s-num whitespace-nowrap text-white', md ? 'text-[clamp(40px,4.4vw,68px)]' : 'text-[clamp(48px,6vw,92px)]')}>{s.v}</div>
+          <div className={cn('s-num whitespace-nowrap text-[var(--k-deep)]', md ? 'text-[clamp(36px,3.8vw,56px)]' : 'text-[clamp(40px,4.8vw,72px)]')}>{s.v}</div>
           <div className="mt-5 flex items-center gap-2 text-[13.5px] font-medium text-[var(--s-tx2)]">
             <span className="s-dot" aria-hidden /> {s.l}
           </div>
@@ -169,6 +194,49 @@ export function StatStrip({ items, className, size }: { items: { v: ReactNode; l
           {s.sub && <div className="mt-3 text-[12.5px] leading-relaxed text-[var(--s-tx3)]">{s.sub}</div>}
         </Rise>
       ))}
+    </div>
+  );
+}
+
+/**
+ * Figures as tiles (founder 2026-11-01, reference: feature cards): the label in small capitals on top, the figure, the
+ * note at the bottom. A tile with an href links, with the arrow in its corner; `accent` is the one bright orange tile.
+ */
+export function StatTiles({ items, className }: { items: { v: ReactNode; l: ReactNode; sub?: ReactNode; href?: string; accent?: boolean }[]; className?: string }) {
+  return (
+    <div className={cn('grid grid-cols-2 gap-5', items.length >= 4 ? 'lg:grid-cols-4' : 'lg:grid-cols-3', className)}>
+      {items.map((s, i) => {
+        const cls = cn('s-tile flex h-full min-h-[190px] flex-col p-5 sm:p-6 lg:min-h-[250px] lg:p-7', s.accent && 'accent');
+        const body = (
+          <>
+            <div className="s-tile-k">{s.l}</div>
+            <div className="s-num mt-auto whitespace-nowrap pt-8 text-[clamp(30px,4vw,60px)] text-[rgb(var(--fg))]">{s.v}</div>
+            <div className="mt-3 flex items-end justify-between gap-3">
+              {s.sub && <div className="text-[13px] leading-relaxed text-[rgb(var(--fg)/0.6)]">{s.sub}</div>}
+              {s.href && (
+                <span className="s-tile-go -mb-2 -me-2" aria-hidden>
+                  <ArrowRight size={22} strokeWidth={2.4} />
+                </span>
+              )}
+            </div>
+          </>
+        );
+        return (
+          <Rise key={i} delay={i * 80} className="h-full">
+            {!s.href ? (
+              <div className={cls}>{body}</div>
+            ) : s.href.startsWith('/auth/') ? (
+              <a href={s.href} className={cls}>
+                {body}
+              </a>
+            ) : (
+              <Link href={s.href} className={cls}>
+                {body}
+              </Link>
+            )}
+          </Rise>
+        );
+      })}
     </div>
   );
 }
@@ -205,7 +273,6 @@ export function Cta({ title, sub, primary, secondary, facts, image }: { title: R
     <section className="s-sec" aria-label="Get started">
       <div className="s-wrap">
         <Rise className="s-orange relative overflow-hidden px-7 py-14 sm:px-12 lg:px-16 lg:py-20">
-          <div aria-hidden className="pointer-events-none absolute -right-24 -top-24 size-[420px] rounded-full bg-[radial-gradient(circle,rgba(255,200,140,0.55),transparent_65%)]" />
           {image && (
             <ThemedImage
               image={{ alt: '', ...image }}

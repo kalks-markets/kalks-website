@@ -92,13 +92,13 @@ function AccountCard({ a, delay }: { a: AccountType; delay: number }) {
           <h3 className="mt-3 text-[clamp(30px,2.8vw,40px)] font-[500] leading-none tracking-[-0.04em]">{a.name}</h3>
           <p className={cn('mt-3 text-[14.5px] leading-relaxed', muted)}>{a.tagline}</p>
           <div className="mt-7 grid grid-cols-2 gap-4">
-            <div>
+            <div className="min-w-0">
               <div className={cn('text-[12.5px] font-medium', muted)}>From</div>
-              <div className="s-num mt-1 text-[clamp(36px,3.4vw,48px)]">{a.minDeposit}</div>
+              <div className="s-num mt-1 whitespace-nowrap text-[clamp(28px,2.4vw,36px)]">{a.minDeposit}</div>
             </div>
             <div>
               <div className={cn('text-[12.5px] font-medium', muted)}>Leverage up to</div>
-              <div className="s-num mt-1 text-[clamp(36px,3.4vw,48px)]">{a.leverage}</div>
+              <div className="s-num mt-1 whitespace-nowrap text-[clamp(28px,2.4vw,36px)]">{a.leverage}</div>
             </div>
           </div>
           <dl className="mt-6">

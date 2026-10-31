@@ -190,7 +190,7 @@ export default async function TraderPage() {
           />
           <div className="grid items-stretch gap-5 lg:grid-cols-[minmax(0,1.55fr)_minmax(0,1fr)]">
             <PinTour shot={PSHOTS.indicators} pins={INDICATOR_PINS} layout="card" scrollMin="min-w-[540px]" intro={<h3 className="s-h3">Indicators</h3>} />
-            <PinTour shot={PSHOTS.layout} pins={LAYOUT_PINS} layout="card" maxW="max-w-[290px]" intro={<h3 className="s-h3">Layout</h3>} />
+            <PinTour shot={PSHOTS.layout} pins={LAYOUT_PINS} layout="card" intro={<h3 className="s-h3">Layout</h3>} />
           </div>
         </div>
       </section>
@@ -201,7 +201,6 @@ export default async function TraderPage() {
           <PinTour
             shot="traderTicket"
             pins={TICKET_PINS}
-            maxW="max-w-[440px]"
             cols="lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)]"
             intro={
               <MiniHead

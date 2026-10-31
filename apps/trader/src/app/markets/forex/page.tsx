@@ -87,7 +87,7 @@ export default function ForexPage() {
           </>
         ),
         lead: 'The Kalks Trader ticket shows the spread, the margin, the pip value and the overnight swap before you choose Sell or Buy. Point at a number to see each part.',
-        body: <PinTour shot="traderTicket" pins={TICKET_PINS} maxW="max-w-[440px]" cols="lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1fr)]" />,
+        body: <PinTour shot="traderTicket" pins={TICKET_PINS} cols="lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1fr)]" />,
       }}
       faq={FAQ}
     />

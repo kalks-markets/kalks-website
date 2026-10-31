@@ -28,7 +28,7 @@ export function PriceStrip({ rows, initial }: { rows: StripRow[]; initial: Quote
   );
   const flash = useFlash(quotes);
   return (
-    <div className="ticks card overflow-hidden !rounded-[24px]">
+    <div className="ticks overflow-hidden bg-[var(--s1)] shadow-[inset_0_1px_0_var(--line),inset_0_-1px_0_var(--line)]">
       <div className="lab">
         <b>Live prices</b>
         <span>

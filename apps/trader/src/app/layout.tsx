@@ -11,6 +11,7 @@ import CampaignForwarder from '@/components/util/CampaignForwarder';
 import { BrandSprite } from '@/components/brand/Logo';
 import { ContentProvider } from '@/components/site/ContentContext';
 import { PreviewBadge } from '@/components/chrome/PreviewBadge';
+import { SmoothScroll } from '@/components/site/Motion';
 import { PSHOTS } from '@/components/site/platforms/shots';
 import { SHOTS } from '@/content/heroes';
 import { FOOTER_COPY, NAV_COPY } from '@/content/site';
@@ -95,9 +96,11 @@ export default async function RootLayout({ children }: { children: React.ReactNo
   return (
     <html lang="en" className={`${interTight.variable} ${interTightExt.variable} ${jbmono.variable} ${golos.variable} ${beVietnam.variable}`} suppressHydrationWarning>
       <head>
-        <script dangerouslySetInnerHTML={{ __html: THEME_BOOT }} />
+        {/* suppressHydrationWarning: some browser extensions rewrite <head> scripts before React loads (e.g. a blob: src
+            on the JSON-LD); the markup the server sent is still what search engines and the page use */}
+        <script dangerouslySetInnerHTML={{ __html: THEME_BOOT }} suppressHydrationWarning />
         <link rel="preconnect" href="https://api.kalkstrade.com" crossOrigin="anonymous" />
-        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(ORG_LD) }} />
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(ORG_LD) }} suppressHydrationWarning />
       </head>
       <body suppressHydrationWarning>
         <BrandSprite />
@@ -106,9 +109,25 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         </a>
         <Nav copy={mergeNav(global, NAV_COPY)} />
         <ContentProvider shots={shotsFrom(global)}>
-          <main id="main">{children}</main>
+          <main id="main" className="relative">
+            {/* REF-2's faint column lines behind every section (the heroes cover them) */}
+            <div className="s-gridlines" aria-hidden>
+              <div className="s-wrap">
+                <i>
+                  <b />
+                  <b />
+                  <b />
+                  <b />
+                  <b />
+                  <b />
+                </i>
+              </div>
+            </div>
+            {children}
+          </main>
         </ContentProvider>
         <Footer copy={mergeFooter(global, FOOTER_COPY)} />
+        <SmoothScroll />
         <CampaignForwarder />
         <GoogleTranslate />
         {previewing && <PreviewBadge state={content.preview ? 'drafts' : content.previewExpired ? 'expired' : 'published'} />}

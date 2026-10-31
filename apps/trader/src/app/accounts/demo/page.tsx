@@ -82,7 +82,7 @@ export default async function DemoPage() {
             <h2 id="n-title" className="s-statement">
               Everything on a demo account behaves the way it does on a live one, <span className="s-mute">except that the money is not real.</span>
             </h2>
-            <div className="lg:col-span-2 [&_.s-num]:!text-[clamp(40px,4.6vw,68px)]">
+            <div className="lg:col-span-2 [&_.s-num]:!text-[clamp(30px,4.2vw,56px)]">
               <StatStrip
                 items={[
                   { v: DEMO.defaultBalance, l: 'Virtual funds to start', sub: `Any balance from ${DEMO.balanceRange}` },

@@ -252,7 +252,7 @@ export default async function MarketsPage() {
             lead="Beside the chart in Kalks Trader, the instruments panel lists every market you can trade with its live prices. Point at a number to see each part."
             action={<Btn href="/platforms/trader">Explore Kalks Trader</Btn>}
           />
-          <PinTour shot={INSTRUMENTS_SHOT} pins={PANEL_PINS} maxW="max-w-[460px]" cols="lg:grid-cols-[minmax(0,0.85fr)_minmax(0,1fr)]" />
+          <PinTour shot={INSTRUMENTS_SHOT} pins={PANEL_PINS} cols="lg:grid-cols-[minmax(0,0.85fr)_minmax(0,1fr)]" />
         </div>
       </section>
 

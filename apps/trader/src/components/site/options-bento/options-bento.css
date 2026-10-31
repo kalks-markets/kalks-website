@@ -1,0 +1,572 @@
+/* ═════════════════════════════════════════════════════════════════════════════
+   The home page's options section as a bento (OptionsBento.tsx; founder 2026-10-31, reference: an app landing page
+   of rounded cards). Calm by design: hairline borders, one accent per card, slow motion only — the strike stack
+   drifts upward, the opportunity cards slide every few seconds, the example's bars fill once. All of it stops with
+   reduced motion (globals.css).
+   ═════════════════════════════════════════════════════════════════════════════ */
+
+.ob {
+  display: grid;
+  gap: 20px;
+}
+@media (min-width: 1024px) {
+  .ob {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  }
+  .ob-wide,
+  .ob-note {
+    grid-column: 1 / -1;
+  }
+}
+/* the cards are tiles (site.css .s-tile): gradient, grain, the glow on hover */
+.ob-card {
+  --pad: 26px;
+  padding: var(--pad);
+}
+@media (min-width: 761px) {
+  .ob-card {
+    --pad: 44px;
+  }
+}
+.ob-card h3 {
+  font: 500 clamp(24px, 2.3vw, 32px) / 1.15 var(--f-disp);
+  letter-spacing: -0.02em;
+  color: var(--k-deep);
+}
+.ob-title {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+/* the opportunity card: its inner card fills the card's height */
+.ob-opp {
+  display: flex;
+  flex-direction: column;
+}
+.ob-lead {
+  max-width: 54ch;
+  margin-top: 14px;
+  font-size: 16px;
+  line-height: 1.6;
+  color: rgb(var(--fg) / 0.62);
+}
+.ob .up {
+  color: var(--s-up);
+}
+.ob .dn {
+  color: var(--s-down);
+}
+
+/* ─────────────────────────────────────────────────────────────── 1. calls and puts by strike */
+.ob-wide {
+  display: grid;
+  gap: 32px;
+}
+@media (min-width: 1024px) {
+  .ob-wide {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.05fr);
+    gap: 56px;
+  }
+}
+.ob-features {
+  display: grid;
+  gap: 18px;
+  margin-top: 30px;
+}
+.ob-features li {
+  display: grid;
+  grid-template-columns: 52px minmax(0, 1fr);
+  gap: 16px;
+  align-items: start;
+}
+/* the glass icon (GlassIcon) stands on its own, no tile behind it */
+.ob-ic {
+  display: grid;
+  place-items: center;
+  width: 52px;
+  height: 52px;
+  margin-top: -6px;
+}
+.ob-features li > span:last-child {
+  font-size: 14px;
+  line-height: 1.55;
+  color: rgb(var(--fg) / 0.62);
+}
+.ob-features b {
+  display: block;
+  margin-bottom: 3px;
+  font-size: 15px;
+  font-weight: 600;
+  color: rgb(var(--fg));
+}
+
+/* the stack: strikes drifting slowly upward through a fixed window, cut by the card's edges (on wide screens it
+   fills the card's right half from its top edge to its bottom edge) */
+.ob-stack {
+  position: relative;
+  height: 400px;
+  margin: 0 0 calc(-1 * var(--pad));
+  overflow: hidden;
+  -webkit-mask-image: linear-gradient(180deg, transparent 0, #000 14%, #000 86%, transparent 100%);
+  mask-image: linear-gradient(180deg, transparent 0, #000 14%, #000 86%, transparent 100%);
+}
+@media (min-width: 1024px) {
+  .ob-chain {
+    min-height: 500px;
+  }
+  .ob-chain .ob-copy {
+    grid-column: 1;
+  }
+  .ob-chain .ob-stack {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    right: var(--pad);
+    width: calc(50% - var(--pad) - 8px);
+    height: auto;
+    margin: 0;
+  }
+}
+.ob-stack-track {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding-block: 14px;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .ob-stack-track {
+    animation: ob-drift 28s linear infinite;
+  }
+  .ob-stack:hover .ob-stack-track {
+    animation-play-state: paused;
+  }
+}
+@keyframes ob-drift {
+  to {
+    transform: translate3d(0, calc(-50% - 7px), 0);
+  }
+}
+/* white cards in both themes (founder 2026-10-31), so their text takes the light theme's ink and up / down colours */
+.ob-entry {
+  --fg: 26 20 16;
+  --s-up: #1d64d8;
+  --s-down: #d4342a;
+  padding: 18px 20px;
+  border-radius: 20px;
+  background: #fff;
+  border: 1px solid rgb(var(--fg) / 0.08);
+  box-shadow: 0 10px 28px rgb(0 0 0 / 0.22);
+}
+:root[data-theme='light'] .ob-entry {
+  box-shadow: 0 1px 2px rgb(0 0 0 / 0.04), 0 8px 24px rgb(0 0 0 / 0.06);
+}
+/* a staggered stack, as in the reference */
+.ob-entry:nth-child(odd) {
+  margin-inline-end: 7%;
+}
+.ob-entry:nth-child(even) {
+  margin-inline-start: 7%;
+}
+.ob-entry-top {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 15px;
+}
+.ob-entry-mark {
+  display: flex;
+  font-size: 24px;
+}
+.ob-entry-top b {
+  font-weight: 600;
+  color: rgb(var(--fg));
+}
+.ob-side {
+  font-size: 13.5px;
+  font-weight: 600;
+}
+.ob-entry-meta {
+  margin-inline-start: auto;
+  font-size: 13px;
+  color: rgb(var(--fg) / 0.55);
+  white-space: nowrap;
+}
+.ob-entry-bottom {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 16px;
+}
+.ob-price {
+  white-space: nowrap;
+  font: 600 26px/1 var(--f-disp);
+  letter-spacing: -0.02em;
+  font-variant-numeric: tabular-nums;
+  color: rgb(var(--fg));
+}
+.ob-price small {
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 0;
+  color: rgb(var(--fg) / 0.55);
+}
+.ob-chip {
+  padding: 8px 12px;
+  border-radius: 10px;
+  background: rgb(var(--fg) / 0.05);
+  font-size: 13px;
+  font-weight: 500;
+  color: rgb(var(--fg) / 0.78);
+  white-space: nowrap;
+}
+@media (max-width: 479px) {
+  .ob-entry-meta {
+    display: none;
+  }
+  .ob-entry {
+    padding: 16px;
+  }
+  .ob-entry:nth-child(odd) {
+    margin-inline-end: 3%;
+  }
+  .ob-entry:nth-child(even) {
+    margin-inline-start: 3%;
+  }
+  .ob-price {
+    font-size: 22px;
+  }
+}
+
+/* ─────────────────────────────────────────────────────────────── 2. the opportunity: one card, its panel slides */
+/* the card stays put; its panel slides through three copies (--at, OptionsBento.tsx), always forward, the jump back
+   to the middle copy unseen; the title and text under it fade in step; the header's bar fills while a panel stays */
+.ob-feature {
+  --tone: var(--s-orange);
+  --tone-fg: var(--s-orange2);
+  --ease: cubic-bezier(0.65, 0, 0.25, 1);
+  --fpad: 18px;
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  margin-top: 28px;
+  padding: var(--fpad);
+  border-radius: 22px;
+  background: linear-gradient(180deg, rgb(var(--fg) / 0.045), rgb(var(--fg) / 0.015));
+  border: 1px solid rgb(var(--fg) / 0.08);
+  box-shadow: inset 0 1px 0 rgb(var(--fg) / 0.05);
+  touch-action: pan-y;
+}
+.ob-feature[data-tone='1'] {
+  --tone: var(--s-up);
+  --tone-fg: var(--s-up);
+}
+.ob-feature[data-tone='2'] {
+  --tone: #ffa040;
+  --tone-fg: color-mix(in oklab, #ffa040 78%, rgb(var(--fg)));
+}
+@media (min-width: 761px) {
+  .ob-feature {
+    --fpad: 22px;
+  }
+}
+.ob-feature-head {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+/* the panel's glass icon (GlassIcon), crossfading with the panel */
+.ob-feature-ic {
+  position: relative;
+  display: grid;
+  flex: none;
+  width: 48px;
+  height: 48px;
+}
+.ob-feature-ic > span {
+  display: grid;
+  grid-area: 1 / 1;
+  place-items: center;
+  opacity: 0;
+  transform: scale(0.6) rotate(-20deg);
+  transition:
+    opacity 0.35s ease,
+    transform 0.5s var(--k-ease);
+}
+.ob-feature-ic > span[data-on] {
+  opacity: 1;
+  transform: none;
+  transition-delay: 0.25s;
+}
+.ob-steps {
+  display: flex;
+  flex: 1;
+  gap: 6px;
+}
+.ob-steps button {
+  position: relative;
+  flex: 1;
+  height: 24px;
+}
+.ob-steps button::before,
+.ob-steps i {
+  content: '';
+  position: absolute;
+  top: 10px;
+  left: 0;
+  right: 0;
+  height: 4px;
+  border-radius: 999px;
+}
+.ob-steps button::before {
+  background: rgb(var(--fg) / 0.12);
+}
+.ob-steps i {
+  background: var(--s-orange);
+  transform: scaleX(0);
+  transform-origin: left center;
+}
+.ob-steps button[data-done] i {
+  transform: none;
+}
+.ob-steps button[aria-pressed='true'] i {
+  transform: none;
+  animation: ob-fill 5s linear both;
+}
+@keyframes ob-fill {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}
+.ob-feature-n {
+  flex: none;
+  font: 500 12px/1 var(--f-mono);
+  letter-spacing: 0.04em;
+  color: rgb(var(--fg) / 0.45);
+  font-variant-numeric: tabular-nums;
+}
+/* the window runs edge to edge of the card, so a card image slides in from one edge and out at the other, softened
+   by a fade in the card's padding; room below for the image's shadow */
+.ob-viewport {
+  display: flex;
+  flex: 1;
+  margin: 12px calc(-1 * var(--fpad)) 0;
+  padding: 8px 0 34px;
+  overflow: hidden;
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 var(--fpad), #000 calc(100% - var(--fpad)), transparent);
+  mask-image: linear-gradient(90deg, transparent, #000 var(--fpad), #000 calc(100% - var(--fpad)), transparent);
+}
+.ob-track {
+  display: flex;
+  flex: 1 0 100%;
+  min-width: 0;
+  transform: translate3d(calc(var(--at) * -100%), 0, 0);
+  transition: transform 1s var(--ease);
+  will-change: transform;
+}
+.ob-feature[data-snap] .ob-track,
+.ob-feature[data-snap] .ob-track * {
+  transition: none !important;
+}
+.ob-feature-copy {
+  display: grid;
+  margin-top: 0;
+  padding: 0 4px 4px;
+}
+.ob-feature-copy > div {
+  grid-area: 1 / 1;
+  opacity: 0;
+  transform: translateY(10px);
+  transition:
+    opacity 0.3s ease,
+    transform 0.3s ease;
+}
+.ob-feature-copy > div[data-on] {
+  opacity: 1;
+  transform: none;
+  transition:
+    opacity 0.7s ease 0.35s,
+    transform 0.9s var(--k-ease) 0.35s;
+}
+.ob-feature-copy h4 {
+  font: 600 21px/1.2 var(--f-disp);
+  letter-spacing: -0.015em;
+  color: rgb(var(--fg));
+}
+.ob-feature-copy p {
+  margin-top: 8px;
+  font-size: 14.5px;
+  line-height: 1.55;
+  color: rgb(var(--fg) / 0.64);
+}
+
+/* each slide: just the card image, no panel around it (founder 2026-10-31); it stays visible the whole way across,
+   easing up from a touch smaller as it arrives, and a light sheen crosses it once it has */
+.ob-art {
+  display: grid;
+  flex: 0 0 100%;
+  place-items: center;
+  min-width: 0;
+  padding-inline: var(--fpad);
+}
+.ob-art-card {
+  position: relative;
+  display: block;
+  width: min(100%, 480px);
+  aspect-ratio: 1280 / 808;
+  overflow: hidden;
+  border-radius: 4.375% / 6.93%;
+  box-shadow:
+    0 28px 50px -20px rgb(0 0 0 / 0.6),
+    0 10px 20px -10px rgb(0 0 0 / 0.4);
+  transform: scale(0.94);
+  transition: transform 1s var(--ease);
+}
+:root[data-theme='light'] .ob-art-card {
+  box-shadow:
+    0 24px 44px -20px rgb(40 20 10 / 0.38),
+    0 8px 16px -10px rgb(40 20 10 / 0.25);
+}
+.ob-art-card img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  user-select: none;
+}
+.ob-art-card::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(105deg, transparent 35%, rgb(255 255 255 / 0.22) 50%, transparent 65%);
+  transform: translateX(-120%);
+  pointer-events: none;
+}
+.ob-art[data-active] .ob-art-card {
+  transform: none;
+}
+.ob-art[data-active] .ob-art-card::after {
+  transform: translateX(120%);
+  transition: transform 1.5s var(--k-ease) 0.9s;
+}
+
+/* ─────────────────────────────────────────────────────────────── 3. the risk: one inner card, a row per risk */
+/* inner panels: a lighter glass on the tile, so its gradient and glow show through */
+.ob-inner {
+  margin-top: 28px;
+  padding: 4px 24px;
+  border-radius: 22px;
+  background: linear-gradient(180deg, rgb(var(--fg) / 0.045), rgb(var(--fg) / 0.015));
+  border: 1px solid rgb(var(--fg) / 0.08);
+  box-shadow: inset 0 1px 0 rgb(var(--fg) / 0.05);
+}
+:root[data-theme='light'] :is(.ob-inner, .ob-feature) {
+  background: linear-gradient(180deg, rgb(255 255 255 / 0.9), rgb(255 255 255 / 0.6));
+}
+.ob-risks li {
+  padding: 18px 0;
+  border-bottom: 1px solid rgb(var(--fg) / 0.08);
+}
+.ob-risks li:last-child {
+  border-bottom: 0;
+}
+.ob-risks b {
+  display: block;
+  font-size: 16px;
+  font-weight: 600;
+  color: rgb(var(--fg));
+}
+.ob-risks span {
+  display: block;
+  margin-top: 4px;
+  font-size: 14.5px;
+  line-height: 1.55;
+  color: rgb(var(--fg) / 0.62);
+}
+
+/* ─────────────────────────────────────────────────────────────── 4. the worked example, its outcomes as bars */
+.ob-example {
+  align-items: start;
+}
+.ob-outcomes {
+  margin-top: 0;
+  padding: 26px 28px 28px;
+}
+.ob-outcomes-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid rgb(var(--fg) / 0.08);
+}
+.ob-outcomes-head b {
+  display: block;
+  font: 600 22px/1.2 var(--f-disp);
+  letter-spacing: -0.015em;
+  color: rgb(var(--fg));
+}
+.ob-outcomes-head span {
+  display: block;
+  margin-top: 4px;
+  font-size: 14px;
+  color: rgb(var(--fg) / 0.55);
+}
+.ob-premium {
+  text-align: end;
+}
+.ob-outcome {
+  padding-top: 22px;
+}
+.ob-outcome-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  font-size: 16px;
+  font-weight: 500;
+  color: rgb(var(--fg));
+}
+.ob-outcome-row b {
+  font-weight: 600;
+  white-space: nowrap;
+}
+.ob-outcome-row b.flat {
+  color: rgb(var(--fg) / 0.75);
+}
+.ob-bar {
+  height: 14px;
+  margin-top: 12px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: rgb(var(--fg) / 0.06);
+}
+.ob-bar i {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border-radius: 999px;
+  transform: scaleX(var(--share));
+  transform-origin: left center;
+  transition: transform 1.3s var(--k-ease) 0.25s;
+}
+.ob-bar i.up {
+  background: var(--s-up);
+}
+.ob-bar i.flat {
+  background: var(--k-deep);
+}
+/* the bars fill when the card first scrolls into view (Rise) */
+.pre .ob-bar i {
+  transform: scaleX(0);
+}
+.ob-outcome small {
+  display: block;
+  margin-top: 8px;
+  font-size: 13px;
+  color: rgb(var(--fg) / 0.55);
+}
+.ob-note {
+  margin-top: 4px;
+}

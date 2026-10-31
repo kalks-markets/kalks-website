@@ -18,7 +18,6 @@ export function PinTour({
   pins,
   cols = 'lg:grid-cols-[minmax(0,0.8fr)_minmax(0,1fr)]',
   flip,
-  maxW,
   intro,
   outro,
   layout = 'side',
@@ -28,7 +27,6 @@ export function PinTour({
   pins: Pin[];
   cols?: string;
   flip?: boolean;
-  maxW?: string;
   intro?: ReactNode;
   outro?: ReactNode;
   layout?: 'side' | 'under';
@@ -38,7 +36,7 @@ export function PinTour({
   const media = (
     <>
       <div className={cn(scrollMin && 'no-sb -mx-[var(--gutter)] overflow-x-auto px-[var(--gutter)] pb-3 lg:mx-0 lg:overflow-visible lg:px-0 lg:pb-0')}>
-        <div className={cn('mx-auto w-full', maxW, scrollMin, scrollMin && 'lg:min-w-0')}>
+        <div className={cn('mx-auto w-full', scrollMin, scrollMin && 'lg:min-w-0')}>
           <Shot shot={shot} pins={pins} active={on} onPin={setOn} />
         </div>
       </div>

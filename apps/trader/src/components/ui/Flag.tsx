@@ -178,3 +178,20 @@ export function Badges({ symbol, cls, size = 22 }: { symbol: string; cls?: strin
     </span>
   );
 }
+
+/** The same badges sized in em, so they scale with the surrounding font size (the phone drawing on the home page). */
+export function BadgesEm({ symbol, cls }: { symbol: string; cls?: string }) {
+  const codes = badgesFor(symbol, cls);
+  const disc = (code: Code) => (
+    <svg width="1em" height="1em" viewBox="0 0 20 20" aria-hidden style={{ flex: 'none', clipPath: 'circle(50%)' }}>
+      {C[code] ?? C.IDX}
+    </svg>
+  );
+  if (codes.length === 1) return disc(codes[0]);
+  return (
+    <span style={{ position: 'relative', display: 'flex', flex: 'none', width: '1.55em', height: '1em' }} aria-hidden>
+      <span style={{ position: 'absolute', right: 0, top: 0, display: 'flex' }}>{disc(codes[1])}</span>
+      <span style={{ position: 'absolute', left: 0, top: 0, display: 'flex', borderRadius: 999, boxShadow: '0 0 0 0.09em #fff' }}>{disc(codes[0])}</span>
+    </span>
+  );
+}

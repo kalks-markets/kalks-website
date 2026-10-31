@@ -14,12 +14,25 @@ const plain = (href: string) => href.startsWith('/auth/') || href.startsWith('/d
 
 /**
  * Footer: the wordmark and one line, the site map, the risk warning in the platform's own words, restricted regions,
- * legal links, language and theme, and the giant KALKS wordmark fading out at the very bottom (orange to black).
+ * legal links, language and theme, and the giant KALKS wordmark fading out at the very bottom (orange to the page),
+ * over the same faint column lines as the sections (REF-2); light or dark with the theme.
  * `copy` is FOOTER_COPY merged with the content service by the root layout.
  */
 export default function Footer({ copy = FOOTER_COPY }: { copy?: FooterCopy }) {
   return (
     <footer className="s-foot">
+      <div className="s-gridlines" aria-hidden>
+        <div className="s-wrap">
+          <i>
+            <b />
+            <b />
+            <b />
+            <b />
+            <b />
+            <b />
+          </i>
+        </div>
+      </div>
       <div className="s-wrap">
         <div className="grid gap-12 lg:grid-cols-[1fr_1.7fr]">
           <div className="flex flex-col items-start gap-6">
@@ -40,7 +53,7 @@ export default function Footer({ copy = FOOTER_COPY }: { copy?: FooterCopy }) {
           <nav aria-label="Footer" className="grid grid-cols-2 gap-10 sm:grid-cols-4">
             {copy.columns.map((col) => (
               <div key={col.title}>
-                <h2 className="mb-4 text-[12px] font-semibold uppercase tracking-[0.1em] text-[var(--s-orange2)]">{col.title}</h2>
+                <h2 className="mb-4 font-mono text-[12px] font-medium uppercase tracking-[0.1em] text-[var(--s-orange2)]">{col.title}</h2>
                 <ul className="flex flex-col gap-2.5">
                   {col.links.map((l) => (
                     <li key={l.href}>

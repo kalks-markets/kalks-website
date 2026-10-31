@@ -11,12 +11,24 @@
   --f-disp: var(--font-inter-tight), var(--font-inter-tight-ext), var(--font-golos), ui-sans-serif, system-ui, sans-serif;
   --f-text: var(--font-inter-tight), var(--font-inter-tight-ext), var(--font-golos), ui-sans-serif, system-ui, sans-serif;
 
-  --gutter: 20px;
+  --gutter: 24px;
+  /* REF-2 background grid: six columns (four on tablets, three on phones, so the tile band's edges sit on the lines) */
+  --grid-cols: 6;
+}
+@media (max-width: 1023px) {
+  :root {
+    --grid-cols: 4;
+  }
+}
+@media (max-width: 760px) {
+  :root {
+    --grid-cols: 3;
+  }
 }
 /* The dark theme, the default. The same tokens apply to the "dark islands" in the light theme (see below). */
 :root,
 :root[data-theme='dark'],
-:root[data-theme='light'] :is(.s-whero, .s-phero, .s-orange, .s-cream, .s-isl, .s-nav:not([data-scrolled='true'])) {
+:root[data-theme='light'] :is(.s-whero, .s-phero, .s-orange, .s-cream, .s-isl, .s-nav-hero) {
   --s-black: #050404;
   --s-ink: #0c0a09;
   --s-ink2: #141110;
@@ -36,7 +48,25 @@
   --s-cream-tx2: #5f5347;
   --s-up: #3b82f6;
   --s-down: #ff5a4e;
-  --s-r: 28px;
+  --s-r: 24px;
+
+  /* Redesign 2026-10-30 (founder's two references): REF-1 (dark premium hero) for the heroes, the header over them
+     and the menu; REF-2 (light, app-like) for every section below. Only the theme's own colours, mapped by role:
+     REF-1 navy → black (--k-hero-top), its lighter blue → ember, a darker orange (--k-hero-bot), its red CTA → the
+     Kalks orange; REF-2 dark green → a deep tone of the orange (--k-deep, headings), its bright green → the orange
+     (--k-hl, the highlighted phrase), its tiles → orange / ember / amber tints. */
+  --k-primary: #f2600c;
+  --k-deep: #ffffff;
+  --k-hl: #ff7a2e;
+  --k-paper: #050404;
+  --k-card: #110e0d;
+  --k-card-line: rgba(255, 255, 255, 0.08);
+  --k-card-sh: none;
+  --k-card-sh2: 0 18px 40px -20px rgba(0, 0, 0, 0.7);
+  --k-gridline: rgba(255, 255, 255, 0.05);
+  --k-hero-top: #050404;
+  --k-hero-bot: #7a2606;
+  --k-ease: cubic-bezier(0.22, 1, 0.36, 1);
 
   /* legacy variables (price strip, markets table, trading day, flags, option mocks) */
   --page: #050404;
@@ -114,6 +144,15 @@
   --s-up: #1d64d8;
   --s-down: #d4342a;
 
+  --k-deep: color-mix(in oklab, #7a2606 55%, #1a1410);
+  --k-hl: #f2600c;
+  --k-paper: #fbf8f4;
+  --k-card: #ffffff;
+  --k-card-line: rgba(26, 20, 16, 0.06);
+  --k-card-sh: none;
+  --k-card-sh2: 0 18px 40px -22px rgba(26, 20, 16, 0.22);
+  --k-gridline: rgba(26, 20, 16, 0.05);
+
   --page: #fbf8f4;
   --bg: #fbf8f4;
   --bg2: #f3ede5;
@@ -164,17 +203,27 @@
   --s-orange2: #ff7a2e;
 }
 /* type that inherits the body colour follows the island's own foreground */
-:root[data-theme='light'] :is(.s-whero, .s-phero, .s-orange, .s-isl, .s-nav) {
+:root[data-theme='light'] :is(.s-whero, .s-phero, .s-orange, .s-isl, .s-nav-hero, .s-nav-page) {
   color: rgb(var(--fg));
+}
+/* the page's own foreground (as r g b) and background; set on the root only, so inside a dark island they still name
+   the page's colours (the home hero's figures sit on its faded foot, which is the page itself) */
+:root {
+  --k-page-fg: 255 255 255;
+  --k-page-bg: #050404;
+}
+:root[data-theme='light'] {
+  --k-page-fg: 26 20 16;
+  --k-page-bg: #fbf8f4;
 }
 /* no transitions while the theme switches (ThemeToggle sets this for one frame) */
 .theme-switching,
 .theme-switching * {
   transition: none !important;
 }
-@media (min-width: 640px) {
+@media (min-width: 1024px) {
   :root {
-    --gutter: 32px;
+    --gutter: 48px;
   }
 }
 
@@ -194,7 +243,7 @@ body {
 /* ─────────────────────────────────────────────────────────────── layout */
 .s-wrap {
   width: 100%;
-  max-width: 1320px;
+  max-width: 1280px;
   margin-inline: auto;
   padding-inline: var(--gutter);
 }
@@ -204,53 +253,142 @@ body {
 }
 @media (min-width: 1024px) {
   .s-sec {
-    padding-block: 112px;
+    padding-block: 120px;
   }
 }
 .s-sec.tight {
   padding-block: 48px;
 }
+/* a softly tinted band; translucent so the page's grid lines still show through */
 .s-band {
-  background: var(--s-ink);
-  border-block: 1px solid var(--s-line);
+  background: color-mix(in oklab, var(--s-orange) 4%, transparent);
+  border-block: 1px solid var(--k-card-line);
+}
+
+/* REF-2: faint vertical grid lines behind the sections, equal columns across the container (layout.tsx) */
+.s-gridlines {
+  pointer-events: none;
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+}
+.s-gridlines > div {
+  height: 100%;
+}
+.s-gridlines i {
+  display: grid;
+  grid-template-columns: repeat(var(--grid-cols), minmax(0, 1fr));
+  height: 100%;
+  border-inline-start: 1px solid var(--k-gridline);
+}
+/* real 1 px borders (a repeating gradient drops lines that fall between pixels) */
+.s-gridlines i > b {
+  border-inline-end: 1px solid var(--k-gridline);
+}
+@media (max-width: 1023px) {
+  .s-gridlines i > b:nth-child(n + 5) {
+    display: none;
+  }
+}
+@media (max-width: 760px) {
+  .s-gridlines i > b:nth-child(n + 4) {
+    display: none;
+  }
 }
 
 /* ─────────────────────────────────────────────────────────────── type */
+/* Pill label above a section heading: the section's number (or a small icon) and the label, on a hairline pill; no
+   arrow, since it isn't a link (minimalist pass, founder 2026-10-30). <Label> renders it; the older markup (an
+   .s-index beside an .s-eyebrow in one row) gets the same pill, and a lone .s-eyebrow is a pill with a dot. */
+.s-label,
+div:has(> .s-index + .s-eyebrow),
 .s-eyebrow {
   display: inline-flex;
   align-items: center;
-  gap: 12px;
-  font-size: 13px;
+  gap: 10px;
+  width: fit-content;
+  max-width: 100%;
+  height: 32px;
+  padding: 0 14px 0 4px;
+  border-radius: 999px;
+  background: var(--k-card);
+  box-shadow: inset 0 0 0 1px rgb(var(--fg) / 0.09);
+  font-size: 14px;
   font-weight: 500;
-  letter-spacing: 0.01em;
-  color: var(--s-tx2);
+  line-height: 1;
+  letter-spacing: -0.005em;
+  color: rgb(var(--fg));
+  white-space: nowrap;
+}
+.s-eyebrow {
+  padding-inline-start: 14px;
 }
 .s-eyebrow::before {
   content: '';
-  width: 28px;
-  height: 1px;
-  background: currentColor;
-  opacity: 0.8;
+  flex: none;
+  width: 8px;
+  height: 8px;
+  border-radius: 99px;
+  background: var(--s-orange);
+}
+:is(.s-label, div:has(> .s-index + .s-eyebrow)) > .s-eyebrow {
+  height: auto;
+  padding: 0;
+  border-radius: 0;
+  background: none;
+  box-shadow: none;
+}
+:is(.s-label, div:has(> .s-index + .s-eyebrow)) > .s-eyebrow::before {
+  display: none;
+}
+.s-label-ic {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 24px;
+  height: 24px;
+  border-radius: 999px;
+  background: color-mix(in oklab, var(--s-orange) 13%, transparent);
+  color: var(--s-orange2);
 }
 .s-index {
-  font: 500 13px/1 var(--f-text);
-  font-variant-numeric: tabular-nums;
+  display: inline-grid;
+  place-items: center;
+  flex: none;
+  justify-self: start;
+  width: fit-content;
+  min-width: 24px;
+  height: 24px;
+  padding: 0 5px;
+  border-radius: 999px;
+  background: color-mix(in oklab, var(--s-orange) 13%, transparent);
   color: var(--s-orange2);
-  letter-spacing: 0.04em;
+  font: 600 12px/1 var(--f-mono);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.02em;
 }
+/* REF-1 headline (heroes) */
 .s-h1 {
   font-family: var(--f-disp);
-  font-weight: 400;
-  font-size: clamp(44px, 7.2vw, 108px);
-  line-height: 0.94;
-  letter-spacing: -0.05em;
+  font-weight: 450;
+  font-size: clamp(44px, 6.4vw, 100px);
+  line-height: 1;
+  letter-spacing: -0.04em;
+  text-wrap: balance;
 }
+/* REF-2 section heading: semibold, the deep brand tone, one phrase in the orange; capped at 56 px so the pages read
+   calm (minimalist pass) */
 .s-h2 {
   font-family: var(--f-disp);
-  font-weight: 400;
-  font-size: clamp(34px, 4.8vw, 68px);
-  line-height: 1;
-  letter-spacing: -0.042em;
+  font-weight: 600;
+  font-size: clamp(32px, 4.2vw, 56px);
+  line-height: 1.08;
+  letter-spacing: -0.025em;
+  color: var(--k-deep);
+  text-wrap: balance;
+}
+.s-h2 :is(.s-mute, .s-hot) {
+  color: var(--k-hl);
 }
 .s-h3 {
   font-family: var(--f-disp);
@@ -261,10 +399,11 @@ body {
 }
 .s-statement {
   font-family: var(--f-disp);
-  font-weight: 400;
-  font-size: clamp(26px, 3.2vw, 44px);
-  line-height: 1.14;
-  letter-spacing: -0.035em;
+  font-weight: 500;
+  font-size: clamp(24px, 2.8vw, 38px);
+  line-height: 1.2;
+  letter-spacing: -0.025em;
+  color: var(--k-deep);
 }
 .s-mute {
   color: var(--s-tx3);
@@ -273,10 +412,10 @@ body {
   color: var(--s-orange2);
 }
 .s-lead {
-  font-size: clamp(16px, 1.25vw, 19px);
-  line-height: 1.55;
-  color: var(--s-tx2);
-  max-width: 60ch;
+  font-size: clamp(16px, 1.2vw, 18px);
+  line-height: 1.6;
+  color: rgb(var(--fg) / 0.64);
+  max-width: 640px;
 }
 .s-small {
   font-size: 13px;
@@ -350,82 +489,179 @@ body {
 }
 
 /* ─────────────────────────────────────────────────────────────── buttons */
+/* REF-2 pill (the default, every section): solid orange, white type, a small arrow that turns on hover */
 .s-btn {
   display: inline-flex;
   align-items: center;
+  justify-content: center;
   gap: 10px;
-  height: 50px;
-  padding: 0 8px 0 22px;
+  height: 52px;
+  padding: 0 26px 0 30px;
   border-radius: 999px;
   background: var(--s-orange);
   color: #fff;
-  font-size: 15px;
-  font-weight: 600;
+  font-size: 16px;
+  font-weight: 500;
   letter-spacing: -0.01em;
   white-space: nowrap;
-  transition: background-color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
-  box-shadow: 0 14px 34px -16px rgba(242, 96, 12, 0.9);
+  transition: background-color 0.25s ease, transform 0.25s var(--k-ease), box-shadow 0.25s ease, border-color 0.25s ease;
 }
 .s-btn:hover {
-  background: var(--s-orange2);
+  background: color-mix(in oklab, var(--s-orange) 94%, #000);
+  transform: translateY(-1px);
+  box-shadow: 0 12px 26px -16px color-mix(in oklab, var(--s-orange) 70%, transparent);
+}
+.s-btn:active {
+  transform: translateY(0);
 }
 .s-btn .s-btn-ic {
   display: grid;
   place-items: center;
-  width: 34px;
-  height: 34px;
-  border-radius: 999px;
-  background: #fff;
-  color: var(--s-cream-tx);
-  transition: transform 0.25s ease;
+  transition: transform 0.25s var(--k-ease);
 }
 .s-btn:hover .s-btn-ic {
   transform: rotate(45deg);
 }
+/* the ⌘ glyph belongs to the REF-1 square buttons only */
+.s-btn .s-btn-cmd {
+  display: none;
+}
 .s-btn.no-ic {
-  padding: 0 22px;
+  padding: 0 30px;
 }
 .s-btn.ghost {
   color: rgb(var(--fg));
-  background: rgb(var(--fg) / 0.04);
-  border: 1px solid rgb(var(--fg) / 0.28);
-  box-shadow: none;
-  backdrop-filter: blur(14px);
+  background: transparent;
+  box-shadow: inset 0 0 0 1px rgb(var(--fg) / 0.2);
 }
 .s-btn.ghost:hover {
-  background: rgb(var(--fg) / 0.1);
-  border-color: rgb(var(--fg) / 0.5);
-}
-.s-btn.ghost .s-btn-ic {
-  background: rgb(var(--fg) / 0.12);
-  color: rgb(var(--fg));
+  background: rgb(var(--fg) / 0.06);
+  box-shadow: inset 0 0 0 1px rgb(var(--fg) / 0.32);
 }
 .s-btn.light {
   background: #fff;
-  color: var(--s-cream-tx);
-  box-shadow: 0 14px 34px -18px rgba(0, 0, 0, 0.6);
+  color: #1a1410;
 }
-.s-btn.light .s-btn-ic {
-  background: var(--s-orange);
-  color: #fff;
+.s-btn.light:hover {
+  background: color-mix(in oklab, #fff 94%, #000);
+  box-shadow: 0 14px 30px -14px rgba(0, 0, 0, 0.45);
 }
 .s-btn.dark {
-  background: var(--s-cream-tx);
+  background: #1a1410;
   color: #fff;
-  box-shadow: none;
 }
-.s-btn.dark .s-btn-ic {
-  background: var(--s-orange);
-  color: #fff;
+.s-btn.dark:hover {
+  background: color-mix(in oklab, #1a1410 90%, #fff);
+  box-shadow: 0 14px 30px -14px rgba(0, 0, 0, 0.5);
 }
 .s-btn.sm {
-  height: 40px;
-  font-size: 14px;
-  padding-inline-start: 16px;
+  height: 44px;
+  padding: 0 18px 0 22px;
+  font-size: 15px;
 }
-.s-btn.sm .s-btn-ic {
-  width: 28px;
-  height: 28px;
+.s-btn.sm.no-ic {
+  padding: 0 22px;
+}
+
+/* REF-1 square button (heroes, the header over them, the menu): square corners, monospace capitals; the main one in
+   the orange with the ⌘ glyph, the others white at 6 % */
+.s-ref1 .s-btn {
+  height: 60px;
+  padding: 0 44px;
+  border-radius: 3px;
+  font: 500 15px/1 var(--f-mono);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  box-shadow: none;
+}
+.s-ref1 .s-btn .s-btn-ic {
+  display: none;
+}
+.s-ref1 .s-btn:not(.ghost, .light, .dark) .s-btn-cmd {
+  display: grid;
+  place-items: center;
+}
+.s-ref1 .s-btn:not(.ghost, .light, .dark):hover {
+  background: color-mix(in oklab, var(--s-orange) 92%, #fff);
+  box-shadow: 0 16px 34px -18px color-mix(in oklab, var(--s-orange) 80%, transparent);
+}
+.s-ref1 .s-btn:is(.ghost, .light, .dark) {
+  background: rgb(255 255 255 / 0.06);
+  color: #fff;
+  box-shadow: inset 0 0 0 1px rgb(255 255 255 / 0.08);
+}
+.s-ref1 .s-btn:is(.ghost, .light, .dark):hover {
+  background: rgb(255 255 255 / 0.12);
+}
+.s-ref1 .s-btn.sm {
+  height: 48px;
+  padding: 0 22px;
+  font-size: 13.5px;
+}
+@media (max-width: 479px) {
+  .s-ref1 .s-btn {
+    padding: 0 28px;
+  }
+}
+/* REF-1 chip (the line above a hero headline) and the square MENU button */
+.s-chip1 {
+  display: inline-flex;
+  align-items: center;
+  gap: 14px;
+  max-width: 100%;
+  padding: 12px 20px;
+  border-radius: 4px;
+  background: rgb(255 255 255 / 0.06);
+  box-shadow: inset 0 0 0 1px rgb(255 255 255 / 0.06);
+  color: rgb(255 255 255 / 0.9);
+  font: 500 14px/1.35 var(--f-mono);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  transition: background-color 0.25s ease;
+}
+.s-chip1 > i {
+  flex: none;
+  width: 12px;
+  height: 12px;
+  border-radius: 1px;
+  background: rgb(255 255 255 / 0.85);
+}
+.s-chip1 > svg {
+  flex: none;
+  transition: transform 0.25s var(--k-ease);
+}
+a.s-chip1:hover {
+  background: rgb(255 255 255 / 0.1);
+}
+a.s-chip1:hover > svg {
+  transform: translateX(4px);
+}
+@media (max-width: 639px) {
+  .s-chip1 {
+    gap: 10px;
+    padding: 10px 14px;
+    font-size: 11.5px;
+    letter-spacing: 0.06em;
+    text-align: start;
+  }
+}
+.s-menu-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  height: 46px;
+  padding: 12px 20px;
+  border-radius: 4px;
+  background: rgb(var(--fg) / 0.06);
+  box-shadow: inset 0 0 0 1px rgb(var(--fg) / 0.08);
+  color: rgb(var(--fg));
+  font: 500 14px/1 var(--f-mono);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  transition: background-color 0.25s ease;
+}
+.s-menu-btn:hover {
+  background: rgb(var(--fg) / 0.12);
 }
 .s-link {
   display: inline-flex;
@@ -444,19 +680,39 @@ body {
 }
 
 /* ─────────────────────────────────────────────────────────────── surfaces */
+/* REF-2 card: white, radius 24, a hairline border and a whisper of shadow; .s-lift (and linked cards) rise on hover */
 .s-card {
   position: relative;
   border-radius: var(--s-r);
-  background: linear-gradient(180deg, rgb(var(--fg) / 0.045), rgb(var(--fg) / 0.02));
-  border: 1px solid var(--s-line);
+  background: var(--k-card);
+  border: 1px solid var(--k-card-line);
+  box-shadow: var(--k-card-sh);
 }
 .s-card.pad {
-  padding: 28px;
+  padding: 24px;
 }
-@media (min-width: 1024px) {
+@media (min-width: 761px) {
   .s-card.pad {
-    padding: 36px;
+    padding: 32px;
   }
+}
+:is(a.s-card, .s-card.s-lift, a.s-bento-card),
+.s-lift {
+  transition: transform 0.25s var(--k-ease), box-shadow 0.25s ease;
+}
+:is(a.s-card, .s-card.s-lift, a.s-bento-card, .s-lift):hover {
+  transform: translateY(-3px);
+  box-shadow: var(--k-card-sh2);
+}
+.s-ic-tile {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 48px;
+  height: 48px;
+  border-radius: 14px;
+  background: color-mix(in oklab, var(--s-orange) 10%, transparent);
+  color: var(--s-orange2);
 }
 .s-glass {
   border-radius: 22px;
@@ -516,59 +772,144 @@ body {
 }
 
 /* ─────────────────────────────────────────────────────────────── nav */
+/* Two bars that cross-fade (Nav.tsx, 300 ms). Over a hero, the REF-1 bar: logo left, the links and the CTA right;
+   transparent at the top, dark glass (70 %, blur 12) once the page moves. Past the hero, REF-2's floating pill: the
+   links left, the logo in the middle, the CTA pill right. Below 1280 px both collapse to the logo and a MENU button. */
 .s-nav {
   position: fixed;
   inset: 0 0 auto 0;
   z-index: 60;
-  padding-top: 16px;
-  transition: padding 0.25s ease;
+  height: 0;
 }
-.s-nav[data-scrolled='true'] {
-  padding-top: 10px;
+.s-nav-hero,
+.s-nav-page {
+  position: absolute;
+  inset: 0 0 auto 0;
+  transition: opacity 0.3s ease, transform 0.3s var(--k-ease), background-color 0.3s ease, padding 0.3s var(--k-ease), visibility 0s linear 0s;
 }
-.s-nav-bar {
+.s-nav-hero[aria-hidden='true'],
+.s-nav-page[aria-hidden='true'] {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition: opacity 0.3s ease, transform 0.3s var(--k-ease), visibility 0s linear 0.3s;
+}
+.s-nav-hero[aria-hidden='true'] {
+  transform: translateY(-10px);
+}
+.s-nav-page[aria-hidden='true'] {
+  transform: translateY(-18px);
+}
+.s-nav-hero {
+  padding-block: 16px;
+}
+.s-nav[data-state='hero'] .s-nav-hero {
+  padding-block: 8px;
+  background: rgb(5 4 4 / 0.7);
+  -webkit-backdrop-filter: blur(12px) saturate(1.2);
+  backdrop-filter: blur(12px) saturate(1.2);
+  box-shadow: inset 0 -1px 0 rgb(255 255 255 / 0.06);
+}
+.s-nav-row {
   display: flex;
   align-items: center;
-  gap: 16px;
-  height: 60px;
+  gap: 8px;
+  height: 56px;
 }
-.s-pill {
-  /* display comes from the markup (hidden on phones, lg:flex) */
+.s-nav-links {
+  display: none;
   align-items: center;
   gap: 2px;
-  height: 48px;
-  padding: 5px;
-  border-radius: 999px;
-  background: rgba(20, 14, 12, 0.32);
-  border: 1px solid rgb(var(--fg) / 0.22);
-  backdrop-filter: blur(20px) saturate(1.4);
-  -webkit-backdrop-filter: blur(20px) saturate(1.4);
-  transition: background-color 0.25s ease;
 }
-.s-nav[data-scrolled='true'] .s-pill {
-  background: rgba(12, 9, 8, 0.78);
+@media (min-width: 1280px) {
+  .s-nav-links {
+    display: flex;
+  }
 }
-.s-pill a,
-.s-pill button {
+.s-nav-links > a,
+.s-nav-links > div > button {
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  height: 38px;
-  padding: 0 15px;
+  height: 40px;
+  padding: 0 12px;
   border-radius: 999px;
-  font-size: 14px;
+  font-size: 14.5px;
   font-weight: 500;
-  color: rgb(var(--fg) / 0.86);
+  color: rgb(var(--fg) / 0.78);
   transition: background-color 0.2s ease, color 0.2s ease;
 }
-.s-pill a:hover,
-.s-pill button:hover {
-  background: rgb(var(--fg) / 0.1);
+.s-nav-links > a:hover,
+.s-nav-links > div > button:hover {
   color: rgb(var(--fg));
+  background: rgb(var(--fg) / 0.07);
 }
-.s-pill a[aria-current='page'] {
-  background: var(--s-cream);
-  color: var(--s-cream-tx);
+.s-nav-links > a[aria-current='page'] {
+  color: rgb(var(--fg));
+  background: rgb(var(--fg) / 0.1);
+}
+.s-nav-page {
+  padding-top: 16px;
+}
+/* the pill is wider than the page column, so the links and the centred wordmark never meet */
+.s-nav-pillwrap {
+  width: calc(100% - 2 * var(--gutter));
+  max-width: 1376px;
+  margin-inline: auto;
+}
+@media (min-width: 1280px) {
+  .s-nav-pillwrap {
+    width: calc(100% - 32px);
+  }
+  .s-nav-page .s-nav-links > a,
+  .s-nav-page .s-nav-links > div > button {
+    padding-inline: 11px;
+  }
+}
+.s-nav-pillbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  height: 64px;
+  padding: 0 8px 0 22px;
+  border-radius: 999px;
+  background: var(--k-card);
+  box-shadow: 0 0 0 1px var(--k-card-line), 0 14px 40px -14px rgba(26, 20, 16, 0.22);
+}
+@media (min-width: 1280px) {
+  .s-nav-pillbar {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+    padding-inline-start: 10px;
+  }
+}
+.s-nav-page .s-nav-links > a[aria-current='page'] {
+  color: var(--s-orange2);
+  background: color-mix(in oklab, var(--s-orange) 10%, transparent);
+}
+.s-nav-tag {
+  padding: 2px 6px;
+  border-radius: 999px;
+  background: var(--s-orange);
+  color: #fff;
+  font: 700 9.5px/1.2 var(--f-mono);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+/* full-screen menu: the REF-1 gradient */
+.s-sheet {
+  background: radial-gradient(60% 40% at 50% 100%, color-mix(in oklab, var(--s-orange) 30%, transparent), transparent 70%), linear-gradient(180deg, var(--k-hero-top) 0%, var(--k-hero-top) 35%, var(--k-hero-bot) 100%);
+  color: #fff;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .s-sheet {
+    animation: s-fade 0.3s ease both;
+  }
+  .s-sheet li {
+    animation: s-in 0.6s var(--k-ease) both;
+    animation-delay: calc(var(--i, 0) * 40ms + 80ms);
+  }
 }
 .s-mega {
   position: absolute;
@@ -588,197 +929,538 @@ body {
 }
 .s-mega a {
   display: flex;
+  align-items: center;
   gap: 12px;
   padding: 12px;
   border-radius: 16px;
   height: auto;
+  transition: background-color 0.2s ease;
 }
 .s-mega a:hover {
   background: rgb(var(--fg) / 0.06);
 }
-/* the page you are on: a soft orange tint, never the cream pill of the top links */
-.s-pill .s-mega a[aria-current='page'] {
+/* the page you are on: a soft orange tint */
+.s-mega a[aria-current='page'] {
   background: rgba(242, 96, 12, 0.12);
   box-shadow: inset 0 0 0 1px rgba(255, 122, 46, 0.35);
   color: inherit;
 }
-.s-pill .s-mega a[aria-current='page'] b {
+.s-mega a[aria-current='page'] b {
   color: var(--s-orange2);
 }
 
-/* ─────────────────────────────────────────────────────────────── heroes */
-.s-guides {
-  pointer-events: none;
-  position: absolute;
-  inset: 0;
-  z-index: 1;
-}
-.s-guides::before,
-.s-guides::after {
-  content: '';
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  width: 1px;
-  background: repeating-linear-gradient(to bottom, rgba(255, 255, 255, 0.28) 0 4px, transparent 4px 9px);
-  opacity: 0.55;
-}
-.s-guides::before {
-  left: 26%;
-}
-.s-guides::after {
-  left: 74%;
-}
-@media (max-width: 760px) {
-  .s-guides {
-    display: none;
-  }
-}
-
-/* home: the giant wordmark across the figure */
+/* ─────────────────────────────────────────────────────────────── heroes (REF-1) */
+/* Home: chip, headline, subtext and buttons centred over a vertical gradient (black at the top, ember at the foot),
+   the figure rising from the foot into a soft glow and fading into the gradient. */
 .s-whero {
   position: relative;
   isolation: isolate;
-  min-height: max(760px, 100svh);
   overflow: hidden;
-  background: linear-gradient(180deg, var(--hero-bg) 0%, var(--hero-bg) 52%, color-mix(in oklab, var(--hero-bg) 55%, #000) 76%, var(--s-black) 100%);
+  min-height: 100vh;
+  min-height: 100svh;
+  display: flex;
+  flex-direction: column;
+  /* black at the top, ember in the middle, then an eased blend into the page's own colour (mixed in oklab, so it
+     passes through warm tones, never a muddy band), then transparent: the foot dissolves into the page below (and
+     its grid lines) with no edge */
+  background: radial-gradient(44% 28% at 50% 64%, color-mix(in oklab, var(--hero-bg, #f2600c) 30%, transparent), transparent 74%),
+    linear-gradient(
+      180deg,
+      var(--k-hero-top) 0%,
+      var(--k-hero-top) 16%,
+      color-mix(in oklab, var(--k-hero-bot) 50%, var(--k-hero-top)) 44%,
+      var(--k-hero-bot) 60%,
+      color-mix(in oklab, var(--k-hero-bot) 86%, var(--k-page-bg)) 66%,
+      color-mix(in oklab, var(--k-hero-bot) 62%, var(--k-page-bg)) 72%,
+      color-mix(in oklab, var(--k-hero-bot) 38%, var(--k-page-bg)) 77%,
+      color-mix(in oklab, var(--k-hero-bot) 18%, var(--k-page-bg)) 82%,
+      color-mix(in oklab, var(--k-hero-bot) 6%, var(--k-page-bg)) 86%,
+      var(--k-page-bg) 89%,
+      transparent 100%
+    );
+  color: #fff;
+  text-align: center;
+}
+.s-whero-copy {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-top: 140px;
+}
+/* The reference's headline is four words; this one is twelve, so the scale tops out lower (84 px, not 112): two
+   lines on a laptop, and the figure stays in the first screen. */
+.s-whero-title {
+  margin-top: 28px;
+  max-width: 1100px;
+  font: 450 clamp(42px, 5.2vw, 84px) / 1.02 var(--f-disp);
+  letter-spacing: -0.04em;
+  text-wrap: balance;
+}
+/* without the chip above it (founder 2026-10-31) the headline opens the hero */
+.s-whero-title:first-child {
+  margin-top: 0;
+}
+.s-whero-sub {
+  margin-top: 28px;
+  max-width: 760px;
+  font-size: clamp(17px, 1.4vw, 22px);
+  line-height: 1.5;
+  color: rgb(255 255 255 / 0.7);
+}
+.s-whero-acts {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 12px;
+  margin-top: 40px;
+}
+@media (max-width: 760px) {
+  .s-whero-copy {
+    padding-top: 110px;
+  }
+}
+@media (max-width: 479px) {
+  .s-whero-acts {
+    flex-direction: column;
+    align-self: stretch;
+  }
+  .s-whero-acts .s-btn {
+    width: 100%;
+  }
+}
+.s-whero-media {
+  position: relative;
+  z-index: 1;
+  flex: 1;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  margin-top: clamp(24px, 5vh, 56px);
+}
+/* a soft glow behind the figure */
+.s-whero-media::before {
+  content: '';
+  position: absolute;
+  z-index: -1;
+  left: 50%;
+  bottom: 8%;
+  width: min(760px, 110vw);
+  aspect-ratio: 1;
+  translate: -50% 0;
+  border-radius: 999px;
+  background: radial-gradient(circle, color-mix(in oklab, var(--hero-bg, #f2600c) 42%, transparent) 0%, transparent 62%);
 }
 .s-whero-fig {
-  position: absolute;
-  z-index: 0;
-  left: 50%;
-  bottom: 0;
-  height: min(94%, 1456px);
+  display: block;
+  height: clamp(360px, 60vh, 700px);
   width: auto;
   max-width: none;
-  translate: -46% 0;
-  -webkit-mask-image: linear-gradient(90deg, transparent 0, #000 16%, #000 84%, transparent 100%), linear-gradient(180deg, #000 70%, transparent 100%);
-  mask-image: linear-gradient(90deg, transparent 0, #000 16%, #000 84%, transparent 100%), linear-gradient(180deg, #000 70%, transparent 100%);
+  /* the photo carries its own solid backdrop: fade every edge into the gradient, the foot over the last 15 % */
+  -webkit-mask-image: radial-gradient(farthest-side ellipse at 50% 46%, #000 40%, transparent 94%), linear-gradient(180deg, #000 48%, transparent 82%);
+  mask-image: radial-gradient(farthest-side ellipse at 50% 46%, #000 40%, transparent 94%), linear-gradient(180deg, #000 48%, transparent 82%);
   -webkit-mask-composite: source-in;
   mask-composite: intersect;
 }
-.s-whero-word {
+/* a transparent cut-out (IMAGES.heroCutout, landscape): from the card's middle down, the figure fades out on an eased
+   curve (founder 2026-10-31), so the cropped robe and the card dissolve into the gradient with no edge; the faded
+   foot ends where the figures under it begin. At most 860 px wide: the 1602 px file stays sharp on a 2× screen. */
+.s-whero-fig.cut {
+  width: min(860px, 92vw, 100vh);
+  height: auto;
+  -webkit-mask-image: linear-gradient(180deg, #000 64%, rgb(0 0 0 / 0.84) 72%, rgb(0 0 0 / 0.58) 80%, rgb(0 0 0 / 0.3) 88%, rgb(0 0 0 / 0.1) 95%, transparent 100%);
+  mask-image: linear-gradient(180deg, #000 64%, rgb(0 0 0 / 0.84) 72%, rgb(0 0 0 / 0.58) 80%, rgb(0 0 0 / 0.3) 88%, rgb(0 0 0 / 0.1) 95%, transparent 100%);
+}
+.s-whero-media:has(.cut) {
+  padding-bottom: 96px;
+}
+@media (max-width: 639px) {
+  .s-whero-media:has(.cut) {
+    padding-bottom: 0;
+  }
+}
+.s-whero-badge {
   position: absolute;
-  z-index: 2;
-  left: 50%;
-  top: 30%;
-  width: min(86vw, 1240px);
-  translate: -50% 0;
-  color: #fff;
-  filter: drop-shadow(0 10px 40px rgba(60, 10, 0, 0.35));
-}
-.s-ring {
-  position: relative;
-  display: grid;
-  place-items: center;
-  width: 150px;
-  height: 150px;
-  border-radius: 999px;
-  background: rgba(255, 255, 255, 0.16);
-  backdrop-filter: blur(6px);
-  transition: transform 0.3s ease;
-}
-.s-ring::before {
-  content: '';
-  position: absolute;
-  inset: 18px;
-  border-radius: 999px;
-  background: rgba(255, 255, 255, 0.28);
-}
-.s-ring span {
-  position: relative;
-  display: grid;
-  place-items: center;
-  width: 84px;
-  height: 84px;
-  border-radius: 999px;
+  z-index: 3;
+  right: var(--gutter);
+  bottom: 140px;
+  display: none;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 14px;
+  border-radius: 8px;
   background: #fff;
-  color: var(--s-cream-tx);
-  font: 700 14px/1.05 var(--f-disp);
-  letter-spacing: -0.02em;
-  text-align: center;
-  box-shadow: 0 10px 30px rgba(80, 20, 0, 0.35);
+  color: #1a1410;
+  font: 500 12.5px/1 var(--f-mono);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  box-shadow: 0 12px 30px -12px rgba(0, 0, 0, 0.5);
+  transition: transform 0.25s var(--k-ease);
 }
-.s-ring:hover {
-  transform: scale(1.04);
+.s-whero-badge:hover {
+  transform: translateY(-2px);
 }
-@media (prefers-reduced-motion: no-preference) {
-  .s-ring::after {
-    content: '';
-    position: absolute;
-    inset: 0;
-    border-radius: 999px;
-    border: 1px solid rgb(var(--fg) / 0.5);
-    animation: s-pulse 2.8s ease-out infinite;
+/* three figures over the faded foot, in the page's own colours */
+.s-whero-stats {
+  position: relative;
+  z-index: 2;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 24px;
+  margin-top: -96px;
+  padding-bottom: 56px;
+  color: rgb(var(--k-page-fg));
+}
+.s-whero-stat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+}
+.s-whero-num {
+  font: 400 clamp(44px, 4.4vw, 64px) / 1 var(--f-disp);
+  letter-spacing: -0.04em;
+  font-variant-numeric: tabular-nums;
+}
+.s-whero-stat p {
+  max-width: 34ch;
+  text-wrap: balance;
+  font-size: clamp(14px, 1.15vw, 17px);
+  line-height: 1.5;
+  color: rgb(var(--k-page-fg) / 0.62);
+}
+.s-whero-stat p b {
+  font-weight: 500;
+  color: rgb(var(--k-page-fg) / 0.86);
+}
+@media (max-width: 639px) {
+  .s-whero-stats {
+    grid-template-columns: 1fr;
+    gap: 28px;
+    margin-top: 8px;
   }
 }
-@keyframes s-pulse {
-  0% {
-    transform: scale(0.9);
-    opacity: 0.8;
-  }
-  100% {
-    transform: scale(1.35);
-    opacity: 0;
+@media (min-width: 761px) {
+  .s-whero-badge {
+    display: inline-flex;
   }
 }
 
-/* inner pages: headline left, figure right on its own solid colour */
+/* Inner pages: the same gradient and type; the copy stays on the left (glass cards and live boards sit on the
+   right), the page's figure fades in behind them. */
 .s-phero {
   position: relative;
   isolation: isolate;
   overflow: hidden;
-  background: var(--hero-bg);
-  padding-top: 132px;
+  padding-top: 140px;
+  background: radial-gradient(40% 62% at 80% 100%, color-mix(in oklab, var(--hero-bg, #f2600c) 36%, transparent), transparent 72%),
+    linear-gradient(180deg, var(--k-hero-top) 0%, var(--k-hero-top) 24%, color-mix(in oklab, var(--k-hero-bot) 55%, var(--k-hero-top)) 74%, var(--k-hero-bot) 100%);
+  color: #fff;
 }
-.s-phero::before {
-  /* legibility on the left, darker at the foot */
-  content: '';
-  position: absolute;
-  inset: 0;
-  z-index: -1;
-  background: linear-gradient(180deg, rgba(0, 0, 0, 0.45) 0, rgba(0, 0, 0, 0.12) 120px, transparent 190px), linear-gradient(90deg, rgba(0, 0, 0, 0.42) 0%, rgba(0, 0, 0, 0.12) 46%, transparent 70%), linear-gradient(180deg, transparent 62%, rgba(0, 0, 0, 0.35) 88%, var(--s-black) 100%);
+@media (max-width: 760px) {
+  .s-phero {
+    padding-top: 110px;
+  }
 }
 .s-phero-fig {
   position: absolute;
-  z-index: -2;
-  right: max(0px, calc(50% - 720px));
+  z-index: -1;
+  right: max(0px, calc(50% - 680px));
   bottom: 0;
-  height: 100%;
+  height: 94%;
   width: auto;
   max-width: none;
-  -webkit-mask-image: linear-gradient(90deg, transparent 0, #000 22%, #000 86%, transparent 100%);
-  mask-image: linear-gradient(90deg, transparent 0, #000 22%, #000 86%, transparent 100%);
+  -webkit-mask-image: radial-gradient(farthest-side ellipse at 50% 50%, #000 50%, transparent 100%), linear-gradient(180deg, #000 85%, transparent 100%);
+  mask-image: radial-gradient(farthest-side ellipse at 50% 50%, #000 50%, transparent 100%), linear-gradient(180deg, #000 85%, transparent 100%);
+  -webkit-mask-composite: source-in;
+  mask-composite: intersect;
 }
 @media (max-width: 1023px) {
   .s-phero-fig {
-    right: -12%;
-    opacity: 0.55;
+    right: -16%;
+    opacity: 0.4;
   }
 }
 .s-phero.flat {
-  background: radial-gradient(70% 90% at 85% 0%, rgba(242, 96, 12, 0.32), transparent 60%), radial-gradient(60% 70% at 0% 100%, rgba(122, 38, 6, 0.4), transparent 70%), var(--s-black);
+  background: radial-gradient(60% 70% at 85% 0%, color-mix(in oklab, var(--s-orange) 20%, transparent), transparent 60%),
+    linear-gradient(180deg, var(--k-hero-top) 0%, var(--k-hero-top) 30%, var(--k-hero-bot) 100%);
 }
-.s-phero.flat::before {
-  display: none;
+
+/* hero load sequence: chip → headline (word by word) → subtext → buttons → figure, 120 ms apart */
+@media (prefers-reduced-motion: no-preference) {
+  .s-in {
+    animation: s-in 0.9s var(--k-ease) both;
+    animation-delay: calc(var(--i, 0) * 120ms);
+  }
+  .s-word {
+    display: inline-block;
+    animation: s-in 0.9s var(--k-ease) both;
+    animation-delay: calc(120ms + var(--w, 0) * 45ms);
+  }
+  .s-in-img {
+    animation: s-in-img 1.4s var(--k-ease) both;
+    animation-delay: calc(var(--i, 0) * 120ms);
+  }
+}
+/* only the start is given: each element settles on its own opacity and transform (a dimmed figure stays dimmed) */
+@keyframes s-in {
+  from {
+    opacity: 0;
+    transform: translateY(24px);
+  }
+}
+@keyframes s-in-img {
+  from {
+    opacity: 0;
+    transform: scale(1.05);
+  }
+}
+@keyframes s-fade {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
 
 /* ─────────────────────────────────────────────────────────────── screenshots */
-.s-shot {
+/* a screenshot on a MacBook (Shot.tsx); every size is in cqw of the laptop's width, so it scales as one piece */
+.s-mac {
+  container-type: inline-size;
   position: relative;
-  border-radius: 20px;
-  padding: 6px;
-  background: linear-gradient(180deg, rgb(var(--fg) / 0.14), rgb(var(--fg) / 0.04));
-  box-shadow: 0 50px 120px -50px rgba(242, 96, 12, 0.55), 0 20px 50px -30px rgba(0, 0, 0, 0.9);
+  width: 100%;
+  filter: drop-shadow(0 28px 34px rgba(0, 0, 0, 0.5)) drop-shadow(0 18px 60px rgba(242, 96, 12, 0.22));
 }
-.s-shot img {
+.s-mac.flat {
+  filter: drop-shadow(0 10px 14px rgba(0, 0, 0, 0.28));
+}
+/* the lid: a silver rim around the black glass */
+.s-mac-lid {
+  width: 88cqw;
+  margin-inline: auto;
+  padding: 0.32cqw;
+  border-radius: 2.6cqw 2.6cqw 0.9cqw 0.9cqw;
+  background: linear-gradient(180deg, #dcdde0, #a4a5aa 60%, #8a8b90);
+}
+.s-mac-bezel {
+  position: relative;
+  padding: 1.9cqw 1.5cqw 1.7cqw;
+  border-radius: 2.3cqw 2.3cqw 0.6cqw 0.6cqw;
+  background: #050506;
+  box-shadow: inset 0 0 0 0.12cqw #26262a;
+}
+/* a faint glass reflection over the screen, under the pins */
+.s-mac-bezel::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  border-radius: inherit;
+  background: linear-gradient(115deg, rgba(255, 255, 255, 0.07), transparent 38%);
+  pointer-events: none;
+}
+.s-mac-cam {
+  position: absolute;
+  top: 0.68cqw;
+  left: 50%;
+  width: 0.55cqw;
+  height: 0.55cqw;
+  translate: -50% 0;
+  border-radius: 999px;
+  background: radial-gradient(circle at 35% 35%, #4a5868 0 18%, #15181c 45%, #0a0a0b 70%);
+  box-shadow: 0 0 0 0.1cqw #1c1c1f;
+}
+.s-mac-screen {
+  position: relative;
+  display: grid;
+  place-items: center;
+  border-radius: 0.5cqw;
+  background: #000;
+}
+/* the Kalks desktop behind a cropped screenshot */
+.s-mac-screen.desk {
+  background:
+    radial-gradient(70% 60% at 80% 12%, rgba(255, 170, 90, 0.5), transparent 60%),
+    radial-gradient(90% 80% at 8% 100%, rgba(242, 96, 12, 0.85), transparent 62%),
+    linear-gradient(160deg, #1a0b05 0%, #4a1804 45%, #7a2606 72%, #c2410c 100%);
+}
+.s-mac-win img {
   display: block;
   width: 100%;
   height: auto;
-  border-radius: 15px;
+  border-radius: 0.7cqw;
+  box-shadow: 0 1.6cqw 3.2cqw -0.8cqw rgba(0, 0, 0, 0.6), 0 0 0 0.08cqw rgba(255, 255, 255, 0.14);
 }
-.s-shot.flat {
-  box-shadow: 0 30px 70px -40px rgba(0, 0, 0, 0.9);
+.s-mac-win.full {
+  width: 100%;
+}
+.s-mac-win.full img {
+  border-radius: 0.5cqw;
+  box-shadow: none;
+}
+/* the base: a dark hinge, the silver edge and the thumb scoop */
+.s-mac-base {
+  position: relative;
+  height: 2.2cqw;
+  margin-top: 0.7cqw;
+  border-radius: 0 0 3cqw 3cqw / 0 0 2cqw 2cqw;
+  background: linear-gradient(180deg, #eceded 0%, #cbcccf 30%, #9c9da2 70%, #5f6065 100%);
+  box-shadow: inset 0 0.12cqw 0 rgba(255, 255, 255, 0.8);
+}
+.s-mac-base::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 50%;
+  width: 13cqw;
+  height: 0.85cqw;
+  translate: -50% 0;
+  border-radius: 0 0 1.1cqw 1.1cqw / 0 0 0.85cqw 0.85cqw;
+  background: linear-gradient(180deg, #8d8e93, #c4c5c9);
+}
+.s-mac-base::after {
+  content: '';
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  width: 84cqw;
+  height: 0.7cqw;
+  translate: -50% 0;
+  border-radius: 0 0 0.3cqw 0.3cqw;
+  background: linear-gradient(180deg, #0c0c0d, #3a3a3e);
+}
+
+/* a screenshot on an iPhone (Shot.tsx IPhone); sizes in cqw of the phone's width */
+.s-iph {
+  container-type: inline-size;
+  position: relative;
+  width: min(330px, 78vw);
+  /* a neutral shadow only: no orange light around the phone (founder 2026-11-01) */
+  filter: drop-shadow(0 26px 30px rgba(0, 0, 0, 0.5)) drop-shadow(0 30px 70px rgba(0, 0, 0, 0.6));
+}
+/* the titanium rim; the black glass border is the screen's own shadow */
+.s-iph-bezel {
+  position: relative;
+  padding: 3.6cqw;
+  border-radius: 17cqw;
+  background: linear-gradient(135deg, #77787c 0%, #2c2d30 16%, #1b1c1e 50%, #2c2d30 84%, #77787c 100%);
+  box-shadow: inset 0 0 0 0.25cqw rgba(255, 255, 255, 0.18);
+}
+/* side buttons: action and volume on the left, power on the right */
+.s-iph-bezel::before,
+.s-iph-bezel::after {
+  content: '';
+  position: absolute;
+  width: 0.9cqw;
+}
+.s-iph-bezel::before {
+  left: -0.8cqw;
+  top: 27cqw;
+  height: 42cqw;
+  background:
+    linear-gradient(#3d3e42, #3d3e42) 0 0 / 100% 7cqw no-repeat,
+    linear-gradient(#3d3e42, #3d3e42) 0 13cqw / 100% 12cqw no-repeat,
+    linear-gradient(#3d3e42, #3d3e42) 0 29cqw / 100% 12cqw no-repeat;
+}
+.s-iph-bezel::after {
+  right: -0.8cqw;
+  top: 41cqw;
+  height: 19cqw;
+  border-radius: 0 0.5cqw 0.5cqw 0;
+  background: #3d3e42;
+}
+.s-iph-screen {
+  position: relative;
+  overflow: hidden;
+  border-radius: 13.4cqw;
+  background: #0b0b0c;
+  box-shadow: 0 0 0 2.4cqw #000;
+}
+.s-iph-screen img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+.s-iph-island {
+  position: absolute;
+  z-index: 3;
+  top: 2.9cqw;
+  left: 50%;
+  width: 29cqw;
+  height: 8.4cqw;
+  translate: -50% 0;
+  border-radius: 999px;
+  background: #000;
+}
+.s-iph-home {
+  position: absolute;
+  z-index: 3;
+  bottom: 2cqw;
+  left: 50%;
+  width: 34cqw;
+  height: 1.3cqw;
+  translate: -50% 0;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.75);
+}
+/* a crop on the iPhone as an app page: status bar, the app's account bar, the screen, the tab bar, the home bar */
+.s-iph-page {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+}
+.s-iph-page::after {
+  content: '';
+  flex: none;
+  height: 5cqw;
+  background: #151011;
+}
+.s-iph-status {
+  flex: none;
+  height: 12.5cqw;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1.2cqw 8cqw 0 10cqw;
+  background: #130e12;
+  color: #fff;
+}
+.s-iph-status b {
+  font: 600 4.3cqw/1 var(--f-text);
+  letter-spacing: -0.01em;
+}
+.s-iph-status svg {
+  width: 16cqw;
+}
+.s-iph-bar {
+  flex: none;
+  width: 100%;
+  background-size: 100% auto;
+  background-repeat: no-repeat;
+}
+.s-iph-crop {
+  flex: none;
+  overflow: hidden;
+}
+.s-iph-screen .s-iph-crop img {
+  max-width: none;
+}
+/* the ticket's own background, down to the tab bar */
+.s-iph-fill {
+  flex: 1;
+  background: #191416;
+}
+/* one part of the screen outlined (IPhone focus): a thin orange ring, no fill */
+.s-iph-focus {
+  position: absolute;
+  z-index: 2;
+  border: 1.5px solid var(--s-orange);
+  border-radius: 3cqw;
+  box-shadow: 0 0 0 3px rgb(242 96 12 / 0.16);
+  pointer-events: none;
 }
 .s-pin {
   position: absolute;
@@ -786,29 +1468,19 @@ body {
   translate: -50% -50%;
   display: grid;
   place-items: center;
-  width: 28px;
-  height: 28px;
+  width: 24px;
+  height: 24px;
   border-radius: 999px;
   background: var(--s-orange);
   color: #fff;
-  font: 700 12.5px/1 var(--f-text);
-  box-shadow: 0 0 0 4px rgba(242, 96, 12, 0.28), 0 6px 18px rgba(0, 0, 0, 0.5);
+  font: 600 11.5px/1 var(--f-text);
+  box-shadow: 0 0 0 3px rgb(255 255 255 / 0.85), 0 4px 12px rgba(0, 0, 0, 0.35);
   transition: transform 0.2s ease, background-color 0.2s ease;
 }
 .s-pin[data-on='true'] {
-  transform: scale(1.18);
-  background: #fff;
-  color: var(--s-orange);
-}
-@media (prefers-reduced-motion: no-preference) {
-  .s-pin::after {
-    content: '';
-    position: absolute;
-    inset: -4px;
-    border-radius: 999px;
-    border: 2px solid rgba(255, 122, 46, 0.7);
-    animation: s-pulse 2.4s ease-out infinite;
-  }
+  transform: scale(1.12);
+  background: #1a1410;
+  color: #fff;
 }
 .s-legend li {
   display: grid;
@@ -860,13 +1532,12 @@ body {
   display: flex;
   flex-direction: column;
   min-height: 260px;
-  padding: 26px;
+  padding: 32px;
   overflow: hidden;
   border-radius: var(--s-r);
-  transition: transform 0.25s ease;
 }
-a.s-bento-card:hover {
-  transform: translateY(-3px);
+.s-bento-card:is(.s-cream, .s-orange) {
+  box-shadow: var(--k-card-sh);
 }
 .s-bento-card .s-arrow {
   position: absolute;
@@ -894,11 +1565,21 @@ a.s-bento-card:hover .s-arrow {
 }
 
 /* ─────────────────────────────────────────────────────────────── faq */
-.s-faq details {
-  border-bottom: 1px solid var(--s-line);
+/* questions as REF-2 cards */
+.s-faq {
+  display: grid;
+  gap: 12px;
 }
-.s-faq details:first-child {
-  border-top: 1px solid var(--s-line);
+.s-faq details {
+  border-radius: 20px;
+  background: var(--k-card);
+  border: 1px solid var(--k-card-line);
+  box-shadow: var(--k-card-sh);
+  padding-inline: 24px;
+  transition: box-shadow 0.25s ease;
+}
+.s-faq details:hover {
+  box-shadow: var(--k-card-sh2);
 }
 .s-faq summary {
   list-style: none;
@@ -906,10 +1587,15 @@ a.s-bento-card:hover .s-arrow {
   align-items: center;
   justify-content: space-between;
   gap: 20px;
-  padding: 22px 0;
+  padding: 20px 0;
   cursor: pointer;
   font: 500 clamp(17px, 1.4vw, 20px) / 1.3 var(--f-disp);
   letter-spacing: -0.02em;
+}
+.s-faq summary:focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: 4px;
+  border-radius: 8px;
 }
 .s-faq summary::-webkit-details-marker {
   display: none;
@@ -930,7 +1616,7 @@ a.s-bento-card:hover .s-arrow {
   border-color: var(--s-orange);
 }
 .s-faq .s-faq-a {
-  padding: 0 56px 24px 0;
+  padding: 0 48px 22px 0;
   color: var(--s-tx2);
   line-height: 1.65;
   max-width: 76ch;
@@ -939,10 +1625,58 @@ a.s-bento-card:hover .s-arrow {
 /* ─────────────────────────────────────────────────────────────── footer */
 .s-foot {
   position: relative;
+  isolation: isolate;
   overflow: hidden;
-  background: var(--s-black);
-  border-top: 1px solid var(--s-line);
-  padding-top: 72px;
+  background: var(--k-paper);
+  border-top: 1px solid var(--k-card-line);
+  padding-top: 96px;
+}
+.s-foot > .s-gridlines {
+  z-index: -1;
+}
+
+/* ─────────────────────────────────────────────────────────────── the deep button (Btn variant="deep") */
+.s-btn.deep {
+  background: var(--brand-deep, var(--k-deep));
+  color: #fff;
+}
+.s-btn.deep:hover {
+  background: color-mix(in oklab, var(--brand-deep, var(--k-deep)) 94%, #fff);
+  transform: translateY(-1px);
+  box-shadow: 0 14px 30px -14px rgb(0 0 0 / 0.4);
+}
+.s-btn.deep:active {
+  transform: scale(0.98);
+}
+
+/* the live price strip on tablets: three markets fit beside the label (globals.css lays it out) */
+@media (min-width: 761px) and (max-width: 1100px) {
+  .ticks .lab {
+    min-width: 128px;
+    padding: 0 18px;
+  }
+  .tk {
+    padding: 16px 14px;
+  }
+  .tk .rng {
+    width: 40px;
+  }
+}
+/* a labelled placeholder where the layout wants an image the site doesn't have yet (ImageSlot.tsx) */
+.s-slot {
+  display: grid;
+  place-items: center;
+  width: 100%;
+  padding: 16px;
+  border: 2px dashed rgb(var(--fg) / 0.2);
+  border-radius: 20px;
+  background: color-mix(in oklab, var(--s-orange) 5%, transparent);
+  color: rgb(var(--fg) / 0.6);
+  font: 500 12.5px/1.6 var(--f-mono);
+  text-align: center;
+}
+.s-slot b {
+  color: rgb(var(--fg));
 }
 .s-foot-word {
   display: block;
@@ -956,12 +1690,26 @@ a.s-bento-card:hover .s-arrow {
 /* ─────────────────────────────────────────────────────────────── motion */
 /* content rises in the first time it scrolls into view; anything already in view (or without JS) just shows */
 .s-rise {
-  transition: opacity 0.7s ease, transform 0.7s cubic-bezier(0.2, 0.7, 0.2, 1);
+  transition: opacity 0.7s var(--k-ease), transform 0.7s var(--k-ease);
   transition-delay: var(--d, 0ms);
 }
 .s-rise.pre {
   opacity: 0;
-  transform: translateY(22px);
+  transform: translateY(32px);
+}
+/* Lenis smooth scrolling (SmoothScroll.tsx) */
+html.lenis,
+html.lenis body {
+  height: auto;
+}
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+.lenis.lenis-smooth [data-lenis-prevent] {
+  overscroll-behavior: contain;
+}
+.lenis.lenis-stopped {
+  overflow: hidden;
 }
 .no-sb {
   scrollbar-width: none;
@@ -1153,39 +1901,27 @@ a.s-bento-card:hover .s-arrow {
 }
 
 /* ─────────────────────────────────────────────────────────────── light theme: surfaces */
-:root[data-theme='light'] .s-card {
-  background: #fff;
-  box-shadow: 0 1px 2px rgba(26, 20, 16, 0.04), 0 24px 48px -36px rgba(26, 20, 16, 0.3);
-}
 :root[data-theme='light'] .s-cream {
-  box-shadow: inset 0 0 0 1px rgba(26, 20, 16, 0.06);
-}
-:root[data-theme='light'] .s-shot {
-  background: linear-gradient(180deg, rgba(26, 20, 16, 0.1), rgba(26, 20, 16, 0.03));
-  box-shadow: 0 50px 110px -60px rgba(242, 96, 12, 0.5), 0 24px 50px -36px rgba(26, 20, 16, 0.35);
-}
-:root[data-theme='light'] .s-shot.flat {
-  box-shadow: 0 26px 60px -40px rgba(26, 20, 16, 0.35);
+  box-shadow: inset 0 0 0 1px rgba(26, 20, 16, 0.06), var(--k-card-sh);
 }
 :root[data-theme='light'] .s-phone {
-  box-shadow: 0 50px 110px -50px rgba(242, 96, 12, 0.5), inset 0 0 0 1px rgba(255, 255, 255, 0.12);
+  box-shadow: 0 50px 110px -50px rgba(122, 38, 6, 0.55), inset 0 0 0 1px rgba(255, 255, 255, 0.12);
 }
-/* the nav: over the hero it is a dark island (white type); once the page scrolls under it, a paper bar */
-:root[data-theme='light'] .s-nav[data-scrolled='true'] {
-  padding-bottom: 8px;
-  background: rgba(251, 248, 244, 0.86);
-  border-bottom: 1px solid var(--s-line);
-  backdrop-filter: blur(18px) saturate(1.3);
-  -webkit-backdrop-filter: blur(18px) saturate(1.3);
+:root[data-theme='light'] .s-mac {
+  filter: drop-shadow(0 30px 34px rgba(60, 28, 8, 0.28));
 }
-:root[data-theme='light'] .s-nav[data-scrolled='true'] .s-pill {
-  background: rgba(255, 255, 255, 0.78);
+:root[data-theme='light'] .s-mac.flat {
+  filter: drop-shadow(0 10px 14px rgba(60, 28, 8, 0.2));
 }
-:root[data-theme='light'] .s-mega {
+:root[data-theme='light'] .s-iph {
+  filter: drop-shadow(0 30px 34px rgba(26, 20, 16, 0.24)) drop-shadow(0 24px 60px rgba(26, 20, 16, 0.14));
+}
+/* the "More" panel of the floating pill (the hero bar's panel stays dark) */
+:root[data-theme='light'] .s-nav-page .s-mega {
   background: rgba(255, 255, 255, 0.98);
   box-shadow: 0 30px 80px -34px rgba(26, 20, 16, 0.4);
 }
-:root[data-theme='light'] .s-pill .s-mega a[aria-current='page'] {
+:root[data-theme='light'] .s-nav-page .s-mega a[aria-current='page'] {
   background: rgba(242, 96, 12, 0.08);
 }
 
@@ -1252,4 +1988,244 @@ a.s-bento-card:hover .s-arrow {
   background: var(--s-orange);
   color: #fff;
   font-weight: 600;
+}
+
+/* ─────────────────────────────────────────────────────────────── glass icons (components/site/GlassIcon.tsx) */
+.s-gico {
+  --gi-solid: #f2600c;
+  --gi-glass: rgb(251 205 178 / 0.92);
+  --gi-rim: rgb(255 255 255 / 0.55);
+  --gi-mark: #ffffff;
+  display: block;
+  flex: none;
+  overflow: visible;
+}
+:root[data-theme='light'] .s-gico {
+  --gi-glass: #fbcdb2;
+  --gi-rim: rgb(255 255 255 / 0.8);
+}
+.s-gico .gi-solid {
+  fill: var(--gi-solid);
+}
+.s-gico .gi-glass {
+  fill: var(--gi-glass);
+}
+.s-gico .gi-blur {
+  opacity: 0.92;
+}
+.s-gico .gi-rim {
+  fill: none;
+  stroke: var(--gi-rim);
+  stroke-width: 0.8;
+}
+.s-gico .gi-mark {
+  fill: var(--gi-mark);
+  stroke: var(--gi-mark);
+  stroke-width: 3;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+/* ─────────────────────────────────────────────────────────────── tiles (founder 2026-11-01, reference: feature cards) */
+/* A card with a warm gradient, fine grain and a soft light in its top corner. On hover (or always, with .hot) its
+   border turns orange, an orange glow rises inside and a ring of dots appears around it; .accent is the one bright
+   orange card of a group, with dark type. The glow and the dots are the ::before and ::after layers, behind the
+   content (isolation), so a tile can't clip its own contents (overflow stays visible). */
+.s-tile {
+  --t-r: 28px;
+  --t-bg: linear-gradient(160deg, #1c1613 0%, #120f0d 52%, #0e0b0a 100%);
+  --t-tint: radial-gradient(110% 80% at 0% 0%, rgb(255 122 46 / 0.08), transparent 62%);
+  --t-grain: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 .1 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  --t-line: rgb(255 255 255 / 0.07);
+  --t-hot: rgb(255 122 46 / 0.8);
+  --t-glow: rgb(242 96 12 / 0.3);
+  --t-dots: rgb(255 122 46 / 0.62);
+  --t-k: rgb(var(--fg) / 0.5);
+  position: relative;
+  isolation: isolate;
+  border-radius: var(--t-r);
+  background: var(--t-grain), var(--t-tint), var(--t-bg);
+  border: 1px solid var(--t-line);
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.05);
+  transition:
+    border-color 0.35s ease,
+    box-shadow 0.35s ease,
+    transform 0.45s var(--k-ease);
+}
+:root[data-theme='light'] .s-tile {
+  --t-bg: linear-gradient(160deg, #ffffff 0%, #fefbf8 55%, #fbf4ed 100%);
+  --t-tint: radial-gradient(110% 80% at 0% 0%, rgb(242 96 12 / 0.06), transparent 62%);
+  --t-grain: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 .05 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  --t-line: rgb(26 20 16 / 0.07);
+  --t-hot: rgb(242 96 12 / 0.7);
+  --t-glow: rgb(242 96 12 / 0.14);
+  --t-dots: rgb(242 96 12 / 0.45);
+  box-shadow: 0 1px 2px rgb(26 20 16 / 0.04);
+}
+.s-tile::before,
+.s-tile::after {
+  content: '';
+  position: absolute;
+  z-index: -1;
+  pointer-events: none;
+  opacity: 0;
+}
+/* the glow inside: from the top right corner, a fainter amber one from the bottom left */
+.s-tile::before {
+  inset: 0;
+  border-radius: inherit;
+  background:
+    radial-gradient(75% 70% at 90% 0%, var(--t-glow), transparent 72%),
+    radial-gradient(60% 55% at 0% 100%, rgb(255 160 64 / 0.08), transparent 70%);
+  transition: opacity 0.45s ease;
+}
+/* the ring of dots around it, 16 px wide, 4 px off the edge: it fits the 20 px gap between tiles */
+.s-tile::after {
+  inset: -20px;
+  padding: 16px;
+  border-radius: calc(var(--t-r) + 20px);
+  background: radial-gradient(circle, var(--t-dots) 1.1px, transparent 1.7px) 0 0 / 7px 7px;
+  -webkit-mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask:
+    linear-gradient(#000 0 0) content-box exclude,
+    linear-gradient(#000 0 0);
+  transform: scale(0.985);
+  transition:
+    opacity 0.45s ease,
+    transform 0.6s var(--k-ease);
+}
+.s-tile.hot {
+  border-color: var(--t-hot);
+  box-shadow: 0 24px 60px -30px rgb(242 96 12 / 0.55);
+}
+.s-tile.hot::before,
+.s-tile.hot::after {
+  opacity: 1;
+  transform: none;
+}
+@media (hover: hover) {
+  .s-tile:not(.calm):hover {
+    border-color: var(--t-hot);
+    box-shadow: 0 24px 60px -30px rgb(242 96 12 / 0.55);
+  }
+  .s-tile:not(.calm):hover::before,
+  .s-tile:not(.calm):hover::after {
+    opacity: 1;
+    transform: none;
+  }
+  /* a big card only warms up: no ring around something that wide */
+  .s-tile.calm:hover::before {
+    opacity: 0.7;
+  }
+}
+.s-tile.pad {
+  padding: 26px;
+}
+@media (min-width: 761px) {
+  .s-tile.pad {
+    padding: 40px;
+  }
+}
+/* the small capitals at the top of a tile */
+.s-tile-k {
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1.2;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: var(--t-k);
+  transition: color 0.35s ease;
+}
+.s-tile:is(.hot, :hover) .s-tile-k {
+  color: var(--s-orange2);
+}
+/* the arrow in a linked tile's corner, a white disc with an orange arrow on hover */
+.s-tile-go {
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: 48px;
+  height: 48px;
+  border-radius: 999px;
+  color: rgb(var(--fg));
+  transition:
+    background-color 0.35s ease,
+    color 0.35s ease,
+    box-shadow 0.35s ease,
+    transform 0.45s var(--k-ease);
+}
+.s-tile:is(.hot, :hover) .s-tile-go {
+  background: #fff;
+  color: var(--s-orange);
+  box-shadow: 0 0 0 1px rgb(26 20 16 / 0.06), 0 8px 30px -6px rgb(242 96 12 / 0.55);
+  transform: translateX(2px);
+}
+a.s-tile:focus-visible {
+  outline: 2px solid var(--s-orange);
+  outline-offset: 3px;
+}
+/* the one bright card of a group (the same in both themes) */
+.s-tile.accent,
+:root[data-theme='light'] .s-tile.accent {
+  --t-bg: linear-gradient(140deg, #ff8a3d 0%, #f2600c 55%, #dd5200 100%);
+  --t-tint: radial-gradient(90% 90% at 12% 0%, rgb(255 190 140 / 0.75), transparent 62%);
+  --t-line: transparent;
+  --t-glow: rgb(255 255 255 / 0.22);
+  --t-k: rgb(31 14 4 / 0.66);
+  --fg: 31 14 4;
+  color: #1f0e04;
+  box-shadow: 0 24px 60px -32px rgb(242 96 12 / 0.7);
+}
+.s-tile.accent:is(.hot, :hover) {
+  border-color: transparent;
+}
+.s-tile.accent:is(.hot, :hover) .s-tile-k {
+  color: #1f0e04;
+}
+.s-tile.accent:is(.hot, :hover) .s-tile-go {
+  background: #1f0e04;
+  color: #ff8a3d;
+}
+/* a list inside a tile, a row per item */
+.s-tile-list {
+  padding: 6px 24px;
+}
+.s-tile-list > ul {
+  gap: 0;
+}
+.s-tile-list li {
+  align-items: center;
+  padding: 15px 0;
+  border-bottom: 1px solid rgb(var(--fg) / 0.07);
+}
+.s-tile-list li:last-child {
+  border-bottom: 0;
+}
+.s-tile-list .s-check {
+  margin-top: 0;
+}
+/* the points of a framed split as a ruled list: hairlines, no card */
+.s-split-list {
+  border-top: 1px solid rgb(var(--fg) / 0.09);
+}
+.s-split-list > ul {
+  gap: 0;
+}
+.s-split-list li {
+  align-items: center;
+  padding: 14px 2px;
+  border-bottom: 1px solid rgb(var(--fg) / 0.09);
+  color: rgb(var(--fg) / 0.78);
+}
+.s-split-list .s-check {
+  margin-top: 0;
+}
+/* the picture of a framed split (the order ticket's phone) stands on the page itself, no card or coloured light behind
+   it (founder 2026-11-01: the orange background looked unwanted) */
+.s-split-media {
+  display: grid;
+  place-items: center;
 }

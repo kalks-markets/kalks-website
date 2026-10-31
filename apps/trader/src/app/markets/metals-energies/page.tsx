@@ -90,7 +90,6 @@ export default function MetalsPage() {
           <PinTour
             shot={UNDERLYINGS}
             pins={PINS}
-            maxW="max-w-[600px]"
             cols="lg:grid-cols-[minmax(0,1.1fr)_minmax(0,1fr)]"
             outro={
               <div className="mt-8">

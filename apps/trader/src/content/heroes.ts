@@ -27,6 +27,8 @@ export const SHOTS = {
   traderToolbar: { src: '/site/shots/trader-toolbar.webp', w: 2152, h: 84, alt: 'The chart toolbar with timeframes and the one-click Sell, lot size and Buy bar' },
   traderChart: { src: '/site/shots/trader-chart.webp', w: 2152, h: 1580, alt: 'A Kalks Trader chart with position, stop loss and take profit lines you can drag' },
   traderPositions: { src: '/site/shots/trader-positions.webp', w: 2880, h: 540, alt: 'Open positions with live P&L, stop loss, take profit and one-click close' },
+  // the workspace with the positions panel open, joined from trader-workspace and trader-positions (founder 2026-11-01)
+  traderPositionsFull: { src: '/site/shots/trader-positions-full.webp', w: 2880, h: 1874, alt: 'Kalks Trader with the positions panel open: live P&L, stop loss, take profit and one-click close under the chart' },
   traderTicket: { src: '/site/shots/trader-ticket.webp', w: 888, h: 1352, alt: 'The order ticket: sell and buy prices, volume presets, stop loss, take profit, margin needed and pip value' },
   traderOptions: { src: '/site/shots/trader-options.webp', w: 2880, h: 1800, alt: 'The Kalks FX Options chain for EURUSD: calls and puts by strike with chance and breakeven' },
   traderPhone: { src: '/site/shots/trader-phone.webp', w: 780, h: 1688, alt: 'Kalks Trader on a phone: the chart with Sell and Buy at the bottom' },
