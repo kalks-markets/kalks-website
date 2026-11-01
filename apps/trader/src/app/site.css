@@ -1536,6 +1536,14 @@ a.s-chip1:hover > svg {
   overflow: hidden;
   border-radius: var(--s-r);
 }
+/* on phones the cards stack one per row: each is as tall as its content, no empty band in the middle (founder
+   2026-11-01: "minimalist"); doubled class to win over a page's own min-h-[...] */
+@media (max-width: 639px) {
+  .s-bento-card.s-bento-card {
+    min-height: 0 !important;
+    padding: 26px;
+  }
+}
 .s-bento-card:is(.s-cream, .s-orange) {
   box-shadow: var(--k-card-sh);
 }

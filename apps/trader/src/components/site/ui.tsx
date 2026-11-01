@@ -209,8 +209,9 @@ export function StatTiles({ items, className }: { items: { v: ReactNode; l: Reac
         const cls = cn('s-tile flex h-full min-h-[190px] flex-col p-5 sm:p-6 lg:min-h-[250px] lg:p-7', s.accent && 'accent');
         const body = (
           <>
-            <div className="s-tile-k">{s.l}</div>
-            <div className="s-num mt-auto whitespace-nowrap pt-8 text-[clamp(30px,4vw,60px)] text-[rgb(var(--fg))]">{s.v}</div>
+            {/* below lg two tiles share a row: the label keeps two lines and the figure follows it, so the figures line up */}
+            <div className="s-tile-k min-h-[2.4em] lg:min-h-0">{s.l}</div>
+            <div className="s-num whitespace-nowrap pt-5 text-[clamp(30px,4vw,60px)] text-[rgb(var(--fg))] lg:mt-auto lg:pt-8">{s.v}</div>
             <div className="mt-3 flex items-end justify-between gap-3">
               {s.sub && <div className="text-[13px] leading-relaxed text-[rgb(var(--fg)/0.6)]">{s.sub}</div>}
               {s.href && (

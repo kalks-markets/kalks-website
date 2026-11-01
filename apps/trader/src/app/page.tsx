@@ -206,7 +206,7 @@ export default async function HomePage() {
       </section>
 
       {/* 04 order ticket */}
-      <section className="s-sec" aria-label="The order ticket">
+      <section className="s-sec !pt-0" aria-label="The order ticket">
         <div className="s-wrap">
           <FeatureSplit
             framed
@@ -375,10 +375,10 @@ export default async function HomePage() {
           <ol className="border-t border-[var(--s-line)]">
             {ROLES.map((r, i) => (
               <Rise as="li" key={r.role} delay={i * 50} className="border-b border-[var(--s-line)]">
-                <Link href={r.href} className="group grid items-baseline gap-3 py-8 lg:grid-cols-[80px_minmax(0,0.9fr)_minmax(0,1.6fr)_48px] lg:gap-8">
+                <Link href={r.href} className="group grid grid-cols-[40px_minmax(0,1fr)] items-baseline gap-x-2 gap-y-3 py-7 lg:grid-cols-[80px_minmax(0,0.9fr)_minmax(0,1.6fr)_48px] lg:gap-8 lg:py-8">
                   <span className="s-index">0{i + 1}</span>
                   <span className="text-[clamp(28px,3vw,44px)] font-[400] leading-none tracking-[-0.04em] transition-colors group-hover:text-[var(--s-orange2)]">{r.role}</span>
-                  <span className="text-[15.5px] leading-relaxed text-[var(--s-tx2)]">{r.pitch}</span>
+                  <span className="col-start-2 text-[15.5px] leading-relaxed text-[var(--s-tx2)] lg:col-start-auto">{r.pitch}</span>
                   <span className="hidden size-11 place-items-center rounded-full border border-[var(--s-line2)] transition-[background-color,transform] group-hover:rotate-45 group-hover:bg-[var(--s-orange)] lg:grid" aria-hidden>
                     <ArrowUpRight size={18} />
                   </span>

@@ -7,6 +7,8 @@
 
 .ob {
   display: grid;
+  /* one column that never grows past the page on phones (a card's content can't widen it) */
+  grid-template-columns: minmax(0, 1fr);
   gap: 20px;
 }
 @media (min-width: 1024px) {
