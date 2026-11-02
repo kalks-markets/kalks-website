@@ -8,6 +8,10 @@ import { cn } from '@/lib/cn';
 export const IMAGES = {
   /** Home hero figure as a transparent cut-out (PNG or WebP), 1602 × 981 px. Empty: the hero photo, faded into the gradient. */
   heroCutout: '/site/heroes/home-cutout.webp',
+  /** The home page's markets block: a photo behind the whole section, edge to edge, dimmed under the tabs, the phone and
+   * the tiles (founder 2026-11-02). Landscape, at least 2400 × 1200 px; a soft or motion-blurred photo reads best. Empty:
+   * the plain page. */
+  marketsBackdrop: '/site/options/example-band.webp',
   /** "The same terminal in your pocket.": a hand holding a phone, transparent background (the screen stays the drawn, separate layer; see POCKET_FRAME). Empty: a CSS phone frame. */
   pocketTerminalFrame: '',
 } as const;

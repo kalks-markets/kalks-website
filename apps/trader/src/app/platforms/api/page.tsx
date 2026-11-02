@@ -48,18 +48,8 @@ export default async function ApiPage() {
       <section className="s-sec" aria-labelledby="n-title">
         <div className="s-wrap">
           <Rise className="s-card pad grid gap-12 lg:grid-cols-[0.8fr_1.6fr] lg:gap-16">
-            <div className="flex flex-col gap-6">
-              <div className="flex items-center gap-4">
-                <span className="s-index">01</span>
-                <span className="s-eyebrow">Automation</span>
-              </div>
-              <div className="flex flex-wrap gap-2">
-                {['REST', 'Webhooks', 'Backtests'].map((c) => (
-                  <span key={c} className="s-chip">
-                    {c}
-                  </span>
-                ))}
-              </div>
+            <div>
+              <span className="s-eyebrow">Automation</span>
             </div>
             <h2 id="n-title" className="s-statement">
               Your rules, on our servers. <span className="s-mute">Alerts from your charting tool, your own code through the API, or a strategy built with blocks, running on demo or live while your computer is off.</span>

@@ -8,7 +8,7 @@ import { FactTable, FaqSchema, MiniHead, NumberedRows } from '@/components/site/
 import { Payoff, STRATEGY_NOTES } from '@/components/options/Payoff';
 import { LiveList, type LiveRow } from '@/components/market/LiveList';
 import { RiskNote } from '@/components/ui/RiskNote';
-import { OptionsOdds } from '@/components/site/OptionsOdds';
+import { OptionsExampleBand, OptionsOddsBento } from '@/components/site/options-bento/OptionsBento';
 import { DEMO, OPTIONS, OPTIONS_ACCOUNTS } from '@/content/facts';
 import { DEMO_HREF, REGISTER_HREF } from '@/lib/crm';
 import { getQuotes } from '@/lib/quotes';
@@ -179,18 +179,8 @@ export default async function OptionsPage() {
       <section className="s-sec" aria-labelledby="i-title">
         <div className="s-wrap">
           <Rise className="s-card pad grid gap-12 lg:grid-cols-[0.8fr_1.6fr] lg:gap-16">
-            <div className="flex flex-col gap-6">
-              <div className="flex items-center gap-4">
-                <span className="s-index">01</span>
-                <span className="s-eyebrow">The idea</span>
-              </div>
-              <div className="flex flex-wrap gap-2">
-                {['Calls', 'Puts', 'European style'].map((c) => (
-                  <span key={c} className="s-chip">
-                    {c}
-                  </span>
-                ))}
-              </div>
+            <div>
+              <span className="s-eyebrow">The idea</span>
             </div>
             <h2 id="i-title" className="s-statement">
               Buy a call or a put and the premium is the most you can lose. <span className="s-mute">A call pays if the market finishes above its strike, a put if it finishes below. Settled in cash in US dollars at {OPTIONS.cut}.</span>
@@ -209,12 +199,14 @@ export default async function OptionsPage() {
         </div>
       </section>
 
-      {/* the opportunity and the risk, side by side (founder 2026-10-28) */}
+      {/* the opportunity and the risk, side by side (founder 2026-10-28), as the home page's cards, then the worked
+          example as its photo band (founder 2026-11-01) */}
       <section className="s-sec !pt-4" aria-label="Opportunity and risk">
         <div className="s-wrap">
-          <OptionsOdds />
+          <OptionsOddsBento />
         </div>
       </section>
+      <OptionsExampleBand />
 
       {/* 02 the chain */}
       <section id="how" className="s-sec !pt-8 scroll-mt-20" aria-labelledby="how-title">
@@ -291,18 +283,16 @@ export default async function OptionsPage() {
             />
           </Rise>
           <div className="grid gap-4 sm:grid-cols-2">
-            {QUICK.map((q, i) => {
-              const tone = ['s-orange', 's-cream', 's-card', 's-cream'][i];
-              return (
-                <Rise key={q.a} delay={i * 70} className="h-full">
-                  <div className={cn('s-bento-card h-full !min-h-[190px]', tone)}>
-                    <span className={cn('text-[12.5px] font-semibold uppercase tracking-[0.08em]', tone === 's-orange' ? 'text-white/80' : tone === 's-cream' ? 'text-[var(--s-orange)]' : 'text-[var(--s-orange2)]')}>You choose</span>
-                    <h3 className="mt-3 text-[clamp(24px,2.3vw,30px)] font-[500] leading-[1.05] tracking-[-0.035em]">{q.a}</h3>
-                    <p className={cn('mt-auto pt-6 text-[14.5px] leading-relaxed', tone === 's-orange' ? 'text-white/85' : tone === 's-cream' ? 'text-[var(--s-cream-tx2)]' : 'text-[var(--s-tx2)]')}>{q.b}</p>
-                  </div>
-                </Rise>
-              );
-            })}
+            {/* the home page's quiet cards (founder 2026-11-02), the first one with the orange hairline */}
+            {QUICK.map((q, i) => (
+              <Rise key={q.a} delay={i * 70} className="h-full">
+                <div className={cn('s-bento-card s-card h-full !min-h-[190px]', i === 0 && 'hot')}>
+                  <span className="text-[12.5px] font-semibold uppercase tracking-[0.08em] text-[var(--s-orange2)]">You choose</span>
+                  <h3 className="mt-3 text-[clamp(22px,2vw,27px)] font-semibold leading-[1.15] tracking-[-0.025em]">{q.a}</h3>
+                  <p className="mt-auto pt-6 text-[14.5px] leading-relaxed text-[var(--s-tx2)]">{q.b}</p>
+                </div>
+              </Rise>
+            ))}
           </div>
         </div>
       </section>
@@ -328,12 +318,12 @@ export default async function OptionsPage() {
                   <h3 className="text-[17px] font-semibold tracking-[-0.015em]">{s}</h3>
                   <span className="s-chip hot !h-6 !px-2.5 !text-[11.5px]">{STRATEGY_NOTES[s]?.view}</span>
                 </div>
-                <Payoff name={s} className="mt-5 h-24 w-full overflow-hidden rounded-[14px]" />
+                <Payoff name={s} className="mt-5 w-full rounded-[14px] shadow-[0_16px_32px_-16px_rgb(0_0_0/0.55)] ring-1 ring-white/[0.08]" />
                 <p className="mt-5 text-[14px] leading-relaxed text-[var(--s-tx2)]">{STRATEGY_NOTES[s]?.d}</p>
               </Rise>
             ))}
           </div>
-          <p className="mt-5 text-[12.5px] text-[var(--s-tx3)]">Payoff at expiry, not to scale. Blue: profit. Red: loss. Dashed: breakeven.</p>
+          <p className="mt-5 text-[12.5px] text-[var(--s-tx3)]">Payoff at expiry, not to scale. White: profit. Red: loss. Dashed: breakeven.</p>
         </div>
       </section>
 
@@ -352,28 +342,24 @@ export default async function OptionsPage() {
             lead="Illustrative prices to show the arithmetic. Real premiums come from the live chain and move all the time. Commission not included."
           />
           <div className="grid gap-4 lg:grid-cols-3">
-            {EXAMPLES.map((ex, i) => {
-              const tone = ['s-cream', 's-orange', 's-card'][i];
-              const muted = tone === 's-cream' ? 'text-[var(--s-cream-tx2)]' : tone === 's-orange' ? 'text-white/80' : 'text-[var(--s-tx3)]';
-              const line = tone === 's-cream' ? 'border-[rgba(26,20,16,0.12)]' : tone === 's-orange' ? 'border-white/25' : 'border-[var(--s-line)]';
-              return (
-                <Rise key={ex.t} delay={i * 80} className="h-full">
-                  <div className={cn('s-bento-card h-full', tone)}>
-                    <span className={cn('s-num text-[48px]', tone === 's-cream' ? 'text-[var(--s-orange)]' : tone === 's-orange' ? 'text-white' : 'text-[var(--s-orange2)]')}>{String(i + 1).padStart(2, '0')}</span>
-                    <h3 className="mt-5 text-[clamp(22px,2vw,27px)] font-[500] leading-[1.1] tracking-[-0.03em]">{ex.t}</h3>
-                    <p className={cn('mt-4 rounded-[14px] px-3.5 py-2.5 text-[14px] font-semibold', tone === 's-cream' ? 'bg-[rgba(242,96,12,0.12)] text-[#a83d00]' : tone === 's-orange' ? 'bg-black/15' : 'bg-[rgba(242,96,12,0.12)] text-[var(--s-orange2)]')}>{ex.trade}</p>
-                    <dl className="mt-5">
-                      {ex.lines.map(([k, v]) => (
-                        <div key={k} className={cn('flex flex-wrap justify-between gap-x-4 gap-y-1 border-t py-3 text-[14px]', line)}>
-                          <dt className={muted}>{k}</dt>
-                          <dd className="text-right font-semibold [font-variant-numeric:tabular-nums]">{v}</dd>
-                        </div>
-                      ))}
-                    </dl>
-                  </div>
-                </Rise>
-              );
-            })}
+            {/* the home page's quiet cards (founder 2026-11-02), the middle one with the orange hairline */}
+            {EXAMPLES.map((ex, i) => (
+              <Rise key={ex.t} delay={i * 80} className="h-full">
+                <div className={cn('s-bento-card s-card h-full', i === 1 && 'hot')}>
+                  <span className="rf-3d self-start !text-[56px]">{String(i + 1).padStart(2, '0')}</span>
+                  <h3 className="mt-5 text-[clamp(20px,1.8vw,24px)] font-semibold leading-[1.2] tracking-[-0.025em]">{ex.t}</h3>
+                  <p className="mt-4 rounded-[14px] bg-[rgba(242,96,12,0.12)] px-3.5 py-2.5 text-[14px] font-semibold text-[var(--s-orange2)]">{ex.trade}</p>
+                  <dl className="mt-5">
+                    {ex.lines.map(([k, v]) => (
+                      <div key={k} className="flex flex-wrap justify-between gap-x-4 gap-y-1 border-t border-[var(--s-line)] py-3 text-[14px]">
+                        <dt className="text-[var(--s-tx3)]">{k}</dt>
+                        <dd className="text-right font-semibold [font-variant-numeric:tabular-nums]">{v}</dd>
+                      </div>
+                    ))}
+                  </dl>
+                </div>
+              </Rise>
+            ))}
           </div>
         </div>
       </section>
@@ -437,10 +423,10 @@ export default async function OptionsPage() {
             </Rise>
             <div id="account" className="grid gap-5">
               <Rise delay={80}>
-                <div className="s-bento-card s-cream !min-h-0">
-                  <span className="text-[12.5px] font-semibold uppercase tracking-[0.08em] text-[var(--s-orange)]">Options account</span>
-                  <h3 className="mt-3 text-[clamp(28px,2.6vw,36px)] font-[500] leading-[1.02] tracking-[-0.035em]">{acc.name}</h3>
-                  <p className="mt-2 text-[15px] leading-relaxed text-[var(--s-cream-tx2)]">{acc.tagline} Daily and weekly expiries, settled in cash in US dollars.</p>
+                <div className="s-bento-card s-card hot !min-h-0">
+                  <span className="text-[12.5px] font-semibold uppercase tracking-[0.08em] text-[var(--s-orange2)]">Options account</span>
+                  <h3 className="mt-3 text-[clamp(26px,2.4vw,32px)] font-semibold leading-[1.05] tracking-[-0.03em]">{acc.name}</h3>
+                  <p className="mt-2 text-[15px] leading-relaxed text-[var(--s-tx2)]">{acc.tagline} Daily and weekly expiries, settled in cash in US dollars.</p>
                   <dl className="mt-6">
                     {[
                       ['Minimum deposit', acc.minDeposit],
@@ -449,14 +435,14 @@ export default async function OptionsPage() {
                       ['Selling options', acc.selling],
                       ['Demo', 'Free, with virtual funds'],
                     ].map(([k, v]) => (
-                      <div key={k} className="grid gap-1 border-t border-[rgba(26,20,16,0.12)] py-3 text-[14px] sm:grid-cols-[150px_minmax(0,1fr)] sm:gap-4">
-                        <dt className="text-[var(--s-cream-tx2)]">{k}</dt>
+                      <div key={k} className="grid gap-1 border-t border-[var(--s-line)] py-3 text-[14px] sm:grid-cols-[150px_minmax(0,1fr)] sm:gap-4">
+                        <dt className="text-[var(--s-tx3)]">{k}</dt>
                         <dd className="font-semibold">{v}</dd>
                       </div>
                     ))}
                   </dl>
                   <div className="mt-6 flex flex-wrap gap-3">
-                    <Btn href={REGISTER_HREF} variant="dark">
+                    <Btn href={REGISTER_HREF}>
                       Open {acc.name}
                     </Btn>
                   </div>

@@ -1,24 +1,28 @@
 /**
  * Hero photos (founder's own solid-colour set, 2026-10-10), served at their native size so they stay sharp; `bg` is
- * each photo's own backdrop colour, used as the hero's solid background so the figure blends into it. Academy,
- * white-label and contact are blue originals graded to an orange duotone (black → ember → orange → cream) to stay in
- * the black + orange palette. Image rights: to confirm before production (founder-supplied).
+ * the hero's solid background, which the photo's backdrop matches so the figure blends into it. The inner pages share
+ * one theme (founder 2026-11-01: "every image and element in the same theme"): each photo graded to the black → ember
+ * → Kalks orange → cream palette with its backdrop on one ember (INNER_BG), so every page hero has the same panel,
+ * glow, buttons and cards. The home photo keeps its own colours. Image rights: to confirm before production
+ * (founder-supplied).
  */
+const INNER_BG = '#3d0f04';
+
 export type HeroKey = 'home' | 'markets' | 'options' | 'accounts' | 'platforms' | 'copy' | 'prop' | 'partners' | 'about' | 'academy' | 'whitelabel' | 'contact';
 
 export const HEROES: Record<HeroKey, { src: string; w: number; h: number; bg: string }> = {
   home: { src: '/site/heroes/home.webp', w: 816, h: 1456, bg: '#ff3201' },
-  markets: { src: '/site/heroes/markets.webp', w: 736, h: 1313, bg: '#f10223' },
-  options: { src: '/site/heroes/options.webp', w: 736, h: 1313, bg: '#ec0701' },
-  accounts: { src: '/site/heroes/accounts.webp', w: 736, h: 977, bg: '#d10013' },
-  platforms: { src: '/site/heroes/platforms.webp', w: 736, h: 1027, bg: '#f7472a' },
-  copy: { src: '/site/heroes/copy.webp', w: 736, h: 1313, bg: '#b50219' },
-  prop: { src: '/site/heroes/prop.webp', w: 1168, h: 1439, bg: '#c51f1e' },
-  partners: { src: '/site/heroes/partners.webp', w: 1200, h: 2015, bg: '#fb1e29' },
-  about: { src: '/site/heroes/about.webp', w: 1672, h: 941, bg: '#440503' },
-  academy: { src: '/site/heroes/academy.webp', w: 928, h: 1222, bg: '#401103' },
-  whitelabel: { src: '/site/heroes/whitelabel.webp', w: 1152, h: 2048, bg: '#4c1403' },
-  contact: { src: '/site/heroes/contact.webp', w: 736, h: 1103, bg: '#641b05' },
+  markets: { src: '/site/heroes/markets.webp', w: 736, h: 1313, bg: INNER_BG },
+  options: { src: '/site/heroes/options.webp', w: 736, h: 1313, bg: INNER_BG },
+  accounts: { src: '/site/heroes/accounts.webp', w: 736, h: 977, bg: INNER_BG },
+  platforms: { src: '/site/heroes/platforms.webp', w: 736, h: 1027, bg: INNER_BG },
+  copy: { src: '/site/heroes/copy.webp', w: 736, h: 1313, bg: INNER_BG },
+  prop: { src: '/site/heroes/prop.webp', w: 1168, h: 1439, bg: INNER_BG },
+  partners: { src: '/site/heroes/partners.webp', w: 1200, h: 2015, bg: INNER_BG },
+  about: { src: '/site/heroes/about.webp', w: 1672, h: 941, bg: INNER_BG },
+  academy: { src: '/site/heroes/academy.webp', w: 928, h: 1222, bg: INNER_BG },
+  whitelabel: { src: '/site/heroes/whitelabel.webp', w: 1152, h: 2048, bg: INNER_BG },
+  contact: { src: '/site/heroes/contact.webp', w: 736, h: 1103, bg: INNER_BG },
 };
 
 /** Real product screenshots (local demo session, 2× retina), in public/site/shots. */

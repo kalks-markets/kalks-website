@@ -104,6 +104,23 @@ const ICONS = {
     back: <path d={ARROW_UP(29)} />,
     glass: <path d={ARROW_DOWN(19)} />,
   },
+  // One USDT wallet
+  wallet: {
+    back: <rect x="13" y="4" width="28" height="20" rx="6" />,
+    glass: <rect x="5" y="14" width="38" height="29" rx="8" />,
+    mark: <circle cx="33" cy="29" r="2.8" stroke="none" />,
+  },
+  // A verified identity
+  id: {
+    back: <circle cx="34" cy="13" r="9" />,
+    glass: <rect x="5" y="13" width="36" height="29" rx="8" />,
+    mark: (
+      <>
+        <circle cx="15.5" cy="25" r="3.4" stroke="none" />
+        <path d="M11 35.5c1.2-2.6 2.8-3.6 4.5-3.6s3.3 1 4.5 3.6M25 24.5h9M25 31h6" fill="none" />
+      </>
+    ),
+  },
 } satisfies Record<string, Glyph>;
 
 export type GlassIconName = keyof typeof ICONS;

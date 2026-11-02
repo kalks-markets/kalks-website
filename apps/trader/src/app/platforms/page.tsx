@@ -40,18 +40,8 @@ export default async function PlatformsPage() {
       <section className="s-sec" aria-labelledby="n-title">
         <div className="s-wrap">
           <Rise className="s-card pad grid gap-12 lg:grid-cols-[0.8fr_1.6fr] lg:gap-16">
-            <div className="flex flex-col gap-6">
-              <div className="flex items-center gap-4">
-                <span className="s-index">01</span>
-                <span className="s-eyebrow">The platform</span>
-              </div>
-              <div className="flex flex-wrap gap-2">
-                {['Browser', 'Android', 'API'].map((c) => (
-                  <span key={c} className="s-chip">
-                    {c}
-                  </span>
-                ))}
-              </div>
+            <div>
+              <span className="s-eyebrow">The platform</span>
             </div>
             <h2 id="n-title" className="s-statement">
               Kalks Trader is where you trade. <span className="s-mute">The Client Area runs everything around it: accounts, the USDT wallet, copy trading, prop, partners and the Academy, behind one login.</span>
@@ -87,11 +77,11 @@ export default async function PlatformsPage() {
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
             <BentoCard tone="orange" kicker="Trade" title="Kalks Trader" href="/platforms/trader" text="The terminal: charts, one-click trading, the order ticket and the option chain." className="min-h-[340px]">
               <div className="s-num text-[clamp(56px,5vw,76px)]">{TRADER.indicators}</div>
-              <div className="mt-2 text-[13.5px] font-medium text-white/85">indicators · {TRADER.timeframes.length} timeframes</div>
+              <div className="mt-2 text-[13.5px] text-[var(--s-tx2)]">indicators · {TRADER.timeframes.length} timeframes</div>
             </BentoCard>
             <BentoCard tone="cream" kicker="Manage" title="Client Area" href="/platforms/client-area" text="Accounts, wallet, copy trading, prop, partner earnings, the Academy and support." delay={60} className="min-h-[340px]">
               <div className="s-num text-[clamp(56px,5vw,76px)]">{ACADEMY.lessons}</div>
-              <div className="mt-2 text-[13.5px] text-[var(--s-cream-tx2)]">Academy lessons inside</div>
+              <div className="mt-2 text-[13.5px] text-[var(--s-tx2)]">Academy lessons inside</div>
             </BentoCard>
             <BentoCard tone="glass" kicker="On the go" title="Android app" href="/platforms/android" text={`Kalks Trader, the Client Area and Kalks FX Options in one app, ${ANDROID_APP.minAndroid} or newer.`} delay={120} className="min-h-[340px]">
               <div className="s-num text-[clamp(56px,5vw,76px)]">{ANDROID_APP.sizeMb}</div>
@@ -99,7 +89,7 @@ export default async function PlatformsPage() {
             </BentoCard>
             <BentoCard tone="cream" kicker="Automate" title="API & algo" href="/platforms/api" text="Webhooks, a REST API, a visual strategy builder and backtests, running on our servers." delay={180} className="min-h-[340px]">
               <div className="s-num text-[clamp(56px,5vw,76px)]">24/7</div>
-              <div className="mt-2 text-[13.5px] text-[var(--s-cream-tx2)]">deployments · {ALGO.indicatorSeries} indicator series</div>
+              <div className="mt-2 text-[13.5px] text-[var(--s-tx2)]">deployments · {ALGO.indicatorSeries} indicator series</div>
             </BentoCard>
           </div>
         </div>

@@ -31,8 +31,8 @@ const ROWS: [string, (a: AccountType) => string][] = [
   ['Best for', (a) => a.bestFor],
 ];
 
-/** card colours for the five CFD accounts (Home's bento: one orange, cream and dark glass) */
-const TONE: Record<string, 'orange' | 'cream' | 'glass'> = { standard: 'orange', pro: 'cream', ecn: 'glass', cent: 'glass', vip: 'cream' };
+/** the featured CFD account: the home page's quiet card with an orange hairline (founder 2026-11-02) */
+const FEATURED = 'standard';
 
 /** the accounts block on the Client Area home, part by part (pins in % of the screenshot) */
 const CA_PINS: Pin[] = [
@@ -76,20 +76,16 @@ const FAQ = [
 ];
 
 function AccountCard({ a, delay }: { a: AccountType; delay: number }) {
-  const tone = TONE[a.id] ?? 'glass';
-  const cls = tone === 'orange' ? 's-orange' : tone === 'cream' ? 's-cream' : 's-card';
-  const muted = tone === 'cream' ? 'text-[var(--s-cream-tx2)]' : tone === 'orange' ? 'text-white/80' : 'text-[var(--s-tx3)]';
-  const line = tone === 'cream' ? 'border-[rgba(26,20,16,0.12)]' : tone === 'orange' ? 'border-white/25' : 'border-[var(--s-line)]';
-  const kicker = tone === 'cream' ? 'text-[var(--s-orange)]' : tone === 'orange' ? 'text-white/80' : 'text-[var(--s-orange2)]';
+  const muted = 'text-[var(--s-tx3)]';
   return (
     <div id={a.id} className="scroll-mt-28">
       <Rise delay={delay} className="h-full">
-        <div className={cn('s-bento-card h-full', cls)}>
+        <div className={cn('s-bento-card s-card h-full', a.id === FEATURED && 'hot')}>
           <div className="flex items-center justify-between gap-3">
-            <span className={cn('text-[12.5px] font-semibold uppercase tracking-[0.08em]', kicker)}>{a.pricing.startsWith('Raw') ? 'Raw spread + commission' : 'All-in spread'}</span>
-            {a.highlight && <span className="rounded-full bg-white px-3 py-1 text-[12px] font-semibold text-[var(--s-cream-tx)]">Most traders</span>}
+            <span className="text-[12.5px] font-semibold uppercase tracking-[0.08em] text-[var(--s-orange2)]">{a.pricing.startsWith('Raw') ? 'Raw spread + commission' : 'All-in spread'}</span>
+            {a.highlight && <span className="rounded-full bg-[color-mix(in_oklab,var(--s-orange)_16%,transparent)] px-3 py-1 text-[12px] font-semibold text-[var(--s-orange2)]">Most traders</span>}
           </div>
-          <h3 className="mt-3 text-[clamp(30px,2.8vw,40px)] font-[500] leading-none tracking-[-0.04em]">{a.name}</h3>
+          <h3 className="mt-3 text-[clamp(26px,2.4vw,34px)] font-semibold leading-none tracking-[-0.03em]">{a.name}</h3>
           <p className={cn('mt-3 text-[14.5px] leading-relaxed', muted)}>{a.tagline}</p>
           <div className="mt-7 grid grid-cols-2 gap-4">
             <div className="min-w-0">
@@ -108,14 +104,14 @@ function AccountCard({ a, delay }: { a: AccountType; delay: number }) {
               ['Margin call / stop out', `${a.marginCall} / ${a.stopOut}`],
               ['Mode', a.mode],
             ].map(([k, v]) => (
-              <div key={k} className={cn('flex flex-wrap justify-between gap-x-4 gap-y-1 border-t py-3 text-[14px]', line)}>
+              <div key={k} className="flex flex-wrap justify-between gap-x-4 gap-y-1 border-t border-[var(--s-line)] py-3 text-[14px]">
                 <dt className={muted}>{k}</dt>
                 <dd className="text-right font-semibold">{v}</dd>
               </div>
             ))}
           </dl>
           <div className="mt-auto pt-6">
-            <Btn href={REGISTER_HREF} size="sm" variant={tone === 'orange' ? 'light' : tone === 'cream' ? 'dark' : 'primary'}>
+            <Btn href={REGISTER_HREF} size="sm">
               Open {a.name}
             </Btn>
           </div>
@@ -242,10 +238,10 @@ export default async function AccountsPage() {
           />
           <div className="grid gap-4 lg:grid-cols-[minmax(0,1.3fr)_minmax(0,1fr)]">
             <Rise className="h-full">
-              <div className="s-bento-card s-cream h-full">
-                <span className="text-[12.5px] font-semibold uppercase tracking-[0.08em] text-[var(--s-orange)]">Options · live</span>
-                <h3 className="mt-3 text-[clamp(30px,2.8vw,40px)] font-[500] leading-none tracking-[-0.04em]">{optStd.name}</h3>
-                <p className="mt-3 max-w-[52ch] text-[15px] leading-relaxed text-[var(--s-cream-tx2)]">{optStd.tagline} Daily and weekly expiries, settled in cash in US dollars.</p>
+              <div className="s-bento-card s-card hot h-full">
+                <span className="text-[12.5px] font-semibold uppercase tracking-[0.08em] text-[var(--s-orange2)]">Options · live</span>
+                <h3 className="mt-3 text-[clamp(26px,2.4vw,34px)] font-semibold leading-none tracking-[-0.03em]">{optStd.name}</h3>
+                <p className="mt-3 max-w-[52ch] text-[15px] leading-relaxed text-[var(--s-tx2)]">{optStd.tagline} Daily and weekly expiries, settled in cash in US dollars.</p>
                 <dl className="mt-7">
                   {[
                     ['Minimum deposit', optStd.minDeposit],
@@ -254,14 +250,14 @@ export default async function AccountsPage() {
                     ['Selling options', optStd.selling],
                     ['Demo', 'Free, with virtual funds'],
                   ].map(([k, v]) => (
-                    <div key={k} className="grid gap-1 border-t border-[rgba(26,20,16,0.12)] py-3 text-[14.5px] sm:grid-cols-[170px_minmax(0,1fr)] sm:gap-4">
-                      <dt className="text-[var(--s-cream-tx2)]">{k}</dt>
+                    <div key={k} className="grid gap-1 border-t border-[var(--s-line)] py-3 text-[14.5px] sm:grid-cols-[170px_minmax(0,1fr)] sm:gap-4">
+                      <dt className="text-[var(--s-tx3)]">{k}</dt>
                       <dd className="font-semibold">{v}</dd>
                     </div>
                   ))}
                 </dl>
                 <div className="mt-auto flex flex-wrap gap-3 pt-7">
-                  <Btn href={REGISTER_HREF} variant="dark">
+                  <Btn href={REGISTER_HREF}>
                     Open {optStd.name}
                   </Btn>
                 </div>

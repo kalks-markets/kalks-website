@@ -44,7 +44,6 @@ export default function ForexPage() {
           Currencies, long or short. <span className="s-mute">Majors, minors and exotics on real money, priced all-in with no commission, or on the raw spread with a fixed commission per lot.</span>
         </>
       }
-      chips={['Majors', 'Minors', 'Exotics']}
       stats={[
         { v: INSTRUMENTS.byClass.forex.live, l: 'Pairs live', sub: 'Majors, minors and exotics' },
         { v: `1:${LEVERAGE.coreCaps.forex}`, l: 'Highest leverage', sub: 'Standard and Cent accounts' },

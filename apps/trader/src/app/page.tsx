@@ -1,19 +1,17 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
-import { ArrowUpRight } from 'lucide-react';
-import { ACADEMY, ACCOUNTS, DEMO, FUNDING, HOURS, IB, INSTRUMENTS, LANGUAGES, LEVERAGE, OPTIONS, OPTIONS_ACCOUNTS, PROP, SOCIAL } from '@/content/facts';
-import { faqById, getPage } from '@/content/pages';
+import { ACADEMY, ACCOUNTS, DEMO, FUNDING, HOURS, INSTRUMENTS, LANGUAGES, LEVERAGE, OPTIONS, SOCIAL } from '@/content/facts';
+import { getPage } from '@/content/pages';
 import { CRM_URL, DEMO_HREF, LOGIN_HREF, REGISTER_HREF } from '@/lib/crm';
-import { NY, ymdIn } from '@/lib/tz';
 import { PriceStrip, type StripRow } from '@/components/market/PriceStrip';
 import { getQuotes } from '@/lib/quotes';
 import { HomeHero } from '@/components/site/Heroes';
-import { BentoCard, Btn, Checks, Cta, Faq, Head, Label, StatTiles, TextLink } from '@/components/site/ui';
-import { FeatureSplit, IPhone, Shot, ShotTour, type Pin } from '@/components/site/Shot';
+import { Btn, Head } from '@/components/site/ui';
+import { ShotTour, type Pin, type ShotVideo } from '@/components/site/Shot';
 import { PocketTerminal, type PocketNote } from '@/components/site/pocket-terminal/PocketTerminal';
-import { Rise } from '@/components/site/Rise';
-import { OptionsBento } from '@/components/site/options-bento/OptionsBento';
-import { TradingDay, type Slot } from '@/components/site/TradingDay';
+import { CtaBand, FeeCards, LangStrip, LogoStrip, PhoneBand, PhoneShot, PhotoFeature, RfHead, TrustCards } from '@/components/site/home/HomeBlocks';
+import { MarketTabs, type MarketTab } from '@/components/site/home/MarketTabs';
+import { IMAGES } from '@/components/site/ImageSlot';
 
 export const revalidate = 60;
 
@@ -39,12 +37,14 @@ const TRADER_PINS: Pin[] = [
   { x: 25, y: 96.8, title: 'Account at a glance', text: 'Balance, equity, floating P&L, margin, free margin and margin level, updated with every tick.' },
 ];
 
-const OPTIONS_PINS: Pin[] = [
-  { x: 27, y: 10.5, title: 'Expiries', text: `Daily and weekly: ${OPTIONS.expiries.daily} and ${OPTIONS.expiries.weekly}.` },
-  { x: 12, y: 36, title: 'Calls and puts by strike', text: 'Buy and sell prices for every strike, around the money, with the current price marked in the middle.' },
-  { x: 9.5, y: 22.5, title: 'Chance and breakeven', text: 'The chance of finishing in the money and the price you need at expiry, on every row.' },
-  { x: 33, y: 5, title: 'Quick trade and strategy builder', text: `One tap for a call or a put, or ${OPTIONS.strategies.length} ready-made strategies of up to ${OPTIONS.maxLegs} legs, with the most you can lose shown first.` },
-];
+/** the workspace in motion on the laptop, looping (founder 2026-11-02; his video, poster = its first frame) */
+const TRADER_VIDEO: ShotVideo = {
+  src: '/site/home/terminal-tour.mp4',
+  poster: '/site/home/terminal-tour.webp',
+  w: 1920,
+  h: 1080,
+  alt: 'Kalks Trader in use: the chart with its trading lines and drawing tools, the instruments list and the account bar',
+};
 
 /* the phone section's notification cards, in the platform's own words: the in-app templates (Back Office ›
    Notifications: "Deposit received" with its sample values, "Price alert") and Kalks Trader's fill toast, with the
@@ -56,44 +56,80 @@ const POCKET_NOTES: PocketNote[] = [
   { title: 'Buy 1.00 XAUUSD filled', time: 'Just now', body: '1.00 at 3,984.13' },
 ];
 
-const ROLES = [
-  { role: 'New trader', pitch: `Start on a demo with ${DEMO.defaultBalance} of virtual money and live prices. When it clicks, go live from ${ACCOUNTS[0].minDeposit} on a Standard or Cent account, and keep learning with ${ACADEMY.lessons} lessons in the Academy.`, href: '/accounts/demo' },
-  { role: 'Active trader', pitch: 'Raw spreads with a fixed commission on ECN and VIP, one-click trading, a depth ladder beside the chart, and stops you drag along the price axis.', href: '/platforms/trader' },
-  { role: 'Options trader', pitch: `Chains on ${OPTIONS.underlyingsLive.length} markets with daily and weekly expiries, ${OPTIONS.strategies.length} ready-made strategies of up to ${OPTIONS.maxLegs} legs, and a card that states your maximum loss before every order.`, href: '/options' },
-  { role: 'Money manager', pitch: `Run a PAMM fund or a MAM account, or become a copy master after ${SOCIAL.trackRecordDays} days of track record. Your performance fee is charged only on new highs.`, href: '/copy-trading' },
-  { role: 'Partner', pitch: `Share your link and get paid for the lots your clients trade, ${IB.tiers} tiers deep, across five levels from Bronze to Diamond. Commission arrives in your USDT wallet every Monday.`, href: '/partners' },
-];
-
-const WEEKDAYS = 'MO,TU,WE,TH,FR';
-/* The platform's day, from the 17:00 New York rollover (00:00 server time). */
-const SLOTS: Slot[] = [
+/* the markets block: Kalks Trader's own watchlist (the guest watchlist on trade.kalkstrade.com, 2026-11-02), class by
+   class in the platform's order and words */
+const fx = (s: string, name: string): MarketTab['rows'][number] => ({ s, name, digits: s.endsWith('JPY') ? 3 : 5 });
+const MARKET_TABS: MarketTab[] = [
   {
-    id: 'rollover',
-    title: 'A new trading day begins',
-    start: HOURS.rolloverNy,
-    tz: NY,
-    who: 'Server time 00:00 · overnight financing is booked',
-    desc: `Positions held past ${HOURS.rolloverNy} New York are charged or credited overnight financing, shown for each market in Kalks Trader. ${HOURS.tripleSwap.forexMetals} counts three times for forex and metals, ${HOURS.tripleSwap.indicesEnergies} for indices and energies.`,
-    tags: ['Forex', 'Metals'],
-    days: 'MO,TU,WE,TH',
+    id: 'forex',
+    label: 'Forex',
+    rows: [
+      fx('EURUSD', 'Euro vs US Dollar'),
+      fx('GBPUSD', 'Pound vs US Dollar'),
+      fx('USDJPY', 'US Dollar vs Yen'),
+      fx('AUDUSD', 'Aussie vs US Dollar'),
+      fx('USDCAD', 'US Dollar vs Loonie'),
+      fx('USDCHF', 'US Dollar vs Franc'),
+      fx('GBPJPY', 'Pound vs Yen'),
+      fx('EURJPY', 'Euro vs Yen'),
+    ],
   },
-  { id: 'tokyo', title: 'Tokyo session', start: '09:00', end: '18:00', tz: 'Asia/Tokyo', who: '09:00 to 18:00 in Tokyo', desc: 'The Asian trading day. The yen and the Australian and New Zealand dollars see most of their activity here.', tags: ['Forex'], days: WEEKDAYS },
-  { id: 'london', title: 'London session', start: '08:00', end: '17:00', tz: 'Europe/London', who: '08:00 to 17:00 in London', desc: 'The heaviest hours for currencies, and for gold and silver, which are priced through London.', tags: ['Forex', 'Metals'], days: WEEKDAYS },
-  { id: 'newyork', title: 'New York session', start: '08:00', end: '17:00', tz: NY, who: '08:00 to 17:00 in New York', desc: 'New York overlaps London until midday: the deepest hours of the day for the dollar pairs and oil.', tags: ['Forex', 'Energies'], days: WEEKDAYS },
-  { id: 'window', title: 'Options settlement window', start: '09:30', end: '10:00', tz: NY, who: 'The 30 minutes that set the settlement price', desc: `${OPTIONS.settlement}. Averaging over half an hour keeps a single spike from deciding the result.`, tags: ['Options'], days: WEEKDAYS },
-  { id: 'stocks', title: 'US stock market', start: '09:30', end: '16:00', tz: NY, who: HOURS.usStocks, desc: 'US stock CFDs trade during the exchange’s own hours. Index CFDs keep trading through the forex week.', tags: ['Stocks'], days: WEEKDAYS },
-  { id: 'cut', title: 'Options cut', start: '10:00', end: '10:15', tz: NY, who: 'Daily and weekly expiries settle', desc: `Options expiring today settle in cash, in US dollars, straight to your balance. Daily expiries cover ${OPTIONS.expiries.daily}, weekly ones ${OPTIONS.expiries.weekly}.`, tags: ['Options'], days: WEEKDAYS, cal: true },
-  { id: 'crypto', title: 'Crypto never closes', who: 'Bitcoin, Ether and more, around the clock', desc: 'Crypto CFDs trade 24 hours a day, 7 days a week. Financing is charged every night, weekends included.', tags: ['Crypto'] },
-  { id: 'weekend', title: 'The forex week closes', start: HOURS.rolloverNy, tz: NY, who: 'Fridays · it reopens Sunday at 17:00 New York', desc: `Forex, metals, energies and index CFDs trade ${HOURS.fxWeek}. Crypto keeps going through the weekend.`, tags: ['Forex', 'Metals'], days: 'FR' },
+  {
+    id: 'metals',
+    label: 'Metals',
+    rows: [
+      { s: 'XAUUSD', name: 'Gold vs US Dollar', digits: 2 },
+      { s: 'XAGUSD', name: 'Silver vs US Dollar', digits: 3 },
+    ],
+  },
+  {
+    id: 'indices',
+    label: 'Indices',
+    rows: [
+      { s: 'US30', name: 'Dow Jones 30', digits: 1, badge: ['USD'] },
+      { s: 'NAS100', name: 'Nasdaq 100', digits: 1, badge: ['USD'] },
+      { s: 'SPX500', name: 'S&P 500', digits: 1, badge: ['USD'] },
+      { s: 'GER40', name: 'Germany 40', digits: 1, badge: ['DE'] },
+      { s: 'UK100', name: 'FTSE 100', digits: 1, badge: ['GBP'] },
+      { s: 'JP225', name: 'Nikkei 225', digits: 0, badge: ['JPY'] },
+    ],
+  },
+  {
+    id: 'energies',
+    label: 'Energies',
+    rows: [
+      { s: 'USOIL', name: 'WTI Crude Oil', digits: 2 },
+      { s: 'UKOIL', name: 'Brent Crude Oil', digits: 2 },
+    ],
+  },
+  {
+    id: 'crypto',
+    label: 'Crypto',
+    rows: [
+      { s: 'BTCUSD', name: 'Bitcoin', digits: 2 },
+      { s: 'ETHUSD', name: 'Ethereum', digits: 2 },
+      { s: 'SOLUSD', name: 'Solana', digits: 3 },
+      { s: 'XRPUSD', name: 'Ripple', digits: 4 },
+    ],
+  },
+  {
+    id: 'stocks',
+    label: 'Stocks',
+    rows: [
+      { s: 'AAPL', name: 'Apple Inc.', digits: 2 },
+      { s: 'TSLA', name: 'Tesla Inc.', digits: 2 },
+      { s: 'NVDA', name: 'NVIDIA Corp.', digits: 2 },
+      { s: 'META', name: 'Meta Platforms', digits: 2 },
+      { s: 'NFLX', name: 'Netflix Inc.', digits: 2 },
+    ],
+  },
 ];
 
-const cfd = (id: string) => ACCOUNTS.find((a) => a.id === id)!;
-
-const FAQ_ITEMS = faqById(['account-types', 'cfds-and-options', 'deposit', 'options-max-loss', 'demo-free', 'prop-plans', 'mobile-app']);
+/** "$0.25 per contract, capped at 10% of the premium" as its figure and the rest */
+const OPT_FEE = OPTIONS.commission.split(' per contract, ');
 
 export default async function HomePage() {
-  const ymd = ymdIn(Date.now(), NY);
-  const [quotes, page] = await Promise.all([getQuotes(STRIP.map((r) => r.s)), getPage('home')]);
+  const [quotes, page] = await Promise.all([getQuotes([...new Set([...STRIP.map((r) => r.s), ...MARKET_TABS.flatMap((t) => t.rows.map((r) => r.s))])]), getPage('home')]);
   const { hero } = page;
   return (
     <>
@@ -135,57 +171,9 @@ export default async function HomePage() {
         ]}
       />
 
-      {/* 01 options */}
-      <section className="s-sec s-band" aria-labelledby="o-title">
-        <div className="s-wrap">
-          <Head
-            id="o-title"
-            index="01"
-            eyebrow="Kalks FX Options"
-            title={
-              <>
-                Options, <span className="s-hot">made simple.</span>
-              </>
-            }
-            lead={`Calls and puts on ${OPTIONS.fxPairsLive} FX pairs, gold, silver and oil. Buy an option and the premium is the most you can lose. Cash-settled in US dollars at ${OPTIONS.cut}.`}
-            action={<Btn href="/options">How options work</Btn>}
-          />
-          {/* a bento of the chain, both sides plainly (what a buyer can gain, what anyone can lose; founder 2026-10-28)
-              and the worked example (founder 2026-10-31, reference: an app landing page of rounded cards) */}
-          <OptionsBento pins={OPTIONS_PINS} />
-        </div>
-      </section>
 
-      {/* 02 the platform in numbers */}
-      <section className="s-sec" aria-labelledby="p-title">
-        <div className="s-wrap grid gap-5">
-          <Rise className="s-tile calm pad grid gap-12 lg:grid-cols-[0.8fr_1.6fr] lg:gap-16">
-            <div className="flex flex-col gap-6">
-              <Label index="02">The platform</Label>
-              <div className="flex gap-2">
-                {['TRC20', 'BEP20', 'Android'].map((c) => (
-                  <span key={c} className="s-chip">
-                    {c}
-                  </span>
-                ))}
-              </div>
-            </div>
-            <h2 id="p-title" className="s-statement">
-              We build the platform we trade on. <span className="s-mute">Options where the premium is the most you can lose, CFDs priced two ways, and copy trading with limits you set, in one Client Area on one wallet.</span>
-            </h2>
-          </Rise>
-          {/* the figures as tiles under it, opening an account the one bright tile (founder 2026-11-01) */}
-          <StatTiles
-            items={[
-              { v: INSTRUMENTS.liveMarkets, l: 'Live markets', sub: 'Forex, metals, energies, indices, crypto' },
-              { v: `1:${LEVERAGE.accountMax}`, l: 'Maximum leverage', sub: 'Standard and Cent accounts' },
-              { v: ACCOUNTS[0].minDeposit, l: 'To open a live account', sub: `Fund with ${FUNDING.minDeposit}`, href: REGISTER_HREF, accent: true },
-              { v: LANGUAGES.length, l: 'Languages', sub: 'Arabic, Urdu and Persian right to left' },
-            ]}
-          />
-        </div>
-      </section>
-
+      {/* Under the hero, block for block after the founder's reference (2026-11-02, "exactly like this"); the hero, the
+          price strip, the terminal's laptop tour and the phone story stay as they were (his choice). */}
       {/* 03 Kalks Trader, part by part */}
       <section className="s-sec !pt-8" aria-labelledby="t-title">
         <div className="s-wrap">
@@ -201,50 +189,7 @@ export default async function HomePage() {
             lead="Our own trading terminal in the browser and on Android. Point at a number to see what each part does."
             action={<Btn href="/platforms/trader">Explore Kalks Trader</Btn>}
           />
-          <ShotTour shot="traderWorkspace" pins={TRADER_PINS} />
-        </div>
-      </section>
-
-      {/* 04 order ticket */}
-      <section className="s-sec !pt-0" aria-label="The order ticket">
-        <div className="s-wrap">
-          <FeatureSplit
-            framed
-            index="04"
-            eyebrow="Order ticket"
-            title={
-              <>
-                Every number <span className="s-mute">before you click.</span>
-              </>
-            }
-            text="The ticket shows the margin you need, the pip value, the position size, your free margin after the trade and the overnight swap, before you choose Sell or Buy."
-            points={
-              <Checks
-                items={['Market, limit, stop and stop-limit orders', 'Volume presets from 0.01 lot, or type your own', 'Stop loss and take profit by price, pips or money', 'Trailing stop, comment and maximum price change', 'One-click trading when you want speed']}
-              />
-            }
-            media={
-              <IPhone shot="traderTicket" trim={18} />
-            }
-          />
-        </div>
-      </section>
-
-      {/* 05 positions */}
-      <section className="s-sec !pt-0" aria-labelledby="pos-title">
-        <div className="s-wrap">
-          <Rise className="mb-10 grid gap-6 lg:grid-cols-[1fr_1fr] lg:items-end">
-            <div className="flex flex-col gap-5">
-              <Label index="05">Positions</Label>
-              <h2 id="pos-title" className="s-h2 !text-[clamp(30px,3.4vw,50px)]">
-                Live P&amp;L, <span className="s-mute">one click to close.</span>
-              </h2>
-            </div>
-            <p className="s-lead lg:justify-self-end">Open price to current price, stops and targets you can add inline, swap and commission, and bulk actions: close all, close profitable, close losing, close by symbol or move every stop to breakeven.</p>
-          </Rise>
-          <Rise>
-            <Shot shot="traderPositionsFull" />
-          </Rise>
+          <ShotTour shot="traderWorkspace" pins={TRADER_PINS} video={TRADER_VIDEO} />
         </div>
       </section>
 
@@ -257,186 +202,136 @@ export default async function HomePage() {
         notes={POCKET_NOTES}
       />
 
-      {/* 07 Client Area */}
-      <section className="s-sec s-band" aria-labelledby="c-title">
+      {/* costs: two large cards with outlined figures, the small print under them */}
+      <section className="rf-sec" aria-labelledby="fee-title">
         <div className="s-wrap">
-          <Head
-            id="c-title"
-            index="07"
-            eyebrow="Client Area"
-            title={
+          <RfHead id="fee-title" title="Clear costs," accent="shown before you trade." />
+          <FeeCards
+            items={[
+              { v: ACCOUNTS[0].minDeposit, t: 'To open a live account', d: `Standard and Cent accounts. Fund with ${FUNDING.minDeposit}.` },
+              { v: OPT_FEE[0], t: 'A contract on options', d: `${OPT_FEE[1].replace(/^c/, 'C')}, in an Options account of its own.` },
+            ]}
+            fine={
               <>
-                Everything around <span className="s-mute">your trading.</span>
+                Withdrawals cost {FUNDING.withdrawalFee}. {FUNDING.transfers}. <Link href="/accounts">Compare every account</Link>
               </>
             }
-            lead="Your wallet, accounts, copy trading, partner programme and support, in one place. Your accounts look like cards; the AI assistant answers questions about your account."
-            action={<TextLink href="/platforms/client-area">Tour the Client Area</TextLink>}
           />
-          <div className="grid gap-5 lg:grid-cols-3">
-            <Rise className="lg:col-span-2">
-              <div className="s-card s-lift h-full overflow-hidden p-3">
-                <Shot shot="caDashboard" flat />
-                <div className="px-3 pb-2 pt-5">
-                  <div className="text-[18px] font-semibold tracking-[-0.02em]">Home</div>
-                  <p className="mt-1 text-[14px] text-[var(--s-tx2)]">Ask the AI assistant, see every balance, and hide the amounts with one tap.</p>
-                </div>
-              </div>
-            </Rise>
-            <div className="grid gap-5">
-              <Rise delay={80}>
-                <div className="s-card s-lift h-full overflow-hidden p-3">
-                  <Shot shot="caAccounts" flat />
-                  <div className="px-3 pb-2 pt-4 text-[15px] font-semibold">Accounts as cards</div>
-                </div>
-              </Rise>
-              <Rise delay={140}>
-                <div className="s-card s-lift h-full overflow-hidden p-3">
-                  <Shot shot="caCopy" flat />
-                  <div className="px-3 pb-2 pt-4 text-[15px] font-semibold">Copy trading masters</div>
-                </div>
-              </Rise>
-            </div>
+        </div>
+      </section>
+
+      {/* markets: pill tabs, the phone's watchlist at live prices, four tiles */}
+      <section className={IMAGES.marketsBackdrop ? 'rf-sec rf-mk-sec s-isl' : 'rf-sec !pt-0'} aria-labelledby="mk-title">
+        {IMAGES.marketsBackdrop && (
+          <div className="rf-mk-bg" aria-hidden>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src={IMAGES.marketsBackdrop} alt="" loading="lazy" decoding="async" />
           </div>
-          <div className="mt-5 grid gap-5 sm:grid-cols-3">
-            {[
-              { shot: 'caWallet' as const, t: 'USDT wallet', d: `${FUNDING.methods}, ${FUNDING.creditTime}.` },
-              { shot: 'caPamm' as const, t: 'PAMM funds', d: 'Invest by units at the next rollover NAV; fees only above the high-water mark.' },
-              { shot: 'caTypes' as const, t: 'Account types as cards', d: 'Every account type side by side, with its minimum deposit and maximum leverage.' },
-            ].map((c, i) => (
-              <Rise key={c.t} delay={i * 80}>
-                <div className="s-card s-lift h-full overflow-hidden p-3">
-                  <Shot shot={c.shot} flat />
-                  <div className="px-3 pb-2 pt-4">
-                    <div className="text-[15px] font-semibold">{c.t}</div>
-                    <p className="mt-1 text-[13.5px] leading-relaxed text-[var(--s-tx2)]">{c.d}</p>
-                  </div>
-                </div>
-              </Rise>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* 08 accounts */}
-      <section className="s-sec" aria-labelledby="a-title">
+        )}
         <div className="s-wrap">
-          <Head
-            id="a-title"
-            index="08"
-            eyebrow="Accounts"
-            title={
-              <>
-                Pick your <span className="s-hot">account.</span>
-              </>
-            }
-            lead="Five CFD accounts priced two ways, an Options account of its own, and a free demo of each. Hold them side by side; one USDT wallet funds them all."
-            action={<Btn href="/accounts">Compare every detail</Btn>}
+          <RfHead id="mk-title" title={`${INSTRUMENTS.liveMarkets} markets,`} accent="live on real money." />
+          <MarketTabs
+            tabs={MARKET_TABS}
+            initial={quotes}
+            tiles={[
+              { v: String(INSTRUMENTS.liveMarkets), t: 'Live markets on real money' },
+              { v: ACCOUNTS[0].minDeposit, t: 'To start, on a Standard or Cent account' },
+              { v: '24/5', t: `Forex, metals, energies and indices, ${HOURS.fxWeek}` },
+              { v: `1:${LEVERAGE.accountMax}`, t: 'Leverage on Standard and Cent accounts' },
+            ]}
           />
-          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-            <div className="lg:row-span-2">
-              <BentoCard tone="orange" kicker="Most traders" title="Standard" href="/accounts#standard" text={cfd('standard').tagline} className="min-h-[420px]">
-                <div className="s-num text-[clamp(64px,7vw,104px)]">{cfd('standard').minDeposit}</div>
-                <div className="mt-2 text-[14px] font-medium text-white/85">to open · 1:1000 · {cfd('standard').spread}</div>
-              </BentoCard>
-            </div>
-            {(['pro', 'ecn', 'cent'] as const).map((id, i) => (
-              <BentoCard key={id} tone={i === 1 ? 'glass' : 'cream'} title={cfd(id).name} href={`/accounts#${id}`} delay={i * 60} text={`${cfd(id).pricing} · ${cfd(id).leverage}`}>
-                <div className="s-num text-[52px]">{cfd(id).minDeposit}</div>
-                <div className={i === 1 ? 'mt-2 text-[13px] text-[var(--s-tx2)]' : 'mt-2 text-[13px] text-[var(--s-cream-tx2)]'}>{cfd(id).commission === 'None' ? cfd(id).spread : cfd(id).commission}</div>
-              </BentoCard>
-            ))}
-            <BentoCard tone="glass" title="VIP" href="/accounts#vip" text={`${cfd('vip').commission} · ${cfd('vip').leverage}`}>
-              <div className="s-num text-[52px]">{cfd('vip').minDeposit}</div>
-            </BentoCard>
-            <BentoCard tone="cream" kicker="Options" title={OPTIONS_ACCOUNTS[0].name} href="/accounts#options" text={OPTIONS_ACCOUNTS[0].commission}>
-              <div className="s-num text-[52px]">$0.25</div>
-              <div className="mt-2 text-[13px] text-[var(--s-cream-tx2)]">a contract · no account minimum</div>
-            </BentoCard>
-            <BentoCard tone="glass" kicker="Free" title="Demo" href="/accounts/demo" text={`Any balance from ${DEMO.balanceRange}, refilled ${DEMO.refillsPerDay}× a day.`}>
-              <div className="s-num text-[52px]">{DEMO.defaultBalance}</div>
-            </BentoCard>
-          </div>
+          <p className="rf-fine">
+            The full catalogue of {INSTRUMENTS.total.toLocaleString('en-US')} markets, stocks included, is open on a free demo. <Link href="/markets">See every market</Link>
+          </p>
         </div>
       </section>
 
-      {/* 09 who it's for */}
-      <section className="s-sec !pt-4" aria-labelledby="w-title">
+      {/* copy trading: the photo with a card of facts over it, the copy beside it */}
+      <section className="rf-sec !pt-0" aria-labelledby="cp-title">
         <div className="s-wrap">
-          <Head
-            id="w-title"
-            index="09"
-            eyebrow="Who it's for"
-            title={
-              <>
-                Built for how <span className="s-mute">you trade.</span>
-              </>
-            }
+          <PhotoFeature
+            id="cp-title"
+            image={{ src: '/site/heroes/copy.webp', w: 736, h: 1313, alt: 'Copy trading at Kalks' }}
+            factsTitle="Copy masters"
+            facts={[
+              { k: 'Track record', v: `${SOCIAL.trackRecordDays} days or more` },
+              { k: 'Performance fee', v: `${SOCIAL.perfFee}, on new highs only` },
+              { k: 'Copy from', v: SOCIAL.minAllocation },
+            ]}
+            note="Past performance is not a reliable indicator of future results."
+            title="Trade alongside"
+            accent="someone who has done it."
+            text="Mirror approved traders with limits you set, invest in a managed fund, or let a manager trade your account. Fees only on new highs."
+            action={<Btn href="/copy-trading">Explore copy trading</Btn>}
           />
-          <ol className="border-t border-[var(--s-line)]">
-            {ROLES.map((r, i) => (
-              <Rise as="li" key={r.role} delay={i * 50} className="border-b border-[var(--s-line)]">
-                <Link href={r.href} className="group grid grid-cols-[40px_minmax(0,1fr)] items-baseline gap-x-2 gap-y-3 py-7 lg:grid-cols-[80px_minmax(0,0.9fr)_minmax(0,1.6fr)_48px] lg:gap-8 lg:py-8">
-                  <span className="s-index">0{i + 1}</span>
-                  <span className="text-[clamp(28px,3vw,44px)] font-[400] leading-none tracking-[-0.04em] transition-colors group-hover:text-[var(--s-orange2)]">{r.role}</span>
-                  <span className="col-start-2 text-[15.5px] leading-relaxed text-[var(--s-tx2)] lg:col-start-auto">{r.pitch}</span>
-                  <span className="hidden size-11 place-items-center rounded-full border border-[var(--s-line2)] transition-[background-color,transform] group-hover:rotate-45 group-hover:bg-[var(--s-orange)] lg:grid" aria-hidden>
-                    <ArrowUpRight size={18} />
-                  </span>
-                </Link>
-              </Rise>
-            ))}
-          </ol>
         </div>
       </section>
 
-      {/* 10 the trading day */}
-      <section className="s-sec !pt-4" aria-labelledby="d-title">
-        <div className="s-wrap">
-          <Head
-            id="d-title"
-            index="10"
-            eyebrow="Your trading day"
-            title={
-              <>
-                The day turns over <span className="s-mute">at 17:00 New York.</span>
-              </>
-            }
-            lead="Filter by market, open a row for the detail, and save the moments you trade around to your calendar."
-          />
-          <Rise className="s-card pad">
-            <TradingDay slots={SLOTS} ymd={ymd} />
-          </Rise>
-        </div>
-      </section>
-
-      {/* 11 questions */}
-      <section className="s-sec !pt-4" aria-labelledby="f-title">
-        <div className="s-wrap grid gap-12 lg:grid-cols-[0.8fr_1.6fr]">
-          <Rise className="flex flex-col items-start gap-6">
-            <Label index="11">Questions</Label>
-            <h2 id="f-title" className="s-h2">
-              On your <span className="s-mute">mind.</span>
-            </h2>
-            <TextLink href="/faq">Every question, by topic</TextLink>
-          </Rise>
-          <Rise delay={100}>
-            <Faq items={page.faq(FAQ_ITEMS)} />
-          </Rise>
-        </div>
-      </section>
-
-      <Cta
-        title={
-          <>
-            Open your account <span className="text-white/70">today.</span>
-          </>
+      {/* options: the tinted band, the worked example on the phone */}
+      <PhoneBand
+        id="op-title"
+        label="Kalks FX Options"
+        title="Options on forex,"
+        accent="with the risk printed first."
+        action={
+          <Btn href="/options" icon={false}>
+            How options work
+          </Btn>
         }
+        points={['Buy one and the premium is the most you can lose.', `Daily and weekly expiries, cash-settled in US dollars at ${OPTIONS.cut}.`, `${OPTIONS.commission}.`]}
+        phone={
+          // Kalks Trader's own options quick trade (the demo build, phone width), the brand colour set to the site's orange
+          <PhoneShot
+            src="/site/home/options-quick-trade.webp"
+            w={1050}
+            h={1723}
+            bg="#070505"
+            alt="Kalks Trader on a phone: an options quick trade on EURUSD showing what you pay, the breakeven, the most you can lose and that the profit is unlimited"
+          />
+        }
+      />
+
+      {/* safety: three cards with an icon, a line and tags */}
+      <section className="rf-sec" aria-labelledby="tr-title">
+        <div className="s-wrap">
+          <RfHead id="tr-title" title="Your account," accent="kept in your hands." sub="Signing in, proving who you are and moving money each follow a clear rule." />
+          <TrustCards
+            items={[
+              { art: 'code', t: 'A code for new devices', d: 'Sign in from a new device and we email you a code first. Withdrawals ask for one too.', tags: ['Email code', 'New devices', 'Withdrawals'] },
+              { art: 'wallet', t: 'One USDT wallet', d: `Deposits in ${FUNDING.methods}, credited ${FUNDING.creditTime}. ${FUNDING.transfers}.`, tags: ['BEP20', 'TRC20', `${FUNDING.withdrawalFee} withdrawal fee`] },
+              { art: 'id', t: 'Verified withdrawals', d: 'Withdrawals need a verified identity (KYC), which you complete in the Client Area with your phone camera.', tags: ['KYC', 'Client Area', 'Phone camera'] },
+            ]}
+          />
+        </div>
+      </section>
+
+      {/* the funding networks as a logo strip */}
+      <section className="rf-sec !pt-0" aria-labelledby="lg-title">
+        <div className="s-wrap">
+          <RfHead id="lg-title" title="Fund in USDT," accent="on two networks." />
+          <LogoStrip
+            logos={[
+              { src: '/site/brands/usdt.svg', name: 'Tether USDT' },
+              { src: '/site/brands/trx.svg', name: 'TRON' },
+              { src: '/site/brands/bnb.svg', name: 'BNB Chain' },
+            ]}
+          />
+        </div>
+      </section>
+
+      {/* the closing band: squares of orange at its edges, one card in the middle */}
+      <CtaBand
+        title="Open your account"
+        accent="today."
         sub={`Register in a couple of minutes, practise on ${DEMO.defaultBalance} of demo money, and go live from ${ACCOUNTS[0].minDeposit} when you are ready.`}
         primary={{ href: `${CRM_URL}/register`, label: 'Open account' }}
-        secondary={{ href: DEMO_HREF, label: 'Try the demo' }}
-        facts={[`${PROP.length} prop plans`, `${ACADEMY.lessons} Academy lessons`, `${FUNDING.withdrawalFee} withdrawal fee`]}
-        image={page.ctaImage}
       />
+
+      {/* the languages as a strip */}
+      <section className="rf-sec" aria-labelledby="ln-title">
+        <RfHead id="ln-title" title={`Kalks speaks ${LANGUAGES.length} languages.`} sub="Arabic, Urdu and Persian read right to left." className="s-wrap" />
+        <LangStrip names={LANGUAGES} />
+      </section>
     </>
   );
 }

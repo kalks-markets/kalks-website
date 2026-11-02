@@ -100,7 +100,6 @@ export default async function AndroidPage() {
             lead="Android asks once to allow installs from your browser; after that the app updates like any other."
           />
           <StepCards
-            cols="sm:grid-cols-3"
             steps={[
               { t: 'Download', d: 'Tap Download for Android on your phone. The APK comes straight from kalkstrade.com.' },
               { t: 'Allow the install', d: 'If Android asks, allow installs from your browser for this one file.' },
@@ -126,13 +125,13 @@ export default async function AndroidPage() {
                 ]}
               />
             </Rise>
-            <Rise delay={100} className="s-cream flex flex-col justify-between gap-8 p-7 lg:p-9">
+            <Rise delay={100} className="s-card flex flex-col justify-between gap-8 p-7 lg:p-9">
               <div>
-                <div className="text-[12.5px] font-semibold uppercase tracking-[0.08em] text-[var(--s-orange)]">Older 32-bit phones</div>
-                <p className="mt-3 text-[clamp(22px,2vw,28px)] font-[450] leading-[1.15] tracking-[-0.03em]">Use the universal APK instead: the same app, packaged for older phones too.</p>
+                <div className="text-[12.5px] font-semibold uppercase tracking-[0.08em] text-[var(--s-orange2)]">Older 32-bit phones</div>
+                <p className="mt-3 text-[clamp(20px,1.8vw,24px)] font-semibold leading-[1.25] tracking-[-0.025em]">Use the universal APK instead: the same app, packaged for older phones too.</p>
               </div>
               <div className="flex flex-wrap gap-3">
-                <DownloadBtn href={ANDROID_APP.hrefUniversal} variant="dark">
+                <DownloadBtn href={ANDROID_APP.hrefUniversal}>
                   Universal APK
                 </DownloadBtn>
               </div>

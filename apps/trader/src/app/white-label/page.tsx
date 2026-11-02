@@ -48,18 +48,8 @@ export default async function WhiteLabelPage() {
       <section className="s-sec" aria-labelledby="n-title">
         <div className="s-wrap">
           <Rise className="s-card pad grid gap-12 lg:grid-cols-[0.8fr_1.6fr] lg:gap-16">
-            <div className="flex flex-col gap-6">
-              <div className="flex items-center gap-4">
-                <span className="s-index">01</span>
-                <span className="s-eyebrow">White-label</span>
-              </div>
-              <div className="flex flex-wrap gap-2">
-                {['Brand', 'Domains', 'Modules'].map((c) => (
-                  <span key={c} className="s-chip">
-                    {c}
-                  </span>
-                ))}
-              </div>
+            <div>
+              <span className="s-eyebrow">White-label</span>
             </div>
             <h2 id="n-title" className="s-statement">
               Everything Kalks runs, under your name. <span className="s-mute">Each broker gets its own website, Client Area, trading terminal and Back Office. Terms combine a setup fee, a monthly licence and a revenue share; ask us for details.</span>

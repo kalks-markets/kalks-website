@@ -31,6 +31,8 @@ const C: Record<Code, JSX.Element> = {
     <>
       <rect width="20" height="20" fill="#F7F4F2" />
       <circle cx="10" cy="10" r="4.6" fill="#C8102E" />
+      {/* a faint edge, so the white disc still reads on a white page */}
+      <circle cx="10" cy="10" r="9.55" fill="none" stroke="rgb(0 0 0 / 0.14)" strokeWidth="0.9" />
     </>
   ),
   GBP: (
@@ -127,6 +129,29 @@ const C: Record<Code, JSX.Element> = {
       <path d="M4.5 13.5 8 9.5l2.6 2.2 4.9-5.2" fill="none" stroke="#A9C3F3" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
     </>
   ),
+  DE: (
+    <>
+      <rect width="20" height="20" fill="#FFCE00" />
+      <rect width="20" height="6.7" fill="#000" />
+      <rect y="6.7" width="20" height="6.6" fill="#DD0000" />
+    </>
+  ),
+  SOL: (
+    <>
+      <rect width="20" height="20" fill="#0E0B16" />
+      <g fill="#14F195">
+        <path d="M6.6 5.8h8.6l-1.8 1.9H4.8z" fill="#9C5CF6" />
+        <path d="M4.8 9.1h8.6l1.8 1.9H6.6z" fill="#5B9BD5" />
+        <path d="M6.6 12.4h8.6l-1.8 1.9H4.8z" />
+      </g>
+    </>
+  ),
+  XRP: (
+    <>
+      <rect width="20" height="20" fill="#23292F" />
+      <path d="M5.4 5.6h1.9l2.7 2.6 2.7-2.6h1.9l-3.7 3.6a1.3 1.3 0 0 1-1.8 0zm0 8.8h1.9l2.7-2.6 2.7 2.6h1.9l-3.7-3.6a1.3 1.3 0 0 0-1.8 0z" fill="#fff" />
+    </>
+  ),
   STK: (
     <>
       <rect width="20" height="20" fill="#1F3FD6" />
@@ -153,6 +178,8 @@ export function badgesFor(symbol: string, cls?: string): Code[] {
   if (/OIL|WTI|BRENT|NGAS/.test(s)) return ['OIL'];
   if (s.startsWith('BTC')) return ['BTC'];
   if (s.startsWith('ETH')) return ['ETH'];
+  if (s.startsWith('SOL')) return ['SOL'];
+  if (s.startsWith('XRP')) return ['XRP'];
   if (cls === 'crypto') return ['BTC'];
   if (cls === 'indices' || /^(US30|NAS100|SPX500|GER40|UK100|JP225|HK50)$/.test(s)) return ['IDX'];
   if (cls === 'stocks' || /^(AAPL|TSLA|NVDA|META|NFLX)$/.test(s)) return ['STK'];
@@ -180,8 +207,8 @@ export function Badges({ symbol, cls, size = 22 }: { symbol: string; cls?: strin
 }
 
 /** The same badges sized in em, so they scale with the surrounding font size (the phone drawing on the home page). */
-export function BadgesEm({ symbol, cls }: { symbol: string; cls?: string }) {
-  const codes = badgesFor(symbol, cls);
+export function BadgesEm({ symbol, cls, codes: given }: { symbol: string; cls?: string; codes?: Code[] }) {
+  const codes = given ?? badgesFor(symbol, cls);
   const disc = (code: Code) => (
     <svg width="1em" height="1em" viewBox="0 0 20 20" aria-hidden style={{ flex: 'none', clipPath: 'circle(50%)' }}>
       {C[code] ?? C.IDX}

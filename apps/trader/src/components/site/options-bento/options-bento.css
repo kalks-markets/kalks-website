@@ -1,7 +1,7 @@
 /* ═════════════════════════════════════════════════════════════════════════════
    The home page's options section as a bento (OptionsBento.tsx; founder 2026-10-31, reference: an app landing page
    of rounded cards). Calm by design: hairline borders, one accent per card, slow motion only — the strike stack
-   drifts upward, the opportunity cards slide every few seconds, the example's bars fill once. All of it stops with
+   drifts upward, the opportunity cards slide every few seconds, the example band's payout lines fill once. All of it stops with
    reduced motion (globals.css).
    ═════════════════════════════════════════════════════════════════════════════ */
 
@@ -15,8 +15,7 @@
   .ob {
     grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
   }
-  .ob-wide,
-  .ob-note {
+  .ob-wide {
     grid-column: 1 / -1;
   }
 }
@@ -242,7 +241,7 @@
 
 /* ─────────────────────────────────────────────────────────────── 2. the opportunity: one card, its panel slides */
 /* the card stays put; its panel slides through three copies (--at, OptionsBento.tsx), always forward, the jump back
-   to the middle copy unseen; the title and text under it fade in step; the header's bar fills while a panel stays */
+   to the middle copy unseen; the title and text under it fade in step */
 .ob-feature {
   --tone: var(--s-orange);
   --tone-fg: var(--s-orange2);
@@ -272,90 +271,12 @@
     --fpad: 22px;
   }
 }
-.ob-feature-head {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-}
-/* the panel's glass icon (GlassIcon), crossfading with the panel */
-.ob-feature-ic {
-  position: relative;
-  display: grid;
-  flex: none;
-  width: 48px;
-  height: 48px;
-}
-.ob-feature-ic > span {
-  display: grid;
-  grid-area: 1 / 1;
-  place-items: center;
-  opacity: 0;
-  transform: scale(0.6) rotate(-20deg);
-  transition:
-    opacity 0.35s ease,
-    transform 0.5s var(--k-ease);
-}
-.ob-feature-ic > span[data-on] {
-  opacity: 1;
-  transform: none;
-  transition-delay: 0.25s;
-}
-.ob-steps {
-  display: flex;
-  flex: 1;
-  gap: 6px;
-}
-.ob-steps button {
-  position: relative;
-  flex: 1;
-  height: 24px;
-}
-.ob-steps button::before,
-.ob-steps i {
-  content: '';
-  position: absolute;
-  top: 10px;
-  left: 0;
-  right: 0;
-  height: 4px;
-  border-radius: 999px;
-}
-.ob-steps button::before {
-  background: rgb(var(--fg) / 0.12);
-}
-.ob-steps i {
-  background: var(--s-orange);
-  transform: scaleX(0);
-  transform-origin: left center;
-}
-.ob-steps button[data-done] i {
-  transform: none;
-}
-.ob-steps button[aria-pressed='true'] i {
-  transform: none;
-  animation: ob-fill 5s linear both;
-}
-@keyframes ob-fill {
-  from {
-    transform: scaleX(0);
-  }
-  to {
-    transform: scaleX(1);
-  }
-}
-.ob-feature-n {
-  flex: none;
-  font: 500 12px/1 var(--f-mono);
-  letter-spacing: 0.04em;
-  color: rgb(var(--fg) / 0.45);
-  font-variant-numeric: tabular-nums;
-}
 /* the window runs edge to edge of the card, so a card image slides in from one edge and out at the other, softened
    by a fade in the card's padding; room below for the image's shadow */
 .ob-viewport {
   display: flex;
   flex: 1;
-  margin: 12px calc(-1 * var(--fpad)) 0;
+  margin: 0 calc(-1 * var(--fpad));
   padding: 8px 0 34px;
   overflow: hidden;
   -webkit-mask-image: linear-gradient(90deg, transparent, #000 var(--fpad), #000 calc(100% - var(--fpad)), transparent);
@@ -488,87 +409,200 @@
   color: rgb(var(--fg) / 0.62);
 }
 
-/* ─────────────────────────────────────────────────────────────── 4. the worked example, its outcomes as bars */
-.ob-example {
-  align-items: start;
-}
-.ob-outcomes {
-  margin-top: 0;
-  padding: 26px 28px 28px;
-}
-.ob-outcomes-head {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: 16px;
-  padding-bottom: 20px;
-  border-bottom: 1px solid rgb(var(--fg) / 0.08);
-}
-.ob-outcomes-head b {
-  display: block;
-  font: 600 22px/1.2 var(--f-disp);
-  letter-spacing: -0.015em;
-  color: rgb(var(--fg));
-}
-.ob-outcomes-head span {
-  display: block;
-  margin-top: 4px;
-  font-size: 14px;
-  color: rgb(var(--fg) / 0.55);
-}
-.ob-premium {
-  text-align: end;
-}
-.ob-outcome {
-  padding-top: 22px;
-}
-.ob-outcome-row {
-  display: flex;
-  justify-content: space-between;
-  gap: 12px;
-  font-size: 16px;
-  font-weight: 500;
-  color: rgb(var(--fg));
-}
-.ob-outcome-row b {
-  font-weight: 600;
-  white-space: nowrap;
-}
-.ob-outcome-row b.flat {
-  color: rgb(var(--fg) / 0.75);
-}
-.ob-bar {
-  height: 14px;
+/* ───────────────────────────────────────── 4. the worked example: a full-bleed photo band (OptionsExampleBand) */
+/* founder 2026-11-01, reference: a landing page's closing band — a motion-blurred photo edge to edge, a centred white
+   headline, one bar of a bordered field and a white button. Here the field holds the three outcomes at expiry and the
+   button is "Try the demo". It is a photo in both themes, so its colours are fixed. */
+.ob-band {
+  --b-line: rgb(255 255 255 / 0.7);
+  --b-up: #8fb4ff;
+  --b-dn: #ff8b7b;
+  position: relative;
+  isolation: isolate;
+  display: grid;
+  place-items: center;
+  min-height: clamp(560px, 46vw, 700px);
   margin-top: 12px;
+  padding: 96px 16px;
   overflow: hidden;
-  border-radius: 999px;
-  background: rgb(var(--fg) / 0.06);
+  background: #2a0a02;
+  color: #fff;
+  text-align: center;
 }
-.ob-bar i {
-  display: block;
+.ob-band-bg {
+  position: absolute;
+  inset: 0;
+  z-index: -2;
   width: 100%;
   height: 100%;
-  border-radius: 999px;
+  object-fit: cover;
+  object-position: 42% 40%;
+}
+/* shade so the white text reads: deeper at the edges and the foot, like a vignette */
+.ob-band::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background:
+    radial-gradient(ellipse 75% 65% at 50% 48%, rgb(12 3 1 / 0.16), rgb(12 3 1 / 0.5)),
+    linear-gradient(180deg, rgb(12 3 1 / 0.12), transparent 30%, transparent 60%, rgb(12 3 1 / 0.5));
+}
+.ob-band-in {
+  width: min(100%, 960px);
+}
+.ob-band h2 {
+  font: 500 clamp(38px, 4.6vw, 68px) / 1.04 var(--f-disp);
+  letter-spacing: -0.035em;
+  text-wrap: balance;
+  text-shadow: 0 2px 28px rgb(0 0 0 / 0.25);
+}
+.ob-band-sub {
+  max-width: 46ch;
+  margin: 18px auto 0;
+  font-size: clamp(16px, 1.3vw, 18.5px);
+  line-height: 1.55;
+  color: rgb(255 255 255 / 0.84);
+}
+.ob-band-sub b {
+  font-weight: 600;
+  color: #fff;
+}
+.ob-band-at {
+  margin-top: 44px;
+  font: 500 11.5px/1 var(--f-mono);
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: rgb(255 255 255 / 0.66);
+}
+/* the bar: three bordered cells sharing their borders, then the white button, square like the reference */
+.ob-band-bar {
+  display: flex;
+  margin-top: 14px;
+  text-align: start;
+}
+.ob-band-bar ul {
+  display: grid;
+  flex: 1;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+.ob-band-bar li {
+  position: relative;
+  padding: 18px 22px 20px;
+  border: 1px solid var(--b-line);
+  background: rgb(14 4 1 / 0.32);
+  -webkit-backdrop-filter: blur(14px);
+  backdrop-filter: blur(14px);
+}
+.ob-band-bar li + li {
+  border-left: 0;
+}
+.ob-band-bar li span {
+  display: block;
+  font-size: 13.5px;
+  color: rgb(255 255 255 / 0.74);
+}
+.ob-band-bar li b {
+  display: block;
+  margin-top: 6px;
+  font: 600 21px/1.15 var(--f-disp);
+  letter-spacing: -0.01em;
+  white-space: nowrap;
+}
+.ob-band-bar b.up {
+  color: var(--b-up);
+}
+.ob-band-bar b.dn {
+  color: var(--b-dn);
+}
+.ob-band-bar li small {
+  display: block;
+  margin-top: 4px;
+  font-size: 12.5px;
+  color: rgb(255 255 255 / 0.6);
+}
+/* what the option pays, out of $400, as a hairline along the cell's foot; it fills when the band scrolls in (Rise) */
+.ob-band-bar li i {
+  position: absolute;
+  inset: auto 0 0;
+  height: 2px;
   transform: scaleX(var(--share));
   transform-origin: left center;
-  transition: transform 1.3s var(--k-ease) 0.25s;
+  transition: transform 1.3s var(--k-ease) 0.3s;
 }
-.ob-bar i.up {
-  background: var(--s-up);
+.ob-band-bar li i.up {
+  background: var(--b-up);
 }
-.ob-bar i.flat {
-  background: var(--k-deep);
+.ob-band-bar li i.flat {
+  background: #fff;
 }
-/* the bars fill when the card first scrolls into view (Rise) */
-.pre .ob-bar i {
+.pre .ob-band-bar li i {
   transform: scaleX(0);
 }
-.ob-outcome small {
-  display: block;
-  margin-top: 8px;
-  font-size: 13px;
-  color: rgb(var(--fg) / 0.55);
+.ob-band-cta {
+  display: grid;
+  place-items: center;
+  padding: 0 44px;
+  border: 1px solid #fff;
+  background: #fff;
+  color: #120600;
+  font: 600 14px/1 var(--f-mono);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease;
 }
-.ob-note {
-  margin-top: 4px;
+.ob-band-cta:hover {
+  border-color: var(--k-primary);
+  background: var(--k-primary);
+  color: #fff;
+}
+.ob-band-cta:focus-visible {
+  outline: 2px solid #fff;
+  outline-offset: 3px;
+}
+.ob-band-fine {
+  max-width: 88ch;
+  margin: 28px auto 0;
+  font-size: 13px;
+  line-height: 1.6;
+  color: rgb(255 255 255 / 0.64);
+}
+.ob-band .ob-band-risk {
+  max-width: 88ch;
+  margin: 8px auto 0;
+  color: rgb(255 255 255 / 0.56);
+}
+.ob-band .ob-band-risk span {
+  color: rgb(255 255 255 / 0.86);
+}
+.ob-band .ob-band-risk a {
+  color: #fff;
+}
+/* tablets: the button drops under the three cells */
+@media (max-width: 1023px) {
+  .ob-band-bar {
+    flex-direction: column;
+  }
+  .ob-band-cta {
+    height: 56px;
+    border-top: 0;
+  }
+}
+/* phones: one cell a row */
+@media (max-width: 760px) {
+  .ob-band {
+    min-height: 0;
+    padding: 72px 16px;
+  }
+  .ob-band-at {
+    margin-top: 36px;
+  }
+  .ob-band-bar ul {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .ob-band-bar li + li {
+    border-top: 0;
+    border-left: 1px solid var(--b-line);
+  }
 }

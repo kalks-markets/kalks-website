@@ -41,7 +41,6 @@ export default function IndicesPage() {
           Take a view on an economy. <span className="s-mute">Benchmark indices from Wall Street to Frankfurt, London, Tokyo and Hong Kong, long or short, without owning the shares.</span>
         </>
       }
-      chips={['US', 'Europe', 'Asia']}
       stats={[
         { v: INSTRUMENTS.byClass.indices.live, l: 'Indices live', sub: 'US30, NAS100, SPX500, GER40, UK100, JP225 and more' },
         { v: `1:${LEVERAGE.coreCaps.indices}`, l: 'Highest leverage', sub: 'Account and market caps apply' },

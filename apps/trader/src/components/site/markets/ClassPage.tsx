@@ -20,7 +20,6 @@ export async function ClassPage({
   heroFacts,
   glass,
   statement,
-  chips,
   stats,
   rows,
   liveTitle,
@@ -37,7 +36,6 @@ export async function ClassPage({
   heroFacts: string[];
   glass: { v: ReactNode; l: ReactNode }[];
   statement: ReactNode;
-  chips: string[];
   stats: { v: ReactNode; l: ReactNode; sub?: ReactNode }[];
   rows: LiveRow[];
   liveTitle: ReactNode;
@@ -71,17 +69,7 @@ export async function ClassPage({
         <div className="s-wrap">
           <Rise className="s-card pad grid gap-12 lg:grid-cols-[0.8fr_1.6fr] lg:gap-16">
             <div className="flex flex-col gap-6">
-              <div className="flex items-center gap-4">
-                <span className="s-index">01</span>
-                <span className="s-eyebrow">{hero.eyebrow}</span>
-              </div>
-              <div className="flex flex-wrap gap-2">
-                {chips.map((c) => (
-                  <span key={c} className="s-chip">
-                    {c}
-                  </span>
-                ))}
-              </div>
+              <span className="s-eyebrow">{hero.eyebrow}</span>
             </div>
             <h2 id="n-title" className="s-statement">
               {statement}

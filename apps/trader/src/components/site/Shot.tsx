@@ -7,6 +7,7 @@ import { cn } from '@/lib/cn';
 import { Rise } from './Rise';
 import { Label } from './ui';
 import { useShotOverrides } from './ContentContext';
+import { LoopVideo } from './LoopVideo';
 import { ThemedImage } from './ThemedImage';
 
 export type Pin = { x: number; y: number; title: string; text: string };
@@ -16,6 +17,8 @@ export type Pin = { x: number; y: number; title: string; text: string };
  */
 export type ShotDef = SiteImage & { key?: string };
 export type ShotRef = ShotKey | ShotDef;
+/** a looping video in place of the screenshot (LoopVideo): its file, its first frame as the poster, its size */
+export type ShotVideo = { src: string; poster: string; w: number; h: number; alt: string };
 
 /** the screenshot, or its replacement from the content service */
 export function useShot(s: ShotRef): ShotDef {
@@ -28,16 +31,22 @@ export function useShot(s: ShotRef): ShotDef {
 const MAC_MIN = 1.45;
 const MAC_MAX = 1.7;
 const MAC_SCREEN = 1.6;
+/** A crop much wider than a screen (a strip) or taller than wide (a panel) left the laptop's screen mostly empty, so it
+ * shows as an app window of its own instead (founder 2026-11-01: "it should look proper"). */
+const STRIP = 2.4;
+const PANEL = 1.05;
 
 /**
  * A real screenshot on a MacBook (founder 2026-10-31). A full-screen Mac screenshot fills the screen; a crop sits on
- * it as an app window over a Kalks desktop until its Mac screenshot replaces it. `pins` (x/y in % of the image) number
- * the parts; `flat` drops the glow (inside cards).
+ * it as an app window over a Kalks desktop until its Mac screenshot replaces it; a strip or a panel is a window of its
+ * own (STRIP, PANEL). `pins` (x/y in % of the image) number the parts; `flat` drops the glow (inside cards). `video`
+ * plays a looping video on the whole screen instead, the screen taking its shape, with no pins on it: the picture
+ * moves under them (founder 2026-11-02).
  */
-export function Shot({ shot, pins, active, onPin, className, flat, priority }: { shot: ShotRef; pins?: Pin[]; active?: number | null; onPin?: (i: number | null) => void; className?: string; flat?: boolean; priority?: boolean }) {
+export function Shot({ shot, pins, active, onPin, className, flat, priority, video }: { shot: ShotRef; pins?: Pin[]; active?: number | null; onPin?: (i: number | null) => void; className?: string; flat?: boolean; priority?: boolean; video?: ShotVideo }) {
   const s = useShot(shot);
-  const ar = s.w && s.h ? s.w / s.h : MAC_SCREEN;
-  const full = ar >= MAC_MIN && ar <= MAC_MAX;
+  const ar = video ? video.w / video.h : s.w && s.h ? s.w / s.h : MAC_SCREEN;
+  const full = !!video || (ar >= MAC_MIN && ar <= MAC_MAX);
   // a crop fits in 92% x 86% of the screen
   const win = full
     ? undefined
@@ -45,6 +54,21 @@ export function Shot({ shot, pins, active, onPin, className, flat, priority }: {
         width: `${Math.min(92, (86 * ar) / MAC_SCREEN)}%`,
         aspectRatio: `${ar}`,
       };
+  if (!video && s.w && s.h && (ar > STRIP || ar < PANEL)) {
+    return (
+      <div className={cn('s-win', ar < PANEL && 'panel', flat && 'flat', className)}>
+        <div className="s-win-bar" aria-hidden>
+          <i />
+          <i />
+          <i />
+        </div>
+        <div className="s-win-body relative">
+          <ThemedImage image={s} sizes="(min-width: 1024px) 60vw, 100vw" loading={priority ? 'eager' : 'lazy'} decoding="async" />
+          <Pins pins={pins} active={active} onPin={onPin} />
+        </div>
+      </div>
+    );
+  }
   return (
     <div className={cn('s-mac', flat && 'flat', className)}>
       <div className="s-mac-lid">
@@ -52,8 +76,14 @@ export function Shot({ shot, pins, active, onPin, className, flat, priority }: {
           <i className="s-mac-cam" aria-hidden />
           <div className={cn('s-mac-screen', !full && 'desk')} style={{ aspectRatio: `${full ? ar : MAC_SCREEN}` }}>
             <div className={cn('s-mac-win relative', full && 'full')} style={win}>
-              <ThemedImage image={s} sizes="(min-width: 1024px) 60vw, 100vw" loading={priority ? 'eager' : 'lazy'} decoding="async" />
-              <Pins pins={pins} active={active} onPin={onPin} />
+              {video ? (
+                <LoopVideo src={video.src} poster={video.poster} ratio={ar} label={video.alt} />
+              ) : (
+                <>
+                  <ThemedImage image={s} sizes="(min-width: 1024px) 60vw, 100vw" loading={priority ? 'eager' : 'lazy'} decoding="async" />
+                  <Pins pins={pins} active={active} onPin={onPin} />
+                </>
+              )}
             </div>
           </div>
         </div>
@@ -158,7 +188,7 @@ export function IPhone({ shot, pins, active, onPin, className, trim = 0, focus }
  * The detailed tour of one screen: the screenshot with numbered pins, and the numbered list explaining each part.
  * Hovering a pin highlights its line and the other way round. `side` puts the list beside (wide screens) or under it.
  */
-export function ShotTour({ shot, pins, side = 'under', intro, scrollMin = 'min-w-[860px]' }: { shot: ShotRef; pins: Pin[]; side?: 'under' | 'right'; intro?: ReactNode; scrollMin?: string | null }) {
+export function ShotTour({ shot, pins, side = 'under', intro, scrollMin = 'min-w-[860px]', video }: { shot: ShotRef; pins: Pin[]; side?: 'under' | 'right'; intro?: ReactNode; scrollMin?: string | null; video?: ShotVideo }) {
   const [on, setOn] = useState<number | null>(null);
   // on phones and tablets a wide screenshot keeps a readable width and scrolls sideways in its own strip, so the
   // numbered pins never pile up
@@ -166,25 +196,37 @@ export function ShotTour({ shot, pins, side = 'under', intro, scrollMin = 'min-w
     <>
       <div className={cn(scrollMin && 'no-sb -mx-[var(--gutter)] overflow-x-auto px-[var(--gutter)] pb-3 lg:mx-0 lg:overflow-visible lg:px-0 lg:pb-0')}>
         <div className={cn('w-full', scrollMin, scrollMin && 'lg:min-w-0')}>
-          <Shot shot={shot} pins={pins} active={on} onPin={setOn} priority={priority} />
+          <Shot shot={shot} pins={pins} active={on} onPin={setOn} priority={priority} video={video} />
         </div>
       </div>
       {scrollMin && <p className="mt-2 text-[12.5px] text-[var(--s-tx3)] lg:hidden">Swipe sideways to see the whole screen.</p>}
     </>
   );
-  const list = (
-    <ol className={cn('s-legend', side === 'under' && 'grid gap-x-10 sm:grid-cols-2 lg:grid-cols-3')}>
-      {pins.map((p, i) => (
-        <li key={i} data-on={on === i} onMouseEnter={() => setOn(i)} onMouseLeave={() => setOn(null)}>
-          <b aria-hidden>{i + 1}</b>
-          <div>
-            <div className="text-[15.5px] font-semibold tracking-[-0.01em] text-white">{p.title}</div>
-            <p className="mt-1 text-[14px] leading-relaxed text-[var(--s-tx2)]">{p.text}</p>
-          </div>
-        </li>
-      ))}
-    </ol>
-  );
+  // under the picture the parts are cards (founder 2026-11-02, "make this good"); beside it, a ruled list
+  const list =
+    side === 'under' ? (
+      <ol className="s-legend s-legend-cards">
+        {pins.map((p, i) => (
+          <li key={i} data-on={on === i} onMouseEnter={() => setOn(i)} onMouseLeave={() => setOn(null)}>
+            <b aria-hidden>{i + 1}</b>
+            <h3>{p.title}</h3>
+            <p>{p.text}</p>
+          </li>
+        ))}
+      </ol>
+    ) : (
+      <ol className="s-legend">
+        {pins.map((p, i) => (
+          <li key={i} data-on={on === i} onMouseEnter={() => setOn(i)} onMouseLeave={() => setOn(null)}>
+            <b aria-hidden>{i + 1}</b>
+            <div>
+              <div className="text-[15.5px] font-semibold tracking-[-0.01em] text-white">{p.title}</div>
+              <p className="mt-1 text-[14px] leading-relaxed text-[var(--s-tx2)]">{p.text}</p>
+            </div>
+          </li>
+        ))}
+      </ol>
+    );
   if (side === 'right')
     return (
       <div className="grid items-start gap-10 lg:grid-cols-[minmax(0,1.55fr)_minmax(0,1fr)] lg:gap-14">

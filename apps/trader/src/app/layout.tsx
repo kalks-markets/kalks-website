@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from 'next';
-import { Golos_Text, Be_Vietnam_Pro, Inter_Tight } from 'next/font/google';
+import { Golos_Text, Be_Vietnam_Pro, Inter_Tight, Noto_Serif_Display } from 'next/font/google';
 import localFont from 'next/font/local';
 import { draftMode } from 'next/headers';
 import './globals.css';
@@ -26,6 +26,9 @@ const interTight = Inter_Tight({ subsets: ['latin'], variable: '--font-inter-tig
 const interTightExt = Inter_Tight({ subsets: ['latin-ext', 'cyrillic'], variable: '--font-inter-tight-ext', display: 'swap', preload: false, adjustFontFallback: false });
 /* JetBrains Mono, instanced to wght 500–700 (30 KB); other scripts use the system monospace. */
 const jbmono = localFont({ src: './fonts/jbmono-k2-latin.woff2', weight: '500 700', variable: '--font-jbmono', display: 'swap', preload: false });
+/* Noto Serif Display (OFL) for the home headline only: a high-contrast display serif, its italic and, on the wdth axis,
+   the tall condensed cut (founder 2026-11-02, an editorial poster reference). Latin only. */
+const serif = Noto_Serif_Display({ subsets: ['latin'], style: ['normal', 'italic'], axes: ['wdth'], variable: '--font-serif', display: 'swap' });
 const golos = Golos_Text({ subsets: ['cyrillic'], variable: '--font-golos', display: 'swap', preload: false });
 const beVietnam = Be_Vietnam_Pro({
   subsets: ['vietnamese'],
@@ -94,7 +97,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
   const previewing = (await draftMode()).isEnabled;
   // html[data-theme] is set by THEME_BOOT before first paint (none in the markup: the CSS default is dark)
   return (
-    <html lang="en" className={`${interTight.variable} ${interTightExt.variable} ${jbmono.variable} ${golos.variable} ${beVietnam.variable}`} suppressHydrationWarning>
+    <html lang="en" className={`${interTight.variable} ${interTightExt.variable} ${jbmono.variable} ${golos.variable} ${beVietnam.variable} ${serif.variable}`} suppressHydrationWarning>
       <head>
         {/* suppressHydrationWarning: some browser extensions rewrite <head> scripts before React loads (e.g. a blob: src
             on the JSON-LD); the markup the server sent is still what search engines and the page use */}
@@ -110,19 +113,6 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         <Nav copy={mergeNav(global, NAV_COPY)} />
         <ContentProvider shots={shotsFrom(global)}>
           <main id="main" className="relative">
-            {/* REF-2's faint column lines behind every section (the heroes cover them) */}
-            <div className="s-gridlines" aria-hidden>
-              <div className="s-wrap">
-                <i>
-                  <b />
-                  <b />
-                  <b />
-                  <b />
-                  <b />
-                  <b />
-                </i>
-              </div>
-            </div>
             {children}
           </main>
         </ContentProvider>

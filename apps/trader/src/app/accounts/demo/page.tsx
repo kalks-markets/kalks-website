@@ -66,18 +66,8 @@ export default async function DemoPage() {
       <section className="s-sec" aria-labelledby="n-title">
         <div className="s-wrap">
           <Rise className="s-card pad grid gap-12 lg:grid-cols-[0.8fr_1.6fr] lg:gap-16">
-            <div className="flex flex-col gap-6">
-              <div className="flex items-center gap-4">
-                <span className="s-index">01</span>
-                <span className="s-eyebrow">The demo</span>
-              </div>
-              <div className="flex flex-wrap gap-2">
-                {['Free', 'Live prices', 'CFDs and options'].map((c) => (
-                  <span key={c} className="s-chip">
-                    {c}
-                  </span>
-                ))}
-              </div>
+            <div>
+              <span className="s-eyebrow">The demo</span>
             </div>
             <h2 id="n-title" className="s-statement">
               Everything on a demo account behaves the way it does on a live one, <span className="s-mute">except that the money is not real.</span>

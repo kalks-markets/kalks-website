@@ -41,7 +41,6 @@ export default function CryptoPage() {
           Bitcoin at 3 a.m. on a Sunday. <span className="s-mute">Crypto CFDs trade around the clock, long or short, priced in US dollars and funded with USDT. No coins are held for you, so there is no wallet to manage.</span>
         </>
       }
-      chips={['Bitcoin', 'Ether', 'Altcoins']}
       stats={[
         { v: INSTRUMENTS.byClass.crypto.live, l: 'Coins live', sub: 'BTC, ETH, SOL, XRP, BNB, DOGE and more' },
         { v: '24/7', l: 'Weekends included', sub: 'Financing every night' },

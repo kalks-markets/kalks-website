@@ -76,7 +76,6 @@ const FAQ = [
   { q: 'Do I get the fee back?', a: 'On Classic and Rapid, yes: the fee is refunded with your first payout. Instant Funding fees are not refunded.' },
 ];
 
-const TONES = ['s-orange', 's-cream', 's-card'] as const;
 
 export default async function PropPage() {
   const page = await getPage('prop');
@@ -98,18 +97,8 @@ export default async function PropPage() {
       <section className="s-sec" aria-labelledby="n-title">
         <div className="s-wrap">
           <Rise className="s-card pad grid gap-12 lg:grid-cols-[0.8fr_1.6fr] lg:gap-16">
-            <div className="flex flex-col gap-6">
-              <div className="flex items-center gap-4">
-                <span className="s-index">01</span>
-                <span className="s-eyebrow">Get funded</span>
-              </div>
-              <div className="flex flex-wrap gap-2">
-                {['1-Step', '2-Step', 'Instant'].map((c) => (
-                  <span key={c} className="s-chip">
-                    {c}
-                  </span>
-                ))}
-              </div>
+            <div>
+              <span className="s-eyebrow">Get funded</span>
             </div>
             <h2 id="n-title" className="s-statement">
               Trade simulated capital under clear rules. <span className="s-mute">Hit the target without breaking a limit, and get paid a share of the profit on your funded account, in USDT to your Kalks wallet.</span>
@@ -143,34 +132,31 @@ export default async function PropPage() {
             lead="The rules below are the plan defaults shown in the Client Area when you buy."
           />
           <div className="grid gap-4 lg:grid-cols-3">
+            {/* the home page's quiet cards (founder 2026-11-02), the popular one with the orange hairline */}
             {PROP.map((p, i) => {
-              const tone = TONES[i];
-              const muted = tone === 's-cream' ? 'text-[var(--s-cream-tx2)]' : tone === 's-orange' ? 'text-white/80' : 'text-[var(--s-tx3)]';
-              const line = tone === 's-cream' ? 'border-[rgba(26,20,16,0.12)]' : tone === 's-orange' ? 'border-white/25' : 'border-[var(--s-line)]';
+              const muted = 'text-[var(--s-tx3)]';
               return (
                 <Rise key={p.id} delay={i * 70} className="h-full">
-                  <div id={p.id} className={cn('s-bento-card h-full scroll-mt-28', tone)}>
+                  <div id={p.id} className={cn('s-bento-card s-card h-full scroll-mt-28', i === 0 && 'hot')}>
                     <div className="flex items-start justify-between gap-3">
-                      <h3 className="text-[clamp(26px,2.4vw,34px)] font-[500] leading-[1.02] tracking-[-0.035em]">{p.name}</h3>
-                      {i === 0 && <span className="shrink-0 rounded-full bg-white px-3 py-1 text-[12px] font-semibold text-[var(--s-cream-tx)]">Popular</span>}
+                      <h3 className="text-[clamp(24px,2.2vw,30px)] font-semibold leading-[1.05] tracking-[-0.03em]">{p.name}</h3>
+                      {i === 0 && <span className="shrink-0 rounded-full bg-[color-mix(in_oklab,var(--s-orange)_16%,transparent)] px-3 py-1 text-[12px] font-semibold text-[var(--s-orange2)]">Popular</span>}
                     </div>
-                    <p className={cn('mt-3 text-[15px] leading-relaxed', tone === 's-orange' ? 'text-white/90' : tone === 's-cream' ? 'text-[var(--s-cream-tx2)]' : 'text-[var(--s-tx2)]')}>{p.summary}</p>
+                    <p className="mt-3 text-[15px] leading-relaxed text-[var(--s-tx2)]">{p.summary}</p>
                     <div className="mt-6 flex items-baseline gap-2">
                       <span className="s-num text-[52px]">{p.sizes[0][1]}</span>
                       <span className={cn('text-[13.5px] font-medium', muted)}>from, for {p.sizes[0][0]}</span>
                     </div>
                     <dl className="mt-6">
                       {RULES.map(([k, get]) => (
-                        <div key={k} className={cn('grid grid-cols-[minmax(0,0.85fr)_minmax(0,1.3fr)] gap-4 border-t py-2.5 text-[14px]', line)}>
+                        <div key={k} className="grid grid-cols-[minmax(0,0.85fr)_minmax(0,1.3fr)] gap-4 border-t border-[var(--s-line)] py-2.5 text-[14px]">
                           <dt className={muted}>{k}</dt>
                           <dd className="font-medium">{get(p)}</dd>
                         </div>
                       ))}
                     </dl>
                     <div className="mt-auto pt-7">
-                      <Btn href={REGISTER_HREF} variant={tone === 's-orange' ? 'light' : tone === 's-cream' ? 'dark' : 'primary'}>
-                        Start {p.name}
-                      </Btn>
+                      <Btn href={REGISTER_HREF}>Start {p.name}</Btn>
                     </div>
                   </div>
                 </Rise>

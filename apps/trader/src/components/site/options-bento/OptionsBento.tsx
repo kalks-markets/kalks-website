@@ -1,20 +1,22 @@
 'use client';
 
-import { useEffect, useRef, useState, type ReactNode } from 'react';
+import Link from 'next/link';
+import { useEffect, useRef, useState } from 'react';
 import { OPTIONS } from '@/content/facts';
+import { DEMO_HREF } from '@/lib/crm';
 import { BadgesEm } from '@/components/ui/Flag';
 import { RiskNote } from '@/components/ui/RiskNote';
 import { GlassIcon, type GlassIconName } from '../GlassIcon';
-import { OPPORTUNITY, OptionsExample, RISK } from '../OptionsOdds';
+import { OPPORTUNITY, RISK } from '../OptionsOdds';
 import { Rise } from '../Rise';
 import type { Pin } from '../Shot';
 import './options-bento.css';
 
 /*
  * The home page's options section as a bento (founder 2026-10-31, reference: an app landing page of rounded cards —
- * a wide card with a stack of entries beside its text, two half cards, a card with progress bars). Every word comes
- * from the site: the options tour lines (OPTIONS_PINS), the opportunity, the risk and the worked example
- * (OptionsOdds.tsx). The stack shows EURUSD strikes from the option chain of a Kalks Trader demo session (the
+ * a wide card with a stack of entries beside its text, two half cards); the worked example follows it as a photo band
+ * (OptionsExampleBand). Every word comes from the site: the options tour lines (OPTIONS_PINS), the opportunity, the
+ * risk and the worked example (OptionsOdds.tsx). The stack shows EURUSD strikes from the option chain of a Kalks Trader demo session (the
  * site's options screenshot): the buy price a contract, the chance of finishing in the money.
  */
 
@@ -75,17 +77,17 @@ function OppArt({ k, active }: { k: number; active: boolean }) {
   );
 }
 
-const OPP_ICONS: GlassIconName[] = ['shield', 'zap', 'updown'];
 const N = OPPORTUNITY.length;
 const SLIDE_MS = 1000; // .ob-track's transition
+const STAY_MS = 5000;
 const mod = (v: number) => ((v % N) + N) % N;
 
 /**
  * The three opportunity lines in one card (founder 2026-10-31): the card stays, its inner panel slides. Three copies of
  * the panels sit side by side and the track only ever moves forward; when a move leaves the middle copy it jumps back
- * to the same panel there with no transition, so the loop has no seam. The title and text under it fade in step. The
- * header's progress bar fills while a panel stays (its animation's end moves on, so a hover pauses both); paused off
- * screen; swipe on touch screens.
+ * to the same panel there with no transition, so the loop has no seam. The title and text under it fade in step. No
+ * header (founder 2026-11-02: icon, bars and count removed); a panel stays STAY_MS, a hover or focus holds it, paused
+ * off screen; swipe on touch screens.
  */
 function Carousel() {
   const [pos, setPos] = useState(N);
@@ -121,6 +123,14 @@ function Carousel() {
       cancelAnimationFrame(r2);
     };
   }, [snap]);
+  useEffect(() => {
+    if (hold || !seen) return;
+    const t = window.setTimeout(() => {
+      setPos((p) => (p + 1 >= 3 * N ? N + mod(p + 1) : p + 1));
+      setMoves((m) => m + 1);
+    }, STAY_MS);
+    return () => window.clearTimeout(t);
+  }, [moves, hold, seen]);
 
   const go = (d: number) => {
     if (!d) return;
@@ -150,25 +160,6 @@ function Carousel() {
       }}
       onPointerCancel={() => (x0.current = null)}
     >
-      <div className="ob-feature-head">
-        <span className="ob-feature-ic" aria-hidden>
-          {OPP_ICONS.map((name, k) => (
-            <span key={name} data-on={k === at || undefined}>
-              <GlassIcon name={name} size={44} />
-            </span>
-          ))}
-        </span>
-        <div className="ob-steps" role="group" aria-label="Pick a card">
-          {OPPORTUNITY.map((o, k) => (
-            <button key={o.t} type="button" aria-label={`${k + 1} of ${N}: ${o.t}`} aria-pressed={k === at} data-done={k < at || undefined} onClick={() => go(mod(k - at))}>
-              {k === at ? <i key={`a${moves}`} style={{ animationPlayState: hold || !seen ? 'paused' : 'running' }} onAnimationEnd={() => go(1)} /> : <i key="idle" />}
-            </button>
-          ))}
-        </div>
-        <span className="ob-feature-n">
-          0{at + 1} / 0{N}
-        </span>
-      </div>
       <div className="ob-viewport">
         <div className="ob-track" style={{ ['--at' as string]: pos }}>
           {[0, 1, 2].flatMap((copy) => OPPORTUNITY.map((_, k) => <OppArt key={copy * N + k} k={k} active={copy * N + k === pos} />))}
@@ -186,19 +177,33 @@ function Carousel() {
   );
 }
 
-/** A bar for one outcome of the worked example (what the option pays at expiry, out of $400). */
-function Outcome({ label, result, tone, share, note }: { label: string; result: ReactNode; tone: 'up' | 'flat' | 'dn'; share: number; note: string }) {
+/** 2 and 3: the opportunity (the sliding card) and the risk, side by side. */
+function OddsCards() {
   return (
-    <div className="ob-outcome">
-      <div className="ob-outcome-row">
-        <span>{label}</span>
-        <b className={tone}>{result}</b>
-      </div>
-      <div className="ob-bar">
-        <i className={tone} style={{ ['--share' as string]: share }} />
-      </div>
-      <small>{note}</small>
-    </div>
+    <>
+      {/* 2. the opportunity */}
+      <Rise delay={80} className="s-tile ob-card ob-opp">
+        <h3 className="ob-title">
+          <GlassIcon name="trend" size={48} /> The opportunity
+        </h3>
+        <Carousel />
+      </Rise>
+
+      {/* 3. the risk */}
+      <Rise delay={160} className="s-tile ob-card">
+        <h3 className="ob-title">
+          <GlassIcon name="alert" size={48} /> The risk
+        </h3>
+        <ul className="ob-inner ob-risks">
+          {RISK.map((r) => (
+            <li key={r.t}>
+              <b>{r.t}</b>
+              <span>{r.d}</span>
+            </li>
+          ))}
+        </ul>
+      </Rise>
+    </>
   );
 }
 
@@ -236,53 +241,65 @@ export function OptionsBento({ pins }: { pins: Pin[] }) {
         </div>
       </Rise>
 
-      {/* 2. the opportunity */}
-      <Rise delay={80} className="s-tile ob-card ob-opp">
-        <h3 className="ob-title">
-          <GlassIcon name="trend" size={48} /> The opportunity
-        </h3>
-        <Carousel />
-      </Rise>
+      <OddsCards />
+    </div>
+  );
+}
 
-      {/* 3. the risk */}
-      <Rise delay={160} className="s-tile ob-card">
-        <h3 className="ob-title">
-          <GlassIcon name="alert" size={48} /> The risk
-        </h3>
-        <ul className="ob-inner ob-risks">
-          {RISK.map((r) => (
-            <li key={r.t}>
-              <b>{r.t}</b>
-              <span>{r.d}</span>
-            </li>
-          ))}
-        </ul>
-      </Rise>
+/** The worked example's outcomes at expiry: what the $195 option pays, as a share of the most it pays here ($400). */
+const OUTCOMES = [
+  { label: 'Gold $40 higher', result: '+$205 (+105%)', tone: 'up', share: 1, note: 'The option pays $400' },
+  { label: 'About $19.50 higher', result: 'Break even', tone: 'flat', share: 0.4875, note: 'The option pays $195' },
+  { label: 'Flat or lower', result: '−$195 (−100%)', tone: 'dn', share: 0, note: 'It expires worthless' },
+];
 
-      {/* 4. the worked example, its three outcomes as bars */}
-      <Rise delay={120} className="s-tile calm ob-card ob-wide ob-example">
-        <div className="ob-copy">
-          <h3>Example, illustrative only</h3>
-          <OptionsExample className="ob-lead" />
+/**
+ * The worked example as a full-bleed photo band after the bento (founder 2026-11-01, reference: a landing page's
+ * closing band — a motion-blurred photo edge to edge, a centred headline, one bar of a bordered field and a white
+ * button). The photo is the home hero's figure, panned. The worked example's words are split around the bar:
+ * the purchase as the line under the headline, the three outcomes in the bar, the rest and the risk warning below it.
+ */
+export function OptionsExampleBand() {
+  return (
+    <section className="ob-band" aria-labelledby="ob-band-title">
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img className="ob-band-bg" src="/site/options/example-band.webp" alt="" width={2560} height={1120} loading="lazy" decoding="async" />
+      <Rise className="ob-band-in">
+        <h2 id="ob-band-title">Example, illustrative only</h2>
+        <p className="ob-band-sub">
+          You buy one at-the-money gold call (10 oz) for about <b>$195</b>, that is $19.50 an ounce.
+        </p>
+        <p className="ob-band-at">At expiry</p>
+        <div className="ob-band-bar">
+          <ul>
+            {OUTCOMES.map((o) => (
+              <li key={o.label}>
+                <span>{o.label}</span>
+                <b className={o.tone}>{o.result}</b>
+                <small>{o.note}</small>
+                <i className={o.tone} style={{ ['--share' as string]: o.share }} aria-hidden />
+              </li>
+            ))}
+          </ul>
+          <Link href={DEMO_HREF} className="ob-band-cta">
+            Try the demo
+          </Link>
         </div>
-        <div className="ob-inner ob-outcomes">
-          <div className="ob-outcomes-head">
-            <div>
-              <b>Gold call · 10 oz</b>
-              <span>$19.50 an ounce</span>
-            </div>
-            <div className="ob-premium">
-              <b>$195</b>
-              <span>Premium</span>
-            </div>
-          </div>
-          <Outcome label="Gold $40 higher" result="+$205 (+105%)" tone="up" share={1} note="The option pays $400" />
-          <Outcome label="About $19.50 higher" result="Break even" tone="flat" share={0.4875} note="The option pays $195" />
-          <Outcome label="Flat or lower" result="−$195 (−100%)" tone="dn" share={0} note="It expires worthless" />
-        </div>
+        <p className="ob-band-fine">
+          Before expiry, a quick $20 rise could lift its value by roughly $100 to $120, while time decay works against you every day. Prices, premiums and outcomes
+          vary with the market; past performance is not a reliable indicator of future results.
+        </p>
+        <RiskNote options cfd={false} className="ob-band-risk" />
       </Rise>
+    </section>
+  );
+}
 
-      <RiskNote options cfd={false} className="ob-note" />
+/** The opportunity and the risk on their own (the options page; founder 2026-11-01: its older plain block replaced). */
+export function OptionsOddsBento() {
+  return (
+    <div className="ob">
+      <OddsCards />
     </div>
   );
 }

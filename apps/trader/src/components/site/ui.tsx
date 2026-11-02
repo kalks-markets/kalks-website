@@ -1,19 +1,20 @@
 import Link from 'next/link';
 import type { ReactNode } from 'react';
-import { ArrowRight, ArrowUpRight, Check, Command, Plus, Zap } from 'lucide-react';
+import { ArrowRight, ArrowUpRight, Check, Command, Plus } from 'lucide-react';
 import type { SiteImage } from '@/lib/content';
 import { cn } from '@/lib/cn';
 import { Rise } from './Rise';
-import { ThemedImage } from './ThemedImage';
+// the home page's blocks (the outlined figure, the closing band of dots), which the menu pages share (founder 2026-11-02)
+import './home/home.css';
 
 /* ─────────────────────────────────────────────────────────────── buttons */
 
 type BtnVariant = 'primary' | 'ghost' | 'light' | 'dark' | 'deep';
 /**
- * One button, two looks by context (site.css): in the sections a REF-2 pill with a small arrow; inside a hero, the
- * header over it or the menu (.s-ref1) a REF-1 square in monospace capitals, the main one with the ⌘ glyph. Hand-offs
- * to the Client Area (/auth/*) and external URLs are plain anchors so the redirect and the campaign forwarder keep
- * query strings; site pages use Link.
+ * One button (site.css): a pill with its arrow in a round disc on the right (founder 2026-11-01, Formix reference);
+ * inside the home hero (.s-ref1) a REF-1 square in monospace capitals, the main one with the ⌘ glyph. Hand-offs to the
+ * Client Area (/auth/*) and external URLs are plain anchors so the redirect and the campaign forwarder keep query
+ * strings; site pages use Link.
  */
 export function Btn({ href, children, variant = 'primary', size, icon = true, className }: { href: string; children: ReactNode; variant?: BtnVariant; size?: 'sm'; icon?: boolean; className?: string }) {
   const cls = cn('s-btn', variant !== 'primary' && variant, size, !icon && 'no-ic', className);
@@ -66,18 +67,18 @@ export function TextLink({ href, children, className }: { href: string; children
 /* ─────────────────────────────────────────────────────────────── headings */
 
 /**
- * REF-2 pill label above a heading: the section's number (or a small icon) on the left, the label, an arrow on the
- * right (drawn by site.css).
+ * Pill label above a heading: an orange dot (or a small icon) and the label. `index`, the section's number, stays on
+ * the call sites but is no longer shown (minimalist pass, founder 2026-11-01).
  */
-export function Label({ index, children, icon, className }: { index?: string; children?: ReactNode; icon?: ReactNode; className?: string }) {
+export function Label({ children, icon, className }: { index?: string; children?: ReactNode; icon?: ReactNode; className?: string }) {
   return (
     <span className={cn('s-label', className)}>
-      {index ? (
-        <span className="s-index">{index}</span>
-      ) : (
+      {icon ? (
         <span className="s-label-ic" aria-hidden>
-          {icon ?? <Zap size={14} strokeWidth={2.2} />}
+          {icon}
         </span>
+      ) : (
+        <i className="s-label-dot" aria-hidden />
       )}
       {children}
     </span>
@@ -112,7 +113,7 @@ export function Head({
 }) {
   const left = align === 'left';
   return (
-    <Rise className={cn('mb-12 flex flex-col gap-6 lg:mb-16', left ? 'lg:flex-row lg:items-end lg:justify-between' : 'items-center text-center', className)}>
+    <Rise className={cn('s-head mb-12 flex flex-col gap-6 lg:mb-16', left ? 'lg:flex-row lg:items-end lg:justify-between' : 'items-center text-center', className)}>
       <div className={cn('flex flex-col gap-6', !left && 'items-center')}>
         {(index || eyebrow) && <Label index={index}>{eyebrow}</Label>}
         <h2 id={id} className={cn('s-h2', left ? 'max-w-[18ch]' : 'max-w-[20ch]')}>
@@ -142,24 +143,49 @@ export function Checks({ items, className, tone = 'dark' }: { items: ReactNode[]
   );
 }
 
+/**
+ * Numbered steps as the home page's quiet dark cards (founder 2026-11-02): the number in an orange disc, the title and
+ * the line; side by side on a wide row, one under the other in a narrow column.
+ */
+export function Steps({ steps, className }: { steps: { t: string; d: ReactNode }[]; className?: string }) {
+  return (
+    <div className={cn('s-steps', className)}>
+      <ol style={{ ['--n' as string]: steps.length }}>
+        {steps.map((s, i) => (
+          <Rise as="li" key={s.t} delay={i * 70} className="s-step">
+            <div className="rf-card">
+              <span className="s-step-n">{String(i + 1).padStart(2, '0')}</span>
+              <h3>{s.t}</h3>
+              <p>{s.d}</p>
+            </div>
+          </Rise>
+        ))}
+      </ol>
+    </div>
+  );
+}
+
 /* ─────────────────────────────────────────────────────────────── bento */
 
 export type BentoTone = 'cream' | 'orange' | 'glass';
-/** A bento card: cream (dark text), orange or dark glass, with the round arrow in the corner when it links. */
+/**
+ * A bento card as the home page's quiet dark card (founder 2026-11-02): a hairline, the kicker in orange, a bold title,
+ * the round arrow in the corner when it links. `tone` stays on the call sites; "orange" marks the featured card with an
+ * orange hairline.
+ */
 export function BentoCard({ tone = 'cream', href, kicker, title, text, children, className, delay }: { tone?: BentoTone; href?: string; kicker?: ReactNode; title: ReactNode; text?: ReactNode; children?: ReactNode; className?: string; delay?: number }) {
-  const cls = cn('s-bento-card', tone === 'cream' ? 's-cream' : tone === 'orange' ? 's-orange' : 's-card', className);
-  const muted = tone === 'cream' ? 'text-[var(--s-cream-tx2)]' : tone === 'orange' ? 'text-white/85' : 'text-[var(--s-tx2)]';
+  const cls = cn('s-bento-card s-card', tone === 'orange' && 'hot', className);
   const body = (
     <>
       {href && (
         <span className="s-arrow" aria-hidden>
-          <ArrowUpRight size={17} strokeWidth={2.2} />
+          <ArrowUpRight size={19} strokeWidth={2.2} />
         </span>
       )}
-      {kicker && <div className={cn('mb-3 text-[12.5px] font-semibold uppercase tracking-[0.08em]', tone === 'cream' ? 'text-[var(--s-orange)]' : tone === 'orange' ? 'text-white/80' : 'text-[var(--s-orange2)]')}>{kicker}</div>}
-      <h3 className="max-w-[16ch] pe-10 text-[clamp(24px,2.3vw,32px)] font-[500] leading-[1.02] tracking-[-0.035em]">{title}</h3>
+      {kicker && <div className="mb-3 text-[12.5px] font-semibold uppercase tracking-[0.08em] text-[var(--s-orange2)]">{kicker}</div>}
+      <h3 className="max-w-[18ch] pe-12 text-[clamp(21px,1.9vw,26px)] font-semibold leading-[1.18] tracking-[-0.025em]">{title}</h3>
       {children && <div className="mt-6 flex-1">{children}</div>}
-      {text && <p className={cn('mt-auto pt-8 text-[14.5px] leading-relaxed', muted)}>{text}</p>}
+      {text && <p className="mt-auto pt-8 text-[14.5px] leading-relaxed text-[var(--s-tx2)]">{text}</p>}
     </>
   );
   return (
@@ -175,23 +201,40 @@ export function BentoCard({ tone = 'cream', href, kicker, title, text, children,
   );
 }
 
+/**
+ * Links to neighbouring pages as service cards: the title at the top, the round arrow in the corner, the line at the
+ * foot; quiet dark cards, as on the home page (founder 2026-11-02).
+ */
+export function LinkTiles({ links, className }: { links: { href: string; t: string; d: string }[]; className?: string }) {
+  return (
+    <div className={cn('grid gap-4 sm:grid-cols-2 lg:grid-cols-4', className)}>
+      {links.map((l, i) => (
+        <BentoCard key={l.href + l.t} tone="glass" href={l.href} title={l.t} text={l.d} delay={i * 60} className="s-svc" />
+      ))}
+    </div>
+  );
+}
+
 /* ─────────────────────────────────────────────────────────────── stats */
 
-/** Big light numbers with an orange rule under each (the agency reference's strip). */
+/**
+ * Figures as the home page's tiles (founder 2026-11-02): quiet dark cards, the figure as an outlined 3D numeral
+ * (home.css .rf-3d), its label and the note under it, centred. On two columns an odd last card takes the whole row.
+ */
 export function StatStrip({ items, className, size }: { items: { v: ReactNode; l: ReactNode; sub?: ReactNode }[]; className?: string; size?: 'lg' | 'md' }) {
   // long values ("$10,000", "1:1000") get the smaller size so neighbours never collide
   const longest = Math.max(...items.map((s) => (typeof s.v === 'string' || typeof s.v === 'number' ? String(s.v).length : 4)));
   const md = size ? size === 'md' : longest > 5;
+  const n = items.length;
   return (
-    <div className={cn('grid grid-cols-2 gap-x-8 gap-y-12', items.length >= 4 ? 'lg:grid-cols-4' : 'lg:grid-cols-3', className)}>
+    <div className={cn('grid grid-cols-2 gap-3 sm:gap-4 max-lg:[&>*:last-child:nth-child(odd)]:col-span-2', n >= 4 ? 'lg:grid-cols-4' : 'lg:grid-cols-3', className)}>
       {items.map((s, i) => (
-        <Rise key={i} delay={i * 80} className="flex flex-col">
-          <div className={cn('s-num whitespace-nowrap text-[var(--k-deep)]', md ? 'text-[clamp(36px,3.8vw,56px)]' : 'text-[clamp(40px,4.8vw,72px)]')}>{s.v}</div>
-          <div className="mt-5 flex items-center gap-2 text-[13.5px] font-medium text-[var(--s-tx2)]">
-            <span className="s-dot" aria-hidden /> {s.l}
+        <Rise key={i} delay={i * 80} className="h-full">
+          <div className="s-stat rf-card h-full">
+            <span className={cn('rf-3d', md && 'md')}>{s.v}</span>
+            <div className="s-stat-l">{s.l}</div>
+            {s.sub && <div className="s-stat-sub">{s.sub}</div>}
           </div>
-          <div className="s-rule mt-4" />
-          {s.sub && <div className="mt-3 text-[12.5px] leading-relaxed text-[var(--s-tx3)]">{s.sub}</div>}
         </Rise>
       ))}
     </div>
@@ -249,7 +292,7 @@ export function Faq({ items, className }: { items: { q: string; a: ReactNode }[]
   return (
     <div className={cn('s-faq', className)}>
       {items.map((it) => (
-        <details key={it.q}>
+        <details key={it.q} className="rf-card">
           <summary>
             {it.q}
             <i aria-hidden>
@@ -266,45 +309,29 @@ export function Faq({ items, className }: { items: { q: string; a: ReactNode }[]
 /* ─────────────────────────────────────────────────────────────── closing call to action */
 
 /**
- * The closing band on every page: a big two-tone line, the two buttons, and a row of small facts. On an orange panel
- * with a soft glow, the figure of the page's hero on the right (optional).
+ * The closing band on every menu page, the home page's (home/HomeBlocks.tsx CtaBand, founder 2026-11-02): fields of
+ * orange dots along the top and bottom edges, one card in the middle with the headline (its <span> phrase in the
+ * orange), the line under it and the buttons, one under the other. A dark island in both themes. `facts` and `image`
+ * are still accepted from older call sites; the band shows neither.
  */
-export function Cta({ title, sub, primary, secondary, facts, image }: { title: ReactNode; sub?: ReactNode; primary: { href: string; label: string }; secondary?: { href: string; label: string }; facts?: string[]; image?: { src: string; w: number; h: number } | SiteImage }) {
+export function Cta({ title, sub, primary, secondary }: { title: ReactNode; sub?: ReactNode; primary: { href: string; label: string }; secondary?: { href: string; label: string }; facts?: string[]; image?: { src: string; w: number; h: number } | SiteImage }) {
   return (
-    <section className="s-sec" aria-label="Get started">
+    <section className="rf-cta s-isl" aria-labelledby="cta-title">
+      <i className="rf-cta-dots" aria-hidden />
       <div className="s-wrap">
-        <Rise className="s-orange relative overflow-hidden px-7 py-14 sm:px-12 lg:px-16 lg:py-20">
-          {image && (
-            <ThemedImage
-              image={{ alt: '', ...image }}
-              alt=""
-              aria-hidden
-              loading="lazy"
-              sizes="40vw"
-              className="pointer-events-none absolute bottom-0 right-0 hidden h-[115%] w-auto max-w-none opacity-90 mix-blend-multiply [mask-image:linear-gradient(90deg,transparent,#000_35%)] lg:block"
-            />
-          )}
-          <div className="relative max-w-[640px]">
-            <h2 className="s-h2 !text-white">{title}</h2>
-            {sub && <p className="mt-6 max-w-[52ch] text-[17px] leading-relaxed text-white/88">{sub}</p>}
-            <div className="mt-9 flex flex-wrap gap-3">
-              <Btn href={primary.href} variant="light">
-                {primary.label}
+        <Rise className="rf-cta-card s-cta-card">
+          <h2 id="cta-title" className="rf-h2">
+            {title}
+          </h2>
+          {sub && <p className="rf-cta-sub">{sub}</p>}
+          <div className="s-cta-acts">
+            <Btn href={primary.href} className="rf-cta-btn">
+              {primary.label}
+            </Btn>
+            {secondary && (
+              <Btn href={secondary.href} variant="ghost" icon={false} className="rf-cta-btn">
+                {secondary.label}
               </Btn>
-              {secondary && (
-                <Btn href={secondary.href} variant="ghost" icon={false}>
-                  {secondary.label}
-                </Btn>
-              )}
-            </div>
-            {facts && (
-              <div className="mt-9 flex flex-wrap gap-x-6 gap-y-2 text-[13.5px] font-medium text-white/85">
-                {facts.map((f) => (
-                  <span key={f} className="flex items-center gap-2">
-                    <span className="size-1.5 rounded-full bg-white" aria-hidden /> {f}
-                  </span>
-                ))}
-              </div>
             )}
           </div>
         </Rise>
@@ -312,3 +339,6 @@ export function Cta({ title, sub, primary, secondary, facts, image }: { title: R
     </section>
   );
 }
+
+/** The Kalks K in 3D (rendered with three.js from public/brand/kalks-mark.svg, scripts/render-3d) */
+export const K3D = { src: '/site/3d/k-mark.webp', w: 1200, h: 1000 };

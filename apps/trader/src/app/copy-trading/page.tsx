@@ -27,7 +27,6 @@ const TOP_FEE = SOCIAL.perfFee.replace(/^up to /, '');
 const WAYS = [
   {
     id: 'copy',
-    tone: 's-orange',
     k: 'Copy trading',
     t: 'Mirror a master.',
     d: 'A copy account repeats every trade of the master you follow: opens, partial closes, stop loss and take profit changes, pending orders.',
@@ -35,7 +34,6 @@ const WAYS = [
   },
   {
     id: 'pamm',
-    tone: 's-cream',
     k: 'PAMM funds',
     t: 'Invest in a fund.',
     d: 'Put money in a pooled fund run by a manager. Your share is tracked as units, with a net asset value that starts at 1.00.',
@@ -43,7 +41,6 @@ const WAYS = [
   },
   {
     id: 'mam',
-    tone: 's-card',
     k: 'MAM',
     t: 'Let a manager trade.',
     d: 'Link your own account to a money manager. They trade; the account and the money stay yours.',
@@ -132,18 +129,8 @@ export default async function CopyTradingPage() {
       <section className="s-sec" aria-labelledby="n-title">
         <div className="s-wrap">
           <Rise className="s-card pad grid gap-12 lg:grid-cols-[0.8fr_1.6fr] lg:gap-16">
-            <div className="flex flex-col gap-6">
-              <div className="flex items-center gap-4">
-                <span className="s-index">01</span>
-                <span className="s-eyebrow">Social trading</span>
-              </div>
-              <div className="flex flex-wrap gap-2">
-                {['Copy', 'PAMM', 'MAM'].map((c) => (
-                  <span key={c} className="s-chip">
-                    {c}
-                  </span>
-                ))}
-              </div>
+            <div>
+              <span className="s-eyebrow">Social trading</span>
             </div>
             <h2 id="n-title" className="s-statement">
               Follow traders our team has approved. <span className="s-mute">You choose the size and the limits, you can pause or stop at any time, and the fee is only charged when your account reaches a new high.</span>
@@ -176,26 +163,23 @@ export default async function CopyTradingPage() {
             }
           />
           <div className="grid gap-4 lg:grid-cols-3">
-            {WAYS.map((w, i) => {
-              const muted = w.tone === 's-cream' ? 'text-[var(--s-cream-tx2)]' : w.tone === 's-orange' ? 'text-white/85' : 'text-[var(--s-tx2)]';
-              const line = w.tone === 's-cream' ? 'border-[rgba(26,20,16,0.12)]' : w.tone === 's-orange' ? 'border-white/25' : 'border-[var(--s-line)]';
-              return (
-                <Rise key={w.id} delay={i * 70} className="h-full">
-                  <div id={w.id} className={cn('s-bento-card h-full scroll-mt-28', w.tone)}>
-                    <div className={cn('mb-3 text-[12.5px] font-semibold uppercase tracking-[0.08em]', w.tone === 's-cream' ? 'text-[var(--s-orange)]' : w.tone === 's-orange' ? 'text-white/80' : 'text-[var(--s-orange2)]')}>{w.k}</div>
-                    <h3 className="text-[clamp(28px,2.6vw,38px)] font-[500] leading-[1.02] tracking-[-0.035em]">{w.t}</h3>
-                    <p className={cn('mt-4 text-[15px] leading-relaxed', muted)}>{w.d}</p>
-                    <ul className="mt-auto pt-8">
-                      {w.pts.map((pt) => (
-                        <li key={pt} className={cn('border-t py-3 text-[14px] leading-relaxed', line)}>
-                          {pt}
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                </Rise>
-              );
-            })}
+            {/* the home page's quiet cards (founder 2026-11-02), the first one with the orange hairline */}
+            {WAYS.map((w, i) => (
+              <Rise key={w.id} delay={i * 70} className="h-full">
+                <div id={w.id} className={cn('s-bento-card s-card h-full scroll-mt-28', i === 0 && 'hot')}>
+                  <div className="mb-3 text-[12.5px] font-semibold uppercase tracking-[0.08em] text-[var(--s-orange2)]">{w.k}</div>
+                  <h3 className="text-[clamp(24px,2.2vw,30px)] font-semibold leading-[1.1] tracking-[-0.03em]">{w.t}</h3>
+                  <p className="mt-4 text-[15px] leading-relaxed text-[var(--s-tx2)]">{w.d}</p>
+                  <ul className="mt-auto pt-8">
+                    {w.pts.map((pt) => (
+                      <li key={pt} className="border-t border-[var(--s-line)] py-3 text-[14px] leading-relaxed">
+                        {pt}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              </Rise>
+            ))}
           </div>
         </div>
       </section>
@@ -233,7 +217,6 @@ export default async function CopyTradingPage() {
           />
           <div className="grid items-start gap-5 lg:grid-cols-[minmax(0,1.4fr)_minmax(0,1fr)]">
             <StepCards
-              cols="sm:grid-cols-2"
               steps={[
                 { t: 'Pick a master', d: 'Compare track records, risk scores from 1 to 10 and fees, all shown up front.' },
                 { t: 'Choose sizing', d: 'In proportion to equity, a fixed amount, a multiplier or a fixed lot size.' },

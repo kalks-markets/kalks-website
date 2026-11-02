@@ -1,10 +1,10 @@
 import Link from 'next/link';
-import { ArrowUpRight } from 'lucide-react';
-import { KalksLogo } from '@/components/brand/KalksLogo';
+import { ArrowUpRight, Smartphone } from 'lucide-react';
 import { Wordmark } from '@/components/brand/Logo';
 import { LanguagePicker } from '@/components/chrome/LanguagePicker';
 import { ThemeSelect } from '@/components/chrome/ThemeToggle';
-import { FOOTER_COPY } from '@/content/site';
+import { ANDROID_APP } from '@/content/facts';
+import { FOOTER_COPY, NAV_COPY } from '@/content/site';
 import { BRAND_COPYRIGHT, BRAND_SUPPORT_EMAIL } from '@/lib/brand';
 import type { FooterCopy } from '@/lib/content';
 import { CRM_URL, TRADER_URL } from '@/lib/crm';
@@ -13,56 +13,53 @@ import { CRM_URL, TRADER_URL } from '@/lib/crm';
 const plain = (href: string) => href.startsWith('/auth/') || href.startsWith('/download/') || /^(https?:|mailto:)/.test(href);
 
 /**
- * Footer: the wordmark and one line, the site map, the risk warning in the platform's own words, restricted regions,
- * legal links, language and theme, and the giant KALKS wordmark fading out at the very bottom (orange to the page),
- * over the same faint column lines as the sections (REF-2); light or dark with the theme.
+ * Footer (founder 2026-11-02, after his reference): the wordmark, one line, the Android app as a badge beside the main
+ * button and the support address on the left; the site map in columns on the right; then the risk warning and the
+ * restricted regions as full-width small print, the legal links, and the bottom bar with language and theme.
  * `copy` is FOOTER_COPY merged with the content service by the root layout.
  */
 export default function Footer({ copy = FOOTER_COPY }: { copy?: FooterCopy }) {
   return (
     <footer className="s-foot">
-      <div className="s-gridlines" aria-hidden>
-        <div className="s-wrap">
-          <i>
-            <b />
-            <b />
-            <b />
-            <b />
-            <b />
-            <b />
-          </i>
-        </div>
-      </div>
       <div className="s-wrap">
-        <div className="grid gap-12 lg:grid-cols-[1fr_1.7fr]">
+        <div className="grid gap-12 lg:grid-cols-[1fr_2fr] lg:gap-16">
           <div className="flex flex-col items-start gap-6">
             <Wordmark className="h-[24px] w-auto text-white" />
             <p className="max-w-[34ch] text-[15px] leading-relaxed text-white/65">{copy.tagline}</p>
-            <div className="flex flex-wrap items-center gap-4">
+            <div className="flex flex-wrap items-center gap-3">
+              <Link href="/platforms/android" className="s-foot-badge">
+                <Smartphone size={22} strokeWidth={1.8} aria-hidden />
+                <span>
+                  <small>
+                    APK · {ANDROID_APP.sizeMb} MB
+                  </small>
+                  {NAV_COPY.android}
+                </span>
+              </Link>
               <a href={copy.cta.href} className="s-btn sm">
                 {copy.cta.label}
                 <span className="s-btn-ic" aria-hidden>
                   <ArrowUpRight size={15} strokeWidth={2.2} />
                 </span>
               </a>
-              <a href={`mailto:${BRAND_SUPPORT_EMAIL}`} className="text-[14px] font-medium text-white/70 hover:text-white">
-                {BRAND_SUPPORT_EMAIL}
-              </a>
             </div>
+            <a href={`mailto:${BRAND_SUPPORT_EMAIL}`} className="text-[14px] font-medium text-white/70 hover:text-white">
+              {BRAND_SUPPORT_EMAIL}
+            </a>
           </div>
           <nav aria-label="Footer" className="grid grid-cols-2 gap-10 sm:grid-cols-4">
             {copy.columns.map((col) => (
               <div key={col.title}>
-                <h2 className="mb-4 font-mono text-[12px] font-medium uppercase tracking-[0.1em] text-[var(--s-orange2)]">{col.title}</h2>
+                <h2 className="mb-4 text-[13px] font-semibold text-white">{col.title}</h2>
                 <ul className="flex flex-col gap-2.5">
                   {col.links.map((l) => (
                     <li key={l.href}>
                       {plain(l.href) ? (
-                        <a href={l.href} className="text-[14px] text-white/68 transition-colors hover:text-white">
+                        <a href={l.href} className="text-[14px] text-white/62 transition-colors hover:text-white">
                           {l.label}
                         </a>
                       ) : (
-                        <Link href={l.href} className="text-[14px] text-white/68 transition-colors hover:text-white">
+                        <Link href={l.href} className="text-[14px] text-white/62 transition-colors hover:text-white">
                           {l.label}
                         </Link>
                       )}
@@ -74,20 +71,17 @@ export default function Footer({ copy = FOOTER_COPY }: { copy?: FooterCopy }) {
           </nav>
         </div>
 
-        <div className="mt-14 grid gap-8 border-t border-white/10 pt-8 lg:grid-cols-2 lg:gap-12">
-          <div>
-            <h2 className="mb-2 text-[13px] font-semibold text-white/90">{copy.riskTitle}</h2>
-            <p className="text-[12.5px] leading-relaxed text-white/52">{copy.risk}</p>
-          </div>
-          <div>
-            <h2 className="mb-2 text-[13px] font-semibold text-white/90">{copy.restrictedTitle}</h2>
-            <p className="text-[12.5px] leading-relaxed text-white/52">
-              {copy.restricted}{' '}
-              <Link href={copy.restrictedLink.href} className="text-white/80 underline decoration-white/30 underline-offset-2 hover:text-white">
-                {copy.restrictedLink.label}
-              </Link>
-            </p>
-          </div>
+        {/* the small print, full width, as the reference sets it */}
+        <div className="mt-14 grid gap-4 border-t border-white/10 pt-8 text-[12.5px] leading-relaxed text-white/52">
+          <p>
+            <b className="font-semibold text-white/85">{copy.riskTitle}.</b> {copy.risk}
+          </p>
+          <p>
+            <b className="font-semibold text-white/85">{copy.restrictedTitle}.</b> {copy.restricted}{' '}
+            <Link href={copy.restrictedLink.href} className="text-white/80 underline decoration-white/30 underline-offset-2 hover:text-white">
+              {copy.restrictedLink.label}
+            </Link>
+          </p>
         </div>
 
         <nav aria-label="Legal" className="mt-8 flex flex-wrap gap-x-6 gap-y-2.5">
@@ -111,18 +105,6 @@ export default function Footer({ copy = FOOTER_COPY }: { copy?: FooterCopy }) {
             <ThemeSelect />
           </div>
         </div>
-      </div>
-      <div className="s-wrap">
-        <KalksLogo className="s-foot-word !text-[var(--s-orange)] [&_path]:fill-[url(#s-foot-grad)]" title="Kalks" />
-        <svg width="0" height="0" aria-hidden className="absolute">
-          <defs>
-            <linearGradient id="s-foot-grad" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0" stopColor="#ff7a2e" />
-              <stop offset="0.55" stopColor="#f2600c" stopOpacity="0.55" />
-              <stop offset="1" stopColor="#f2600c" stopOpacity="0" />
-            </linearGradient>
-          </defs>
-        </svg>
       </div>
     </footer>
   );

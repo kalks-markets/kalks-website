@@ -46,7 +46,6 @@ export default function MetalsPage() {
           The metals and the oils, as CFDs or options. <span className="s-mute">Trade gold, silver, copper, crude and natural gas long or short, or buy a call or a put on gold, silver or oil, where the premium is the most you can lose.</span>
         </>
       }
-      chips={['Gold', 'Silver', 'Crude oil']}
       stats={[
         { v: INSTRUMENTS.byClass.metals.live, l: 'Metals live', sub: 'Gold, silver, platinum, copper and more' },
         { v: INSTRUMENTS.byClass.energies.live, l: 'Energies live', sub: 'WTI, Brent and natural gas' },

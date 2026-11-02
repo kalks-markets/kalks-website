@@ -80,7 +80,7 @@ const PROP_TOP_SPLIT = PROP[0].split.match(/(\d+%)$/)?.[1] ?? '';
 /** Hero copy per page. Home: title = the line top-left, subtitle = the small facts under it, cta = the round button. */
 export const HERO_COPY: Record<HeroPage, HeroCopy> = {
   home: {
-    title: 'Options, CFDs and copy trading, funded from one USDT wallet.',
+    title: 'Asia’s first options & CFD trading platform.',
     subtitle: `${LANGUAGES.length} languages · Android app · USDT on TRON and BNB Chain`,
     cta: { label: 'Open account', href: REGISTER_HREF },
     image: heroImage('home'),
@@ -251,7 +251,6 @@ export const HERO_COPY: Record<HeroPage, HeroCopy> = {
     eyebrow: 'About Kalks',
     title: 'Built in-house,',
     accent: 'for traders everywhere.',
-    accentClass: 'text-white/60',
     subtitle: 'Forex options, CFDs, prop challenges, copy trading and a partner programme in one place, on technology we write ourselves, in 22 languages.',
     cta: open,
     cta2: { label: 'Talk to us', href: '/contact' },
@@ -261,7 +260,6 @@ export const HERO_COPY: Record<HeroPage, HeroCopy> = {
     eyebrow: 'Kalks Academy',
     title: 'Learn it properly.',
     accent: 'Then trade it.',
-    accentClass: 'text-white/60',
     subtitle: `${ACADEMY.lessons} lessons in ${ACADEMY.phases} phases, from how markets work to macro regimes and FX options. A quiz after every lesson and certificates anyone can verify.`,
     cta: { label: 'Start learning', href: REGISTER_HREF },
     cta2: { label: 'See the phases', href: '#phases' },
@@ -271,7 +269,6 @@ export const HERO_COPY: Record<HeroPage, HeroCopy> = {
     eyebrow: 'Help & contact',
     title: 'We are here',
     accent: 'to help.',
-    accentClass: 'text-white/60',
     subtitle: 'Clients get the fastest answers in the support chat inside the Client Area. Anyone can write to us by email.',
     image: heroImage('contact'),
   },

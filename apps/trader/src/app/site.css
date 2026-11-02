@@ -9,21 +9,10 @@
 
 :root {
   --f-disp: var(--font-inter-tight), var(--font-inter-tight-ext), var(--font-golos), ui-sans-serif, system-ui, sans-serif;
+  --f-serif: var(--font-serif), ui-serif, Georgia, serif;
   --f-text: var(--font-inter-tight), var(--font-inter-tight-ext), var(--font-golos), ui-sans-serif, system-ui, sans-serif;
 
   --gutter: 24px;
-  /* REF-2 background grid: six columns (four on tablets, three on phones, so the tile band's edges sit on the lines) */
-  --grid-cols: 6;
-}
-@media (max-width: 1023px) {
-  :root {
-    --grid-cols: 4;
-  }
-}
-@media (max-width: 760px) {
-  :root {
-    --grid-cols: 3;
-  }
 }
 /* The dark theme, the default. The same tokens apply to the "dark islands" in the light theme (see below). */
 :root,
@@ -63,10 +52,11 @@
   --k-card-line: rgba(255, 255, 255, 0.08);
   --k-card-sh: none;
   --k-card-sh2: 0 18px 40px -20px rgba(0, 0, 0, 0.7);
-  --k-gridline: rgba(255, 255, 255, 0.05);
   --k-hero-top: #050404;
   --k-hero-bot: #7a2606;
   --k-ease: cubic-bezier(0.22, 1, 0.36, 1);
+  --k-sheet: linear-gradient(180deg, #120b08, #0c0807);
+  --k-sheet-line: rgba(255, 122, 46, 0.13);
 
   /* legacy variables (price strip, markets table, trading day, flags, option mocks) */
   --page: #050404;
@@ -151,7 +141,8 @@
   --k-card-line: rgba(26, 20, 16, 0.06);
   --k-card-sh: none;
   --k-card-sh2: 0 18px 40px -22px rgba(26, 20, 16, 0.22);
-  --k-gridline: rgba(26, 20, 16, 0.05);
+  --k-sheet: #ffffff;
+  --k-sheet-line: rgba(26, 20, 16, 0.07);
 
   --page: #fbf8f4;
   --bg: #fbf8f4;
@@ -259,60 +250,35 @@ body {
 .s-sec.tight {
   padding-block: 48px;
 }
-/* a softly tinted band; translucent so the page's grid lines still show through */
+/* a section on its own sheet (founder 2026-11-01, Formix reference): a rounded panel a little in from the window's
+   edges, a shade warmer than the page, with an orange hairline */
 .s-band {
-  background: color-mix(in oklab, var(--s-orange) 4%, transparent);
-  border-block: 1px solid var(--k-card-line);
+  margin-inline: 10px;
+  border-radius: clamp(28px, 3vw, 44px);
+  background: var(--k-sheet);
+  box-shadow: inset 0 0 0 1px var(--k-sheet-line);
 }
-
-/* REF-2: faint vertical grid lines behind the sections, equal columns across the container (layout.tsx) */
-.s-gridlines {
-  pointer-events: none;
-  position: absolute;
-  inset: 0;
-  z-index: 0;
-}
-.s-gridlines > div {
-  height: 100%;
-}
-.s-gridlines i {
-  display: grid;
-  grid-template-columns: repeat(var(--grid-cols), minmax(0, 1fr));
-  height: 100%;
-  border-inline-start: 1px solid var(--k-gridline);
-}
-/* real 1 px borders (a repeating gradient drops lines that fall between pixels) */
-.s-gridlines i > b {
-  border-inline-end: 1px solid var(--k-gridline);
-}
-@media (max-width: 1023px) {
-  .s-gridlines i > b:nth-child(n + 5) {
-    display: none;
-  }
-}
-@media (max-width: 760px) {
-  .s-gridlines i > b:nth-child(n + 4) {
-    display: none;
+@media (min-width: 1024px) {
+  .s-band {
+    margin-inline: 12px;
   }
 }
 
 /* ─────────────────────────────────────────────────────────────── type */
-/* Pill label above a section heading: the section's number (or a small icon) and the label, on a hairline pill; no
-   arrow, since it isn't a link (minimalist pass, founder 2026-10-30). <Label> renders it; the older markup (an
-   .s-index beside an .s-eyebrow in one row) gets the same pill, and a lone .s-eyebrow is a pill with a dot. */
+/* Pill label above a section heading: an orange dot (or a small icon) and the label on a hairline pill, no section
+   number (minimalist pass, founder 2026-11-01). <Label> renders it; a lone .s-eyebrow is the same pill. */
 .s-label,
-div:has(> .s-index + .s-eyebrow),
 .s-eyebrow {
   display: inline-flex;
   align-items: center;
   gap: 10px;
   width: fit-content;
   max-width: 100%;
-  height: 32px;
-  padding: 0 14px 0 4px;
+  height: 34px;
+  padding: 0 15px 0 14px;
   border-radius: 999px;
-  background: var(--k-card);
-  box-shadow: inset 0 0 0 1px rgb(var(--fg) / 0.09);
+  background: transparent;
+  box-shadow: inset 0 0 0 1px rgb(var(--fg) / 0.2);
   font-size: 14px;
   font-weight: 500;
   line-height: 1;
@@ -320,9 +286,10 @@ div:has(> .s-index + .s-eyebrow),
   color: rgb(var(--fg));
   white-space: nowrap;
 }
-.s-eyebrow {
-  padding-inline-start: 14px;
+.s-label:has(> .s-label-ic) {
+  padding-inline-start: 5px;
 }
+.s-label-dot,
 .s-eyebrow::before {
   content: '';
   flex: none;
@@ -331,14 +298,14 @@ div:has(> .s-index + .s-eyebrow),
   border-radius: 99px;
   background: var(--s-orange);
 }
-:is(.s-label, div:has(> .s-index + .s-eyebrow)) > .s-eyebrow {
+.s-label > .s-eyebrow {
   height: auto;
   padding: 0;
   border-radius: 0;
   background: none;
   box-shadow: none;
 }
-:is(.s-label, div:has(> .s-index + .s-eyebrow)) > .s-eyebrow::before {
+.s-label > .s-eyebrow::before {
   display: none;
 }
 .s-label-ic {
@@ -376,14 +343,14 @@ div:has(> .s-index + .s-eyebrow),
   letter-spacing: -0.04em;
   text-wrap: balance;
 }
-/* REF-2 section heading: semibold, the deep brand tone, one phrase in the orange; capped at 56 px so the pages read
-   calm (minimalist pass) */
+/* Section heading (founder 2026-11-01, Formix reference): large and light, the deep brand tone, one phrase in the
+   orange */
 .s-h2 {
   font-family: var(--f-disp);
-  font-weight: 600;
-  font-size: clamp(32px, 4.2vw, 56px);
-  line-height: 1.08;
-  letter-spacing: -0.025em;
+  font-weight: 450;
+  font-size: clamp(34px, 4.6vw, 64px);
+  line-height: 1.02;
+  letter-spacing: -0.04em;
   color: var(--k-deep);
   text-wrap: balance;
 }
@@ -489,14 +456,15 @@ div:has(> .s-index + .s-eyebrow),
 }
 
 /* ─────────────────────────────────────────────────────────────── buttons */
-/* REF-2 pill (the default, every section): solid orange, white type, a small arrow that turns on hover */
+/* The pill (founder 2026-11-01, Formix reference): the label, then the arrow in a round disc that turns on hover.
+   Solid orange with a white disc, white with an orange disc, dark with an orange disc, or a hairline ghost. */
 .s-btn {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 10px;
-  height: 52px;
-  padding: 0 26px 0 30px;
+  gap: 14px;
+  height: 56px;
+  padding: 0 7px 0 26px;
   border-radius: 999px;
   background: var(--s-orange);
   color: #fff;
@@ -504,12 +472,12 @@ div:has(> .s-index + .s-eyebrow),
   font-weight: 500;
   letter-spacing: -0.01em;
   white-space: nowrap;
-  transition: background-color 0.25s ease, transform 0.25s var(--k-ease), box-shadow 0.25s ease, border-color 0.25s ease;
+  transition: background-color 0.25s ease, transform 0.25s var(--k-ease), box-shadow 0.25s ease, border-color 0.25s ease, color 0.25s ease;
 }
 .s-btn:hover {
   background: color-mix(in oklab, var(--s-orange) 94%, #000);
   transform: translateY(-1px);
-  box-shadow: 0 12px 26px -16px color-mix(in oklab, var(--s-orange) 70%, transparent);
+  box-shadow: 0 14px 30px -16px color-mix(in oklab, var(--s-orange) 75%, transparent);
 }
 .s-btn:active {
   transform: translateY(0);
@@ -517,10 +485,19 @@ div:has(> .s-index + .s-eyebrow),
 .s-btn .s-btn-ic {
   display: grid;
   place-items: center;
-  transition: transform 0.25s var(--k-ease);
+  flex: none;
+  width: 42px;
+  height: 42px;
+  border-radius: 999px;
+  background: #fff;
+  color: var(--s-orange);
+  transition: transform 0.4s var(--k-ease), background-color 0.25s ease, color 0.25s ease;
 }
 .s-btn:hover .s-btn-ic {
   transform: rotate(45deg);
+}
+.s-btn[download]:hover .s-btn-ic {
+  transform: translateY(2px);
 }
 /* the ⌘ glyph belongs to the REF-1 square buttons only */
 .s-btn .s-btn-cmd {
@@ -532,11 +509,15 @@ div:has(> .s-index + .s-eyebrow),
 .s-btn.ghost {
   color: rgb(var(--fg));
   background: transparent;
-  box-shadow: inset 0 0 0 1px rgb(var(--fg) / 0.2);
+  box-shadow: inset 0 0 0 1px rgb(var(--fg) / 0.22);
 }
 .s-btn.ghost:hover {
   background: rgb(var(--fg) / 0.06);
-  box-shadow: inset 0 0 0 1px rgb(var(--fg) / 0.32);
+  box-shadow: inset 0 0 0 1px rgb(var(--fg) / 0.36);
+}
+.s-btn.ghost .s-btn-ic {
+  background: rgb(var(--fg) / 0.1);
+  color: rgb(var(--fg));
 }
 .s-btn.light {
   background: #fff;
@@ -545,6 +526,10 @@ div:has(> .s-index + .s-eyebrow),
 .s-btn.light:hover {
   background: color-mix(in oklab, #fff 94%, #000);
   box-shadow: 0 14px 30px -14px rgba(0, 0, 0, 0.45);
+}
+.s-btn:is(.light, .dark, .deep) .s-btn-ic {
+  background: var(--s-orange);
+  color: #fff;
 }
 .s-btn.dark {
   background: #1a1410;
@@ -555,16 +540,21 @@ div:has(> .s-index + .s-eyebrow),
   box-shadow: 0 14px 30px -14px rgba(0, 0, 0, 0.5);
 }
 .s-btn.sm {
-  height: 44px;
-  padding: 0 18px 0 22px;
+  gap: 10px;
+  height: 46px;
+  padding: 0 5px 0 20px;
   font-size: 15px;
+}
+.s-btn.sm .s-btn-ic {
+  width: 36px;
+  height: 36px;
 }
 .s-btn.sm.no-ic {
   padding: 0 22px;
 }
 
-/* REF-1 square button (heroes, the header over them, the menu): square corners, monospace capitals; the main one in
-   the orange with the ⌘ glyph, the others white at 6 % */
+/* REF-1 square button (the home hero): square corners, monospace capitals; the main one in the orange with the ⌘
+   glyph, the others white at 6 % */
 .s-ref1 .s-btn {
   height: 60px;
   padding: 0 44px;
@@ -603,7 +593,7 @@ div:has(> .s-index + .s-eyebrow),
     padding: 0 28px;
   }
 }
-/* REF-1 chip (the line above a hero headline) and the square MENU button */
+/* REF-1 chip (the line above the home headline) and the MENU pill */
 .s-chip1 {
   display: inline-flex;
   align-items: center;
@@ -649,15 +639,16 @@ a.s-chip1:hover > svg {
   display: inline-flex;
   align-items: center;
   gap: 10px;
-  height: 46px;
-  padding: 12px 20px;
-  border-radius: 4px;
-  background: rgb(var(--fg) / 0.06);
-  box-shadow: inset 0 0 0 1px rgb(var(--fg) / 0.08);
+  height: 44px;
+  padding: 0 16px 0 20px;
+  border-radius: 999px;
+  background: rgb(var(--fg) / 0.08);
+  box-shadow: inset 0 0 0 1px rgb(var(--fg) / 0.2);
   color: rgb(var(--fg));
-  font: 500 14px/1 var(--f-mono);
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
+  font-size: 14.5px;
+  font-weight: 500;
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
   transition: background-color 0.25s ease;
 }
 .s-menu-btn:hover {
@@ -804,7 +795,7 @@ a.s-chip1:hover > svg {
   padding-block: 16px;
 }
 .s-nav[data-state='hero'] .s-nav-hero {
-  padding-block: 8px;
+  padding-block: 10px;
   background: rgb(5 4 4 / 0.7);
   -webkit-backdrop-filter: blur(12px) saturate(1.2);
   backdrop-filter: blur(12px) saturate(1.2);
@@ -845,8 +836,28 @@ a.s-chip1:hover > svg {
   background: rgb(var(--fg) / 0.07);
 }
 .s-nav-links > a[aria-current='page'] {
-  color: rgb(var(--fg));
-  background: rgb(var(--fg) / 0.1);
+  color: #1a1410;
+  background: #fff;
+}
+/* over a hero the links sit in a hairline pill (Formix reference) */
+@media (min-width: 1280px) {
+  .s-nav-hero .s-nav-links {
+    padding: 4px;
+    border-radius: 999px;
+    background: rgb(255 255 255 / 0.07);
+    box-shadow: inset 0 0 0 1px rgb(255 255 255 / 0.24);
+    -webkit-backdrop-filter: blur(12px);
+    backdrop-filter: blur(12px);
+  }
+  .s-nav-hero .s-nav-links > a,
+  .s-nav-hero .s-nav-links > div > button {
+    height: 38px;
+    padding-inline: 14px;
+    color: rgb(255 255 255 / 0.88);
+  }
+  .s-nav-hero .s-nav-links > a[aria-current='page'] {
+    color: #1a1410;
+  }
 }
 .s-nav-page {
   padding-top: 16px;
@@ -885,8 +896,8 @@ a.s-chip1:hover > svg {
   }
 }
 .s-nav-page .s-nav-links > a[aria-current='page'] {
-  color: var(--s-orange2);
-  background: color-mix(in oklab, var(--s-orange) 10%, transparent);
+  color: var(--k-paper);
+  background: rgb(var(--fg));
 }
 .s-nav-tag {
   padding: 2px 6px;
@@ -1001,6 +1012,81 @@ a.s-chip1:hover > svg {
 /* without the chip above it (founder 2026-10-31) the headline opens the hero */
 .s-whero-title:first-child {
   margin-top: 0;
+}
+/* the lockup's big line is wider than 1100px on wide screens; capped, it spilled to the right of the centre line
+   (founder 2026-11-02: "make top text on center"). It stays inside the viewport (about 82% of its width). */
+.s-whero-title:has(.s-lock) {
+  max-width: none;
+}
+/* the headline as a poster lockup (Heroes.tsx Lockup, founder 2026-11-02): line one an italic serif clause and a heavy
+   sans phrase, centred over line two (no hairline); line two the last words in a tall condensed serif. Both lines
+   take the width of the wider one, the block itself centred. */
+.s-lock {
+  display: inline-grid;
+  max-width: 100%;
+  text-align: left;
+}
+.s-lock-top {
+  display: flex;
+  justify-content: center;
+  align-items: baseline;
+  gap: 0 0.26em;
+  font-size: clamp(24px, 3vw, 46px);
+  line-height: 1.1;
+  letter-spacing: 0;
+}
+.s-lock-top em {
+  font: italic 300 1.12em/1 var(--f-serif);
+  letter-spacing: -0.012em;
+}
+.s-lock-top b {
+  font: 800 1em/1 var(--f-disp);
+  letter-spacing: -0.045em;
+}
+/* the orange marks (the hero is dark in both themes, so fixed colours): the italic clause's last word, the ampersand */
+.s-lock-top .s-lock-hot {
+  color: #ff8a3d;
+}
+.s-lock-top .s-lock-amp {
+  font: italic 400 1.18em/1 var(--f-serif);
+  letter-spacing: 0;
+  color: #ff8a3d;
+}
+/* room under the big line for the tails of g, p and y (the line height is tighter than the glyphs) */
+.s-lock-big {
+  margin: 0.04em 0 0.16em -0.04em;
+  font: 500 clamp(72px, 12.6vw, 204px) / 0.84 var(--f-serif);
+  font-stretch: 62.5%;
+  letter-spacing: -0.015em;
+  white-space: nowrap;
+  filter: drop-shadow(0 0.12em 0.3em rgb(242 96 12 / 0.22));
+}
+/* the big words lit from below, white into a warm peach; each word carries the gradient (they rise in on their own),
+   padded past the tight line height so the ascenders and descenders stay inside it */
+.s-lock-big .s-word {
+  padding: 0.16em 0 0.22em;
+  margin: -0.16em 0 -0.22em;
+  background: linear-gradient(180deg, #fff 40%, #ffe2cc 68%, #ffab73 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+.s-lock-dot {
+  color: #f2600c;
+}
+@media (max-width: 760px) {
+  .s-lock {
+    text-align: center;
+  }
+  .s-lock-top {
+    display: block;
+    text-wrap: balance;
+  }
+  .s-lock-big {
+    margin-top: 0.08em;
+    font-size: clamp(56px, 19vw, 104px);
+    white-space: normal;
+  }
 }
 .s-whero-sub {
   margin-top: 28px;
@@ -1147,44 +1233,246 @@ a.s-chip1:hover > svg {
   }
 }
 
-/* Inner pages: the same gradient and type; the copy stays on the left (glass cards and live boards sit on the
-   right), the page's figure fades in behind them. */
+/* Inner pages (founder 2026-11-01, two references: Formix, an orange agency page, and Hype On, a dark one with a
+   glowing horizon). A rounded panel 10–12 px in from the window, the header inside its top. On the photo's own
+   backdrop (--hero-bg) with the Kalks orange rising from the lower left; the figure in full colour right of centre,
+   its sides fading into the backdrop. Dark backdrops (the duotoned photos) keep the same layout; without a photo the
+   panel is black over a glowing horizon. The copy at the lower left, the figure cards at the lower right. */
 .s-phero {
+  padding: 10px 10px 0;
+}
+@media (min-width: 1024px) {
+  .s-phero {
+    padding: 12px 12px 0;
+  }
+}
+.s-phero-panel {
   position: relative;
   isolation: isolate;
   overflow: hidden;
-  padding-top: 140px;
-  background: radial-gradient(40% 62% at 80% 100%, color-mix(in oklab, var(--hero-bg, #f2600c) 36%, transparent), transparent 72%),
-    linear-gradient(180deg, var(--k-hero-top) 0%, var(--k-hero-top) 24%, color-mix(in oklab, var(--k-hero-bot) 55%, var(--k-hero-top)) 74%, var(--k-hero-bot) 100%);
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  min-height: clamp(640px, calc(100svh - 24px), 860px);
+  padding: 132px 0 clamp(40px, 4.4vw, 64px);
+  border-radius: clamp(26px, 2.8vw, 40px);
   color: #fff;
+  background: linear-gradient(180deg, rgb(0 0 0 / 0.22), transparent 24%),
+    radial-gradient(70% 90% at 0% 100%, color-mix(in oklab, var(--s-orange) 92%, transparent), transparent 72%), var(--hero-bg, var(--s-orange));
 }
-@media (max-width: 760px) {
-  .s-phero {
-    padding-top: 110px;
-  }
+.s-phero.compact .s-phero-panel {
+  min-height: clamp(560px, 76svh, 720px);
 }
+.s-phero.dark .s-phero-panel {
+  background: linear-gradient(180deg, rgb(0 0 0 / 0.3), transparent 26%),
+    radial-gradient(64% 84% at 0% 100%, color-mix(in oklab, var(--s-orange) 52%, transparent), transparent 74%), var(--hero-bg);
+}
+/* the photo's backdrop is a flat colour, so its sides and top fade into the panel without a seam */
 .s-phero-fig {
   position: absolute;
   z-index: -1;
-  right: max(0px, calc(50% - 680px));
   bottom: 0;
-  height: 94%;
+  left: 61%;
+  translate: -50% 0;
+  height: 97%;
   width: auto;
-  max-width: none;
-  -webkit-mask-image: radial-gradient(farthest-side ellipse at 50% 50%, #000 50%, transparent 100%), linear-gradient(180deg, #000 85%, transparent 100%);
-  mask-image: radial-gradient(farthest-side ellipse at 50% 50%, #000 50%, transparent 100%), linear-gradient(180deg, #000 85%, transparent 100%);
+  max-width: min(66%, 980px);
+  object-fit: cover;
+  object-position: 50% 0;
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 16%, #000 84%, transparent), linear-gradient(180deg, transparent, #000 14%);
+  mask-image: linear-gradient(90deg, transparent, #000 16%, #000 84%, transparent), linear-gradient(180deg, transparent, #000 14%);
   -webkit-mask-composite: source-in;
   mask-composite: intersect;
 }
-@media (max-width: 1023px) {
-  .s-phero-fig {
-    right: -16%;
-    opacity: 0.4;
+/* no photo (legal and help pages): black, and a glowing horizon along the foot (Hype On reference) */
+.s-phero.flat .s-phero-panel {
+  min-height: 0;
+  padding-bottom: clamp(120px, 12vw, 176px);
+  background: radial-gradient(46% 70% at 50% 100%, rgb(255 132 52 / 0.78), rgb(242 96 12 / 0.4) 38%, rgb(122 38 6 / 0.18) 64%, transparent 82%), #070504;
+}
+.s-phero.flat .s-phero-panel::after {
+  content: '';
+  position: absolute;
+  z-index: -1;
+  left: 50%;
+  top: calc(100% - clamp(64px, 6vw, 92px));
+  translate: -50% 0;
+  width: 170%;
+  height: 560px;
+  border-radius: 50%;
+  background: var(--k-hero-top);
+  box-shadow: 0 -1px 0 rgb(255 214 170 / 0.9), 0 -6px 26px rgb(255 140 60 / 0.85), 0 -36px 110px 10px rgb(242 96 12 / 0.55);
+}
+.s-phero-grid {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 36px;
+}
+@media (min-width: 1024px) {
+  .s-phero-grid {
+    grid-template-columns: minmax(0, 1fr) 330px;
+    align-items: end;
   }
 }
-.s-phero.flat {
-  background: radial-gradient(60% 70% at 85% 0%, color-mix(in oklab, var(--s-orange) 20%, transparent), transparent 60%),
-    linear-gradient(180deg, var(--k-hero-top) 0%, var(--k-hero-top) 30%, var(--k-hero-bot) 100%);
+.s-phero-copy {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+.s-phero-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  max-width: 100%;
+  height: 34px;
+  margin-bottom: 28px;
+  padding: 0 16px 0 13px;
+  border-radius: 999px;
+  background: rgb(255 255 255 / 0.1);
+  box-shadow: inset 0 0 0 1px rgb(255 255 255 / 0.42);
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+  font-size: 14px;
+  font-weight: 500;
+  white-space: nowrap;
+}
+.s-phero-chip > i {
+  flex: none;
+  width: 8px;
+  height: 8px;
+  border-radius: 99px;
+  background: #fff;
+}
+.s-phero:is(.dark, .flat) .s-phero-chip > i {
+  background: var(--s-orange2);
+}
+.s-phero-title {
+  max-width: 13ch;
+  font-family: var(--f-disp);
+  font-weight: 400;
+  font-size: clamp(46px, 6.3vw, 100px);
+  line-height: 0.96;
+  letter-spacing: -0.047em;
+  text-wrap: balance;
+}
+.s-phero.compact .s-phero-title {
+  font-size: clamp(42px, 5.4vw, 84px);
+}
+/* on the bright panels the headline is white throughout (Formix); a translucent white would turn pink on the red */
+.s-phero-title .s-mute {
+  color: #fff;
+}
+.s-phero:is(.dark, .flat) .s-phero-title .s-mute {
+  color: var(--s-orange2);
+}
+.s-phero-lead {
+  max-width: 52ch;
+  margin-top: 26px;
+  font-size: clamp(16px, 1.25vw, 19px);
+  line-height: 1.55;
+  color: rgb(255 255 255 / 0.86);
+}
+.s-phero-acts {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+  margin-top: 36px;
+}
+/* on the bright panel the main button turns white (an orange one would sink into it) */
+.s-phero.bright .s-btn:not(.ghost, .light, .dark) {
+  background: #fff;
+  color: #1a1410;
+}
+.s-phero.bright .s-btn:not(.ghost, .light, .dark) .s-btn-ic {
+  background: var(--s-orange);
+  color: #fff;
+}
+.s-phero .s-btn.ghost {
+  color: #fff;
+  background: rgb(255 255 255 / 0.1);
+  box-shadow: inset 0 0 0 1px rgb(255 255 255 / 0.45);
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+}
+.s-phero .s-btn.ghost:hover {
+  background: rgb(255 255 255 / 0.18);
+}
+.s-phero-aside {
+  display: none;
+}
+@media (min-width: 1024px) {
+  .s-phero-aside {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+}
+/* the figure cards: the first cream, the next frosted glass */
+.s-hcard {
+  padding: 22px 22px 20px;
+  border-radius: 24px;
+  background: rgb(255 255 255 / 0.14);
+  box-shadow: inset 0 0 0 1px rgb(255 255 255 / 0.3);
+  -webkit-backdrop-filter: blur(18px) saturate(1.2);
+  backdrop-filter: blur(18px) saturate(1.2);
+  color: #fff;
+}
+.s-hcard:first-child {
+  --fg: 26 20 16;
+  background: var(--s-cream);
+  box-shadow: 0 24px 50px -28px rgb(0 0 0 / 0.55);
+  color: var(--s-cream-tx);
+}
+@media (max-width: 1023px) {
+  .s-phero-panel {
+    min-height: 0;
+    padding-top: 108px;
+  }
+  .s-phero.compact .s-phero-panel {
+    min-height: 0;
+  }
+  /* the figure under the copy, its top fading into the panel */
+  .s-phero-fig {
+    position: relative;
+    order: 2;
+    left: auto;
+    translate: none;
+    width: 100%;
+    max-width: none;
+    height: clamp(340px, 80vw, 520px);
+    margin: 20px 0 calc(-1 * clamp(40px, 4.4vw, 64px));
+    object-fit: contain;
+    object-position: 50% 100%;
+    -webkit-mask-image: linear-gradient(90deg, transparent, #000 22%, #000 78%, transparent), linear-gradient(180deg, transparent, #000 26%);
+    mask-image: linear-gradient(90deg, transparent, #000 22%, #000 78%, transparent), linear-gradient(180deg, transparent, #000 26%);
+  }
+  .s-phero-aside:has(.s-hcard) {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 10px;
+  }
+  .s-hcard {
+    padding: 18px;
+    border-radius: 20px;
+  }
+  .s-hcard .s-num {
+    font-size: 38px !important;
+  }
+}
+@media (max-width: 479px) {
+  .s-phero-acts {
+    width: 100%;
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .s-phero-acts .s-btn {
+    justify-content: space-between;
+  }
+  .s-phero-acts .s-btn.no-ic {
+    justify-content: center;
+  }
 }
 
 /* hero load sequence: chip → headline (word by word) → subtext → buttons → figure, 120 ms apart */
@@ -1299,6 +1587,26 @@ a.s-chip1:hover > svg {
 .s-mac-win.full img {
   border-radius: 0.5cqw;
   box-shadow: none;
+}
+/* a looping video on the screen (LoopVideo.tsx): the held last frame on a canvas over it, fading out at each loop */
+.s-loopv {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+  border-radius: 0.5cqw;
+  background: #000;
+}
+.s-loopv video,
+.s-loopv canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.s-loopv canvas {
+  opacity: 0;
+  pointer-events: none;
 }
 /* the base: a dark hinge, the silver edge and the thumb scoop */
 .s-mac-base {
@@ -1512,6 +1820,87 @@ a.s-chip1:hover > svg {
   border-color: var(--s-orange);
   color: #fff;
 }
+/* the parts under a tour's picture as cards: the number, the name and the line; the card of the pin being pointed at
+   lights up (founder 2026-11-02) */
+.s-legend.s-legend-cards {
+  display: grid;
+  gap: 16px;
+}
+@media (min-width: 640px) {
+  .s-legend.s-legend-cards {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+@media (min-width: 1024px) {
+  .s-legend.s-legend-cards {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 20px;
+  }
+}
+.s-legend.s-legend-cards li {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0;
+  padding: 24px 24px 28px;
+  border-radius: 20px;
+  background: linear-gradient(180deg, rgb(var(--fg) / 0.06), rgb(var(--fg) / 0.022));
+  border: 1px solid rgb(var(--fg) / 0.09);
+  transition:
+    border-color 0.3s ease,
+    box-shadow 0.3s ease,
+    transform 0.4s var(--k-ease);
+}
+:root[data-theme='light'] .s-legend.s-legend-cards li {
+  background: #fff;
+  border-color: rgb(26 20 16 / 0.08);
+  box-shadow:
+    0 1px 2px rgb(26 20 16 / 0.04),
+    0 16px 40px -24px rgb(26 20 16 / 0.22);
+}
+.s-legend.s-legend-cards li[data-on='true'] {
+  border-color: rgb(255 122 46 / 0.55);
+  box-shadow: 0 24px 50px -30px rgb(242 96 12 / 0.65);
+  transform: translateY(-2px);
+}
+.s-legend-cards b {
+  width: 36px;
+  height: 36px;
+  margin-bottom: 20px;
+  font-size: 14px;
+  font-weight: 600;
+  transition:
+    background-color 0.3s ease,
+    border-color 0.3s ease,
+    color 0.3s ease;
+}
+/* on a phone the number sits beside the name, so six cards stay short */
+@media (max-width: 639px) {
+  .s-legend.s-legend-cards li {
+    display: grid;
+    grid-template-columns: 36px minmax(0, 1fr);
+    column-gap: 16px;
+    padding: 20px;
+  }
+  .s-legend-cards b {
+    grid-row: span 2;
+    margin-bottom: 0;
+  }
+  .s-legend-cards h3 {
+    align-self: center;
+  }
+}
+.s-legend-cards h3 {
+  font: 600 17px/1.3 var(--f-disp);
+  letter-spacing: -0.015em;
+  color: rgb(var(--fg));
+}
+.s-legend-cards p {
+  margin-top: 8px;
+  font-size: 14.5px;
+  line-height: 1.6;
+  color: rgb(var(--fg) / 0.68);
+}
 .s-phone {
   position: relative;
   width: min(320px, 78vw);
@@ -1531,10 +1920,10 @@ a.s-chip1:hover > svg {
   position: relative;
   display: flex;
   flex-direction: column;
-  min-height: 260px;
-  padding: 32px;
+  min-height: 300px;
+  padding: 30px;
   overflow: hidden;
-  border-radius: var(--s-r);
+  border-radius: 28px;
 }
 /* on phones the cards stack one per row: each is as tall as its content, no empty band in the middle (founder
    2026-11-01: "minimalist"); doubled class to win over a page's own min-h-[...] */
@@ -1549,12 +1938,12 @@ a.s-chip1:hover > svg {
 }
 .s-bento-card .s-arrow {
   position: absolute;
-  top: 20px;
-  right: 20px;
+  top: 22px;
+  right: 22px;
   display: grid;
   place-items: center;
-  width: 34px;
-  height: 34px;
+  width: 42px;
+  height: 42px;
   border-radius: 999px;
   background: var(--s-cream-tx);
   color: #fff;
@@ -1573,21 +1962,17 @@ a.s-bento-card:hover .s-arrow {
 }
 
 /* ─────────────────────────────────────────────────────────────── faq */
-/* questions as REF-2 cards */
+/* questions as the home page's quiet cards (ui.tsx Faq: home.css .rf-card, founder 2026-11-02) */
 .s-faq {
   display: grid;
   gap: 12px;
 }
 .s-faq details {
-  border-radius: 20px;
-  background: var(--k-card);
-  border: 1px solid var(--k-card-line);
-  box-shadow: var(--k-card-sh);
   padding-inline: 24px;
-  transition: box-shadow 0.25s ease;
+  transition: border-color 0.25s ease;
 }
 .s-faq details:hover {
-  box-shadow: var(--k-card-sh2);
+  border-color: rgb(var(--fg) / 0.18);
 }
 .s-faq summary {
   list-style: none;
@@ -1615,7 +2000,8 @@ a.s-bento-card:hover .s-arrow {
   width: 34px;
   height: 34px;
   border-radius: 999px;
-  border: 1px solid var(--s-line2);
+  border: 1px solid transparent;
+  background: rgb(var(--fg) / 0.07);
   transition: transform 0.25s ease, background-color 0.25s ease;
 }
 .s-faq details[open] summary i {
@@ -1637,10 +2023,7 @@ a.s-bento-card:hover .s-arrow {
   overflow: hidden;
   background: var(--k-paper);
   border-top: 1px solid var(--k-card-line);
-  padding-top: 96px;
-}
-.s-foot > .s-gridlines {
-  z-index: -1;
+  padding-block: 96px 40px;
 }
 
 /* ─────────────────────────────────────────────────────────────── the deep button (Btn variant="deep") */
@@ -1686,13 +2069,30 @@ a.s-bento-card:hover .s-arrow {
 .s-slot b {
   color: rgb(var(--fg));
 }
-.s-foot-word {
-  display: block;
-  width: 100%;
-  margin-top: 56px;
-  color: transparent;
-  -webkit-mask-image: linear-gradient(180deg, #000 0%, rgba(0, 0, 0, 0.55) 55%, transparent 100%);
-  mask-image: linear-gradient(180deg, #000 0%, rgba(0, 0, 0, 0.55) 55%, transparent 100%);
+/* the Android app as a store-style badge in the footer */
+.s-foot-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 44px;
+  padding: 6px 16px 6px 12px;
+  border-radius: 10px;
+  background: #000;
+  box-shadow: inset 0 0 0 1px rgb(255 255 255 / 0.22);
+  color: #fff;
+  font: 600 14px/1.15 var(--f-disp);
+  transition: box-shadow 0.25s ease;
+}
+.s-foot-badge:hover {
+  box-shadow: inset 0 0 0 1px rgb(255 255 255 / 0.5);
+}
+.s-foot-badge span {
+  display: grid;
+}
+.s-foot-badge small {
+  font-size: 10.5px;
+  font-weight: 500;
+  color: rgb(255 255 255 / 0.66);
 }
 
 /* ─────────────────────────────────────────────────────────────── motion */
@@ -2236,4 +2636,272 @@ a.s-tile:focus-visible {
 .s-split-media {
   display: grid;
   place-items: center;
+}
+
+/* ─────────────────────────────────────────────────────────────── redesign 2026-11-01 (Formix + Hype On references) */
+/* the page's facts in one quiet row under the hero (Heroes.tsx FactBand), hairlines between them */
+.s-facts {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px 0;
+  padding-block: 26px 4px;
+}
+.s-facts li {
+  padding-inline: 26px;
+  font-size: 14.5px;
+  font-weight: 500;
+  color: rgb(var(--fg) / 0.6);
+}
+.s-facts li + li {
+  border-inline-start: 1px solid rgb(var(--fg) / 0.14);
+}
+@media (max-width: 639px) {
+  .s-facts {
+    justify-content: flex-start;
+    padding-top: 20px;
+  }
+  .s-facts li {
+    padding-inline: 0 14px;
+    font-size: 13.5px;
+  }
+  .s-facts li + li {
+    padding-inline-start: 14px;
+  }
+}
+
+/* figures as the home page's tiles (ui.tsx StatStrip, founder 2026-11-02): a quiet card (home.css .rf-card), the
+   figure as an outlined 3D numeral (.rf-3d), the label and the note under it, centred */
+.s-stat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-height: 216px;
+  padding: 32px 16px 24px;
+  text-align: center;
+}
+@media (min-width: 1024px) {
+  .s-stat {
+    min-height: 248px;
+  }
+}
+.s-stat .rf-3d {
+  margin-top: auto;
+  font-size: clamp(44px, 5vw, 72px);
+}
+.s-stat .rf-3d.md {
+  font-size: clamp(34px, 3.8vw, 54px);
+}
+.s-stat-l {
+  margin-top: 16px;
+  max-width: 26ch;
+  font-size: 15px;
+  font-weight: 600;
+  line-height: 1.35;
+}
+.s-stat-sub {
+  max-width: 30ch;
+  margin-top: 6px;
+  font-size: 13px;
+  line-height: 1.5;
+  color: rgb(var(--fg) / 0.62);
+}
+
+/* link cards to the neighbouring pages (ui.tsx LinkTiles) */
+.s-bento-card.s-svc {
+  min-height: 250px;
+}
+
+/* Numbered steps as the home page's quiet cards (ui.tsx Steps, founder 2026-11-02): the number in an orange disc, a
+   bold title and the line; one under the other in a narrow column, side by side from 760 px of row. */
+.s-steps {
+  container-type: inline-size;
+}
+.s-steps ol {
+  display: grid;
+  gap: 16px;
+}
+.s-step > div {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  padding: 28px 24px;
+}
+.s-step-n {
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 999px;
+  background: color-mix(in oklab, var(--s-orange) 16%, transparent);
+  color: var(--s-orange2);
+  font: 600 12.5px/1 var(--f-mono);
+  letter-spacing: 0.02em;
+}
+.s-step h3 {
+  margin-top: 24px;
+  font: 600 clamp(19px, 1.6vw, 22px) / 1.25 var(--f-disp);
+  letter-spacing: -0.02em;
+}
+.s-step p {
+  margin-top: 10px;
+  max-width: 40ch;
+  font-size: 14.5px;
+  line-height: 1.55;
+  color: rgb(var(--fg) / 0.66);
+}
+@container (min-width: 760px) {
+  .s-steps ol {
+    grid-template-columns: repeat(var(--n), minmax(0, 1fr));
+    gap: 20px;
+  }
+  .s-step > div {
+    min-height: 240px;
+  }
+}
+
+/* The closing band (ui.tsx Cta, Hype On reference): black, a glowing horizon along the foot, the 3D K above a large
+   light headline, everything centred. A dark island in both themes. */
+.s-cta {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: clamp(44px, 5vw, 72px) clamp(22px, 5vw, 64px) clamp(150px, 14vw, 200px);
+  border-radius: clamp(28px, 3vw, 44px);
+  background: #060404;
+  box-shadow: inset 0 0 0 1px rgb(255 255 255 / 0.07);
+  color: #fff;
+  text-align: center;
+}
+.s-cta-sky {
+  position: absolute;
+  inset: 0;
+  z-index: -2;
+  background: radial-gradient(44% 62% at 50% 100%, rgb(255 140 60 / 0.86), rgb(242 96 12 / 0.52) 36%, rgb(122 38 6 / 0.22) 64%, transparent 84%),
+    radial-gradient(60% 50% at 50% 0%, rgb(255 255 255 / 0.04), transparent 70%);
+}
+.s-cta-horizon {
+  position: absolute;
+  z-index: -1;
+  left: 50%;
+  top: calc(100% - clamp(72px, 7vw, 104px));
+  translate: -50% 0;
+  width: 170%;
+  height: 620px;
+  border-radius: 50%;
+  background: #050303;
+  box-shadow: 0 -1px 0 rgb(255 214 170 / 0.9), 0 -6px 26px rgb(255 140 60 / 0.9), 0 -40px 120px 14px rgb(242 96 12 / 0.55);
+}
+.s-cta-art {
+  width: clamp(190px, 19vw, 280px);
+  height: auto;
+  margin: -12px 0 6px;
+  filter: drop-shadow(0 0 46px rgb(242 96 12 / 0.38)) drop-shadow(0 30px 40px rgb(0 0 0 / 0.6));
+}
+.s-cta-title {
+  max-width: 18ch;
+  font: 400 clamp(36px, 4.8vw, 68px) / 1 var(--f-disp);
+  letter-spacing: -0.045em;
+  text-wrap: balance;
+}
+.s-cta-title span {
+  color: rgb(255 255 255 / 0.5);
+}
+.s-cta-sub {
+  max-width: 54ch;
+  margin-top: 22px;
+  font-size: clamp(15.5px, 1.2vw, 17px);
+  line-height: 1.6;
+  color: rgb(255 255 255 / 0.74);
+}
+.s-cta-acts {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 12px;
+  margin-top: 34px;
+}
+@media (max-width: 479px) {
+  .s-cta-acts {
+    width: 100%;
+    flex-direction: column;
+  }
+  .s-cta-acts .s-btn {
+    justify-content: space-between;
+  }
+  .s-cta-acts .s-btn.no-ic {
+    justify-content: center;
+  }
+}
+/* the closing band in the home page's style (ui.tsx Cta on home.css .rf-cta): the buttons one under the other at the
+   card's width, the headline's <span> phrase in the orange */
+.s-cta-card .rf-h2 span {
+  color: var(--k-hl);
+}
+.s-cta-card .s-cta-acts {
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  margin-top: 32px;
+}
+.s-cta-card .s-cta-acts .rf-cta-btn {
+  margin-top: 0;
+}
+
+/* ─────────────────────────────────────────────────────────────── menu pages in the home page's design */
+/* Founder 2026-11-02: "all menu pages, the hero apart, like the home page". Every menu page opens with PageHero
+   (.s-phero); what follows it takes the home's look (home/home.css): bold headings with the orange phrase, the page's
+   own black from edge to edge (no sheets), quiet cards with a hairline in place of the cream and orange ones, and the
+   home's rhythm (64 / 96 px). The heroes and the home page itself are untouched. */
+:is(.s-phero ~ .s-sec, .s-phero ~ * .s-sec) {
+  padding-block: 64px;
+}
+@media (min-width: 1024px) {
+  :is(.s-phero ~ .s-sec, .s-phero ~ * .s-sec) {
+    padding-block: 96px;
+  }
+}
+:is(.s-phero ~ .s-band, .s-phero ~ * .s-band) {
+  margin-inline: 0;
+  border-radius: 0;
+  background: none;
+  box-shadow: none;
+}
+.s-phero ~ * .s-h2 {
+  font-weight: 700;
+  font-size: clamp(30px, 3.4vw, 46px);
+  line-height: 1.08;
+  letter-spacing: -0.035em;
+  color: rgb(var(--fg));
+}
+.s-phero ~ * :is(.s-head, .s-head > div) {
+  gap: 16px;
+}
+.s-phero ~ * .s-head {
+  margin-bottom: 40px;
+}
+@media (min-width: 1024px) {
+  .s-phero ~ * .s-head {
+    margin-bottom: 56px;
+  }
+}
+.s-phero ~ * .s-lead {
+  font-size: 16px;
+  color: rgb(var(--fg) / 0.68);
+}
+/* cards on the home's quiet surface (home.css .rf-card); the light theme keeps its white card */
+:root:not([data-theme='light']) .s-phero ~ * .s-card {
+  border-radius: 20px;
+  background: linear-gradient(180deg, rgb(255 255 255 / 0.06), rgb(255 255 255 / 0.022));
+  border-color: rgb(255 255 255 / 0.09);
+  box-shadow: none;
+}
+/* the featured card (a bento card's tone "orange", a page's first or popular one): an orange hairline and a low glow
+   instead of the orange fill */
+:root .s-phero ~ * .s-card.hot {
+  border-color: rgb(242 96 12 / 0.5);
+  box-shadow: 0 0 80px -40px rgb(242 96 12 / 0.6);
 }

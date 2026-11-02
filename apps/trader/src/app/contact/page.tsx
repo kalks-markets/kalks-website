@@ -35,26 +35,25 @@ export default async function ContactPage() {
 
       <section className="s-sec" aria-label="Ways to reach us">
         <div className="s-wrap grid gap-4 lg:grid-cols-3">
-          <Rise className="s-orange flex flex-col p-7 sm:p-8">
-            <span className="grid size-12 place-items-center rounded-full bg-white text-[var(--s-orange)]">
+          {/* the home page's quiet cards (founder 2026-11-02), the chat one with the orange hairline */}
+          <Rise className="s-card hot flex flex-col p-7 sm:p-8">
+            <span className="grid size-12 place-items-center rounded-full bg-[color-mix(in_oklab,var(--s-orange)_16%,transparent)] text-[var(--s-orange2)]">
               <MessageCircle size={20} aria-hidden />
             </span>
-            <h2 className="mt-8 text-[28px] font-[500] leading-none tracking-[-0.035em]">Support chat</h2>
-            <p className="mt-3 text-[15px] leading-relaxed text-white/88">
+            <h2 className="mt-8 text-[26px] font-semibold leading-none tracking-[-0.03em]">Support chat</h2>
+            <p className="mt-3 text-[15px] leading-relaxed text-[var(--s-tx2)]">
               Open the chat from any page of the Client Area. An instant help assistant answers common questions; our team takes over when you need a person.
             </p>
             <div className="mt-auto pt-8">
-              <Btn href={`${CRM_URL}/support`} variant="light">
-                Open support
-              </Btn>
+              <Btn href={`${CRM_URL}/support`}>Open support</Btn>
             </div>
           </Rise>
-          <Rise delay={70} className="s-cream flex flex-col p-7 sm:p-8">
-            <span className="grid size-12 place-items-center rounded-full bg-[var(--s-cream-tx)] text-white">
+          <Rise delay={70} className="s-card flex flex-col p-7 sm:p-8">
+            <span className="grid size-12 place-items-center rounded-full bg-[rgb(var(--fg)/0.1)] text-[rgb(var(--fg))]">
               <Mail size={20} aria-hidden />
             </span>
-            <h2 className="mt-8 text-[28px] font-[500] leading-none tracking-[-0.035em]">Email</h2>
-            <p className="mt-3 text-[15px] leading-relaxed text-[var(--s-cream-tx2)]">For anything else: questions before you open an account, partnerships and data requests.</p>
+            <h2 className="mt-8 text-[26px] font-semibold leading-none tracking-[-0.03em]">Email</h2>
+            <p className="mt-3 text-[15px] leading-relaxed text-[var(--s-tx2)]">For anything else: questions before you open an account, partnerships and data requests.</p>
             <a href={`mailto:${BRAND_SUPPORT_EMAIL}`} className="mt-auto self-start pt-8 text-[17px] font-semibold underline decoration-[var(--s-orange)] decoration-2 underline-offset-4">
               {BRAND_SUPPORT_EMAIL}
             </a>

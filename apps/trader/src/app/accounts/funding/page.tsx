@@ -64,18 +64,8 @@ export default async function FundingPage() {
       <section className="s-sec" aria-labelledby="n-title">
         <div className="s-wrap">
           <Rise className="s-card pad grid gap-12 lg:grid-cols-[0.8fr_1.6fr] lg:gap-16">
-            <div className="flex flex-col gap-6">
-              <div className="flex items-center gap-4">
-                <span className="s-index">01</span>
-                <span className="s-eyebrow">One wallet</span>
-              </div>
-              <div className="flex flex-wrap gap-2">
-                {['TRC20', 'BEP20', 'USDT'].map((c) => (
-                  <span key={c} className="s-chip">
-                    {c}
-                  </span>
-                ))}
-              </div>
+            <div>
+              <span className="s-eyebrow">One wallet</span>
             </div>
             <h2 id="n-title" className="s-statement">
               One wallet funds every account. <span className="s-mute">Deposit USDT on TRON or BNB Chain, see it credited 1:1 as US dollars, and move it to any CFD or Options account for free.</span>

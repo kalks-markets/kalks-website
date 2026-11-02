@@ -31,6 +31,61 @@ function Words({ text }: { text: ReactNode }) {
   );
 }
 
+/** the big line of the lockup holds the last words up to about this many characters ("trading platform.") */
+const BIG_CHARS = 18;
+
+/**
+ * The home headline as a poster lockup (founder 2026-11-02, an editorial poster reference): line one an italic serif
+ * clause and a heavy sans phrase, centred (founder 2026-11-02: no hairline); line two the last words, huge, in a tall
+ * condensed serif.
+ * Split from the text itself, since the Back Office can edit it: the big line takes the last words that fit
+ * BIG_CHARS, the words before them break after their last comma (italic before, heavy after), or after the first
+ * half when there is none. The orange marks (founder 2026-11-02, "too simple"): the italic clause's last word, an
+ * ampersand, the closing full stop. The words still rise in one by one.
+ */
+function Lockup({ text }: { text: ReactNode }) {
+  if (typeof text !== 'string') return <>{text}</>;
+  const words = text.trim().split(/\s+/);
+  let big = 1;
+  while (big < words.length - 2 && words.slice(-(big + 1)).join(' ').length <= BIG_CHARS) big++;
+  if (words.length - big < 2) return <Words text={text} />;
+  const rest = words.slice(0, -big);
+  let cut = Math.floor(rest.length / 2);
+  for (let i = rest.length - 2; i >= 0; i--) {
+    if (rest[i].endsWith(',')) {
+      cut = i + 1;
+      break;
+    }
+  }
+  let n = 0;
+  const run = (ws: string[], tone: (w: string, i: number) => string | undefined = () => undefined, stop = false) =>
+    ws.map((w, i) => (
+      <Fragment key={i}>
+        <span className={cn('s-word', tone(w, i))} style={{ '--w': n++ } as CSSProperties}>
+          {stop && i === ws.length - 1 && /[.!]$/.test(w) ? (
+            <>
+              {w.slice(0, -1)}
+              <span className="s-lock-dot">{w.slice(-1)}</span>
+            </>
+          ) : (
+            w
+          )}
+        </span>
+        {i < ws.length - 1 && ' '}
+      </Fragment>
+    ));
+  const italic = rest.slice(0, cut);
+  return (
+    <span className="s-lock">
+      <span className="s-lock-top">
+        <em>{run(italic, (_, i) => (i === italic.length - 1 ? 's-lock-hot' : undefined))}</em>{' '}
+        <b>{run(rest.slice(cut), (w) => (w === '&' ? 's-lock-amp' : undefined))}</b>
+      </span>
+      <span className="s-lock-big">{run(words.slice(-big), undefined, true)}</span>
+    </span>
+  );
+}
+
 /**
  * Home hero (founder 2026-10-30, REF-1, a dark premium fintech hero): everything centred on a vertical gradient,
  * black at the top to ember at the foot. The small facts as a monospace chip, the headline large, the subtext, the
@@ -84,7 +139,7 @@ export function HomeHero({
             </a>
           )}
           <p className="s-whero-title">
-            <Words text={line} />
+            <Lockup text={line} />
           </p>
           {sub && (
             <p className="s-whero-sub s-in" style={step(2)}>
@@ -183,10 +238,33 @@ export function HeroActions({ hero }: { hero: HeroCopy }) {
   );
 }
 
+/** a hero photo's backdrop is dark (the duotoned ones) when its luminance is low */
+function darkBg(hex?: string) {
+  const m = hex && /^#?([\da-f]{2})([\da-f]{2})([\da-f]{2})$/i.exec(hex);
+  if (!m) return false;
+  const [r, g, b] = m.slice(1).map((c) => (parseInt(c, 16) / 255) ** 2.2);
+  return 0.2126 * r + 0.7152 * g + 0.0722 * b < 0.06;
+}
+
+/** The page's small facts in one quiet row under the hero, hairlines between them (minimalist pass, 2026-11-01). */
+export function FactBand({ items }: { items: ReactNode[] }) {
+  return (
+    <div className="s-wrap">
+      <ul className="s-facts" aria-label="At a glance">
+        {items.map((f, i) => (
+          <li key={i}>{f}</li>
+        ))}
+      </ul>
+    </div>
+  );
+}
+
 /**
- * Inner-page hero (REF-1 styling): the same black-to-ember gradient, the eyebrow as a monospace chip, the headline,
- * the lead at 70 %, square buttons and small facts, with the load sequence. The copy stays on the left because these
- * heroes carry glass cards and live boards on the right; the page's figure fades in behind them.
+ * Inner-page hero (founder 2026-11-01, two references: Formix, an orange agency page, and Hype On, a dark one with a
+ * glowing horizon): a rounded panel inset from the window, on the photo's own backdrop with the Kalks orange rising
+ * from the lower left, the figure in full colour on the right. The eyebrow as a hairline pill, a large light
+ * headline, the lead, pill buttons; the cards in `aside` stand at the lower right (the first cream, the rest glass).
+ * Under the panel the facts in one quiet row. Without a photo the panel is black with the glowing horizon.
  * `hero` (from content/pages.ts, merged with the content service) gives the eyebrow, headline, lead, buttons and
  * photo; the separate props override it. `photo={null}` without `hero.image` gives the typographic version (legal
  * and help pages).
@@ -220,56 +298,53 @@ export function PageHero({
   const eb = eyebrow ?? hero?.eyebrow;
   const ld = lead ?? hero?.subtitle;
   const act = actions ?? (hero && <HeroActions hero={hero} />);
+  const tone = !h ? 'flat' : darkBg(h.bg) ? 'dark' : 'bright';
   return (
-    <section className={cn('s-phero s-ref1', !h && 'flat')} data-hero style={h?.bg ? { ['--hero-bg' as string]: h.bg } : undefined}>
-      {h && <ThemedImage image={h} alt="" aria-hidden fetchPriority="high" className="s-phero-fig s-in-img" style={step(3)} />}
-      <div className={cn('s-wrap relative grid grid-cols-1 gap-10 lg:grid-cols-[minmax(0,1fr)_340px]', compact ? 'pb-14 lg:pb-20' : 'min-h-[min(640px,78svh)] pb-16 lg:pb-24')}>
-        <div className="flex flex-col items-start justify-end">
-          {eb && (
-            <span className="s-chip1 s-in mb-7" style={step(0)}>
-              <i aria-hidden />
-              {eb}
-            </span>
-          )}
-          <h1 className={cn('s-h1 s-in max-w-[14ch] text-white', compact && '!text-[clamp(40px,5.4vw,80px)]')} style={step(1)}>
-            {title ?? (hero && <HeroTitle hero={hero} />)}
-          </h1>
-          {ld && (
-            <p className="s-in mt-7 max-w-[56ch] text-[clamp(17px,1.4vw,21px)] leading-[1.5] text-white/70" style={step(2)}>
-              {ld}
-            </p>
-          )}
-          {act && (
-            <div className="s-in mt-10 flex flex-wrap items-center gap-3 max-[479px]:w-full max-[479px]:flex-col max-[479px]:items-stretch" style={step(3)}>
-              {act}
-            </div>
-          )}
-          {facts && facts.length > 0 && (
-            <div className="s-in mt-9 flex flex-wrap gap-x-6 gap-y-2 text-[13.5px] font-medium text-white/80" style={step(4)}>
-              {facts.map((f, i) => (
-                <span key={i} className="flex items-center gap-2">
-                  <span className="size-1.5 rounded-[1px] bg-white/85" aria-hidden /> {f}
+    <>
+      <section className={cn('s-phero', tone, compact && 'compact')} data-hero>
+        <div className="s-phero-panel" style={h?.bg ? { ['--hero-bg' as string]: h.bg } : undefined}>
+          {h && <ThemedImage image={h} alt="" aria-hidden fetchPriority="high" className="s-phero-fig s-in-img" style={step(3)} />}
+          <div className="s-wrap s-phero-grid">
+            <div className="s-phero-copy">
+              {eb && (
+                <span className="s-phero-chip s-in" style={step(0)}>
+                  <i aria-hidden />
+                  {eb}
                 </span>
-              ))}
+              )}
+              <h1 className="s-phero-title s-in" style={step(1)}>
+                {title ?? (hero && <HeroTitle hero={hero} />)}
+              </h1>
+              {ld && (
+                <p className="s-phero-lead s-in" style={step(2)}>
+                  {ld}
+                </p>
+              )}
+              {act && (
+                <div className="s-phero-acts s-in" style={step(3)}>
+                  {act}
+                </div>
+              )}
+              {children && (
+                <div className="s-in mt-10 w-full" style={step(5)}>
+                  {children}
+                </div>
+              )}
             </div>
-          )}
-          {children && (
-            <div className="s-in mt-10 w-full" style={step(5)}>
-              {children}
-            </div>
-          )}
-        </div>
-        {aside && (
-          <div className="s-in hidden flex-col justify-end gap-3 lg:flex" style={step(4)}>
-            {aside}
+            {aside && (
+              <div className="s-phero-aside s-in" style={step(4)}>
+                {aside}
+              </div>
+            )}
           </div>
-        )}
-      </div>
-    </section>
+        </div>
+      </section>
+      {facts && facts.length > 0 && <FactBand items={facts} />}
+    </>
   );
 }
 
-/** A small frosted card for the hero's right side (a number with a line, or anything short). */
+/** A figure card for the hero's lower right (a number with a line): the first one cream, the next ones glass. */
 export function HeroGlass({ children, className }: { children: ReactNode; className?: string }) {
-  return <div className={cn('s-glass p-5 text-white', className)}>{children}</div>;
+  return <div className={cn('s-hcard', className)}>{children}</div>;
 }

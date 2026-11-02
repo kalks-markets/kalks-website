@@ -1,0 +1,89 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <style>
+      html, body { margin: 0; background: transparent; }
+    </style>
+    <script type="importmap">
+      { "imports": { "three": "/three/build/three.module.js", "three/addons/": "/three/examples/jsm/" } }
+    </script>
+  </head>
+  <body>
+    <script type="module">
+      // The site's 3D marks (founder 2026-11-01, Hype On reference: a glossy black 3D logo lit orange from below).
+      // ?obj=k: the Kalks K from public/brand/kalks-mark.svg, extruded; ?obj=ring: a chrome ring. Transparent
+      // background; render.cjs saves the canvas.
+      import * as THREE from 'three';
+      import { SVGLoader } from 'three/addons/loaders/SVGLoader.js';
+
+      const q = new URLSearchParams(location.search);
+      const obj = q.get('obj') || 'k';
+      const W = +(q.get('w') || 1200), H = +(q.get('h') || 1000), S = 2;
+
+      const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true, preserveDrawingBuffer: true });
+      renderer.setPixelRatio(S);
+      renderer.setSize(W, H);
+      renderer.setClearColor(0x000000, 0);
+      renderer.toneMapping = THREE.ACESFilmicToneMapping;
+      renderer.toneMappingExposure = 1.05;
+      renderer.outputColorSpace = THREE.SRGBColorSpace;
+      document.body.appendChild(renderer.domElement);
+
+      // reflections: a studio of emissive panels, an orange floor glow and a warm softbox above
+      const studio = new THREE.Scene();
+      studio.background = new THREE.Color(0x050302);
+      const panel = (w, h, color, k, pos, look) => {
+        const m = new THREE.Mesh(new THREE.PlaneGeometry(w, h), new THREE.MeshBasicMaterial({ color: new THREE.Color(color).multiplyScalar(k), side: THREE.DoubleSide }));
+        m.position.set(...pos);
+        m.lookAt(...look);
+        studio.add(m);
+      };
+      panel(40, 14, 0xff5a0a, 3.2, [0, -9, -4], [0, 0, 0]); // the horizon glow, low and behind
+      panel(30, 6, 0xff7a2e, 2.2, [0, -10, 6], [0, 0, 0]); // the glow under the front
+      panel(10, 10, 0xffe2c8, 2.4, [-8, 9, 7], [0, 0, 0]); // softbox, upper left
+      panel(4, 16, 0xffb070, 1.4, [11, 2, 3], [0, 0, 0]); // strip, right
+      panel(30, 8, 0xff6a1a, 2.4, [0, -6, 14], [0, 0, 0]); // the glow in front, low: an orange gradient up the faces
+      panel(24, 6, 0x3a2a24, 1, [0, 8, 14], [0, 0, 0]); // a dim ceiling in front: the faces' upper edge catches it
+      const pmrem = new THREE.PMREMGenerator(renderer);
+      const scene = new THREE.Scene();
+      scene.environment = pmrem.fromScene(studio, 0.03).texture;
+
+      const key = new THREE.DirectionalLight(0xffd9b8, 2.4);
+      key.position.set(-4, 6, 8);
+      const rim = new THREE.DirectionalLight(0xff5a0a, 7);
+      rim.position.set(2, -6, -5);
+      const under = new THREE.PointLight(0xff6a1a, 110, 30, 1.6);
+      under.position.set(0, -4.5, 3);
+      scene.add(key, rim, under);
+
+      const camera = new THREE.PerspectiveCamera(26, W / H, 0.1, 100);
+      camera.position.set(0, 0.4, 12);
+      camera.lookAt(0, 0, 0);
+
+      let mesh;
+      if (obj === 'ring') {
+        const geo = new THREE.TorusGeometry(2.3, 0.62, 128, 320);
+        const mat = new THREE.MeshPhysicalMaterial({ color: 0xd9d2cc, metalness: 1, roughness: 0.14, clearcoat: 0.6, clearcoatRoughness: 0.1, envMapIntensity: 1.5 });
+        mesh = new THREE.Mesh(geo, mat);
+        mesh.rotation.set(1.05, 0.35, -0.5);
+      } else {
+        const svg = await (await fetch('/mark.svg')).text();
+        const data = new SVGLoader().parse(svg);
+        const shapes = data.paths.flatMap((p) => SVGLoader.createShapes(p));
+        const geo = new THREE.ExtrudeGeometry(shapes, { depth: 120, curveSegments: 64, bevelEnabled: true, bevelThickness: 16, bevelSize: 10, bevelSegments: 10 });
+        geo.center();
+        geo.scale(1, -1, 1); // SVG y runs down
+        geo.computeVertexNormals();
+        const mat = new THREE.MeshPhysicalMaterial({ color: 0x18100d, metalness: 0.72, roughness: 0.3, clearcoat: 1, clearcoatRoughness: 0.05, envMapIntensity: 1.6 });
+        mesh = new THREE.Mesh(geo, mat);
+        const s = 4.1 / 653;
+        mesh.scale.set(s, s, s);
+        mesh.rotation.set(0.12, -0.46, 0.0);
+      }
+      scene.add(mesh);
+      renderer.render(scene, camera);
+      window.__done = true;
+    </script>
+  </body>
+</html>

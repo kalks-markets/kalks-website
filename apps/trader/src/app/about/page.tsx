@@ -75,10 +75,7 @@ export default async function AboutPage() {
       <section className="s-sec" aria-labelledby="how-title">
         <div className="s-wrap grid gap-12 lg:grid-cols-[0.8fr_1.4fr] lg:gap-16">
           <Rise className="flex flex-col gap-6">
-            <div className="flex items-center gap-4">
-              <span className="s-index">02</span>
-              <span className="s-eyebrow">How we build</span>
-            </div>
+            <span className="s-eyebrow">How we build</span>
             <h2 id="how-title" className="s-h2">
               Clear, fast <span className="s-mute">and our own.</span>
             </h2>

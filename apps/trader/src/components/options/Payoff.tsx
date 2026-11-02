@@ -1,25 +1,24 @@
-/** Schematic payoff at expiry for the strategy templates (not to scale). y = 30 is break-even. */
-const SHAPES: Record<string, string> = {
-  'Long call': '0,40 62,40 120,4',
-  'Long put': '0,4 58,40 120,40',
-  Straddle: '0,4 60,46 120,4',
-  Strangle: '0,8 44,40 76,40 120,8',
-  'Bull call spread': '0,42 44,42 76,16 120,16',
-  'Bear put spread': '0,16 44,16 76,42 120,42',
-  'Iron condor': '0,46 22,46 44,20 76,20 98,46 120,46',
-  Butterfly: '0,38 40,38 60,10 80,38 120,38',
-};
-
+/**
+ * The strategy templates as product shots (founder 2026-11-01, references: a tablet held up against a flat red backdrop,
+ * its black screen in big red type; a laptop on a black rock against a red gradient): a tablet resting on a black rock
+ * against the site's black → ember → Kalks orange (the inner pages' one theme), rendered offline (three.js) with the
+ * site's font and wordmark. Its screen shows the strategy, its
+ * outlook, the number of legs, its payoff at expiry (white where it makes money, red where it loses, dashed breakeven;
+ * schematic, not to scale) and the legs of Kalks Trader's template.
+ */
 export function Payoff({ name, className }: { name: string; className?: string }) {
-  const pts = SHAPES[name];
-  if (!pts) return null;
+  if (!STRATEGY_NOTES[name]) return null;
   return (
-    <svg viewBox="0 0 120 50" className={className} role="img" aria-label={`${name} payoff at expiry`}>
-      <rect x="0" y="0" width="120" height="30" fill="var(--up-soft)" opacity=".55" />
-      <rect x="0" y="30" width="120" height="20" fill="var(--dn-soft)" opacity=".55" />
-      <line x1="0" y1="30" x2="120" y2="30" stroke="var(--tx3)" strokeDasharray="2 3" strokeWidth="0.8" />
-      <polyline points={pts} fill="none" stroke="var(--tx)" strokeWidth="2.4" strokeLinejoin="round" strokeLinecap="round" />
-    </svg>
+    // eslint-disable-next-line @next/next/no-img-element
+    <img
+      src={`/site/options/strategy-${name.toLowerCase().replace(/ /g, '-')}.webp`}
+      alt={`A tablet showing the ${name.toLowerCase()} and its payoff at expiry: white where it makes money, red where it loses.`}
+      width={1280}
+      height={853}
+      loading="lazy"
+      decoding="async"
+      className={className}
+    />
   );
 }
 

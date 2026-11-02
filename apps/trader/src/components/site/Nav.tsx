@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useEffect, useState } from 'react';
-import { ArrowUpRight, BookOpen, Building2, ChevronDown, Command, Copy, LifeBuoy, Network, Smartphone, Users, X } from 'lucide-react';
+import { ArrowUpRight, BookOpen, Building2, ChevronDown, Copy, LifeBuoy, Menu, Network, Smartphone, Users, X } from 'lucide-react';
 import { Wordmark } from '@/components/brand/Logo';
 import { NAV_COPY } from '@/content/site';
 import { ANDROID_APP, RISK_WARNING } from '@/content/facts';
@@ -31,11 +31,12 @@ function readState(): NavState {
 }
 
 /**
- * Site navigation, two bars that cross-fade (site.css). Over a hero, the REF-1 bar: the wordmark left, the page links,
- * language, theme, Log in and the square "Open account" right; transparent at the top, dark glass once the page moves.
- * Past the hero, REF-2's floating pill: the links left, the wordmark in the middle, Log in and the orange pill right.
- * Below 1280 px both bars are the wordmark and a square MENU button opening a full-screen menu. `copy` is NAV_COPY
- * merged with the content service by the root layout.
+ * Site navigation, two bars that cross-fade (site.css). Over a hero (founder 2026-11-01, Formix reference): the
+ * wordmark left, the page links in a hairline pill with the current page as a white pill, language, theme, Log in and
+ * the white "Open account" pill with its round arrow right; transparent at the top, dark glass once the page moves.
+ * Past the hero, the floating pill: the links left, the wordmark in the middle, Log in and the orange pill right.
+ * Below 1280 px both bars are the wordmark and a MENU pill opening a full-screen menu. `copy` is NAV_COPY merged with
+ * the content service by the root layout.
  */
 export default function Nav({ copy = NAV_COPY }: { copy?: NavCopy }) {
   const pathname = usePathname();
@@ -146,8 +147,8 @@ export default function Nav({ copy = NAV_COPY }: { copy?: NavCopy }) {
 
   const menuBtn = (
     <button type="button" className="s-menu-btn min-[1280px]:!hidden" aria-label="Open menu" aria-expanded={sheet} aria-controls="site-menu" onClick={() => setSheet(true)}>
-      <Command size={15} strokeWidth={2} aria-hidden />
       Menu
+      <Menu size={16} strokeWidth={2} aria-hidden />
     </button>
   );
 
@@ -160,8 +161,8 @@ export default function Nav({ copy = NAV_COPY }: { copy?: NavCopy }) {
   return (
     <>
       <header className="s-nav" data-state={state} data-scrolled={state !== 'top' || more}>
-        {/* REF-1: over the hero */}
-        <div className="s-nav-hero s-ref1" aria-hidden={past}>
+        {/* over the hero */}
+        <div className="s-nav-hero" aria-hidden={past}>
           <div className="s-wrap s-nav-row">
             {logo('me-auto')}
             {links('hero')}
@@ -169,18 +170,18 @@ export default function Nav({ copy = NAV_COPY }: { copy?: NavCopy }) {
               <LanguagePicker className="hidden min-[1280px]:block" />
               <ThemeToggle className="hidden min-[1280px]:grid" />
               {login}
-              <a href={copy.register.href} className="s-btn sm !hidden sm:!inline-flex">
-                <span className="s-btn-cmd" aria-hidden>
-                  <Command size={15} strokeWidth={2} />
-                </span>
+              <a href={copy.register.href} className="s-btn light sm !hidden sm:!inline-flex">
                 {copy.register.label}
+                <span className="s-btn-ic" aria-hidden>
+                  <ArrowUpRight size={16} strokeWidth={2.2} />
+                </span>
               </a>
               {menuBtn}
             </div>
           </div>
         </div>
 
-        {/* REF-2: the floating pill, past the hero */}
+        {/* the floating pill, past the hero */}
         <div className="s-nav-page" aria-hidden={!past}>
           <div className="s-nav-pillwrap">
             <div className="s-nav-pillbar">
@@ -204,14 +205,14 @@ export default function Nav({ copy = NAV_COPY }: { copy?: NavCopy }) {
       </header>
 
       {sheet && (
-        <div id="site-menu" className="s-sheet s-isl s-ref1 fixed inset-0 z-[80] flex flex-col overflow-y-auto" role="dialog" aria-modal="true" aria-label="Menu" data-lenis-prevent>
+        <div id="site-menu" className="s-sheet s-isl fixed inset-0 z-[80] flex flex-col overflow-y-auto" role="dialog" aria-modal="true" aria-label="Menu" data-lenis-prevent>
           <div className="s-wrap flex h-[88px] flex-none items-center justify-between">
             <Link href="/" aria-label="Kalks home">
               <Wordmark className="h-[22px] w-auto text-white" title="Kalks" />
             </Link>
             <button type="button" className="s-menu-btn" aria-label="Close menu" onClick={() => setSheet(false)}>
-              <X size={16} aria-hidden />
               Close
+              <X size={16} aria-hidden />
             </button>
           </div>
           <nav aria-label="Mobile" className="s-wrap flex flex-1 flex-col gap-8 pb-10 pt-2">
@@ -229,11 +230,11 @@ export default function Nav({ copy = NAV_COPY }: { copy?: NavCopy }) {
               })}
             </ul>
             <div className="flex flex-col gap-3">
-              <a href={copy.register.href} className="s-btn no-ic w-full justify-center">
-                <span className="s-btn-cmd" aria-hidden>
-                  <Command size={17} strokeWidth={2} />
-                </span>
+              <a href={copy.register.href} className="s-btn w-full !justify-between">
                 {copy.register.label}
+                <span className="s-btn-ic" aria-hidden>
+                  <ArrowUpRight size={18} strokeWidth={2.2} />
+                </span>
               </a>
               <a href={copy.demo.href} className="s-btn ghost no-ic w-full justify-center">
                 {copy.demo.label}

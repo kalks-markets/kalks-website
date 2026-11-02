@@ -1,0 +1,1125 @@
+/* ─────────────────────────────────────────────────────────────── home page blocks (founder 2026-11-02) */
+/* HomeBlocks.tsx and MarketTabs.tsx, block for block after the founder's reference: a long dark landing page with
+   centred bold headings, quiet dark cards, outlined 3D figures, a tabbed markets block with a phone, a tinted band,
+   icon cards with tags, a logo strip and a closing band of dots. The theme's own colours; spacing on an 8 px grid. */
+
+.rf-sec {
+  position: relative;
+  padding-block: 64px;
+}
+@media (min-width: 1024px) {
+  .rf-sec {
+    padding-block: 96px;
+  }
+}
+
+/* ── headings */
+.rf-head {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 40px;
+  text-align: center;
+}
+@media (min-width: 1024px) {
+  .rf-head {
+    margin-bottom: 56px;
+  }
+}
+.rf-h2 {
+  font: 700 clamp(30px, 3.4vw, 46px) / 1.08 var(--f-disp);
+  letter-spacing: -0.035em;
+  color: rgb(var(--fg));
+  text-wrap: balance;
+}
+.rf-hl {
+  color: var(--k-hl);
+}
+.rf-sub {
+  max-width: 640px;
+  font-size: 16px;
+  line-height: 1.6;
+  color: rgb(var(--fg) / 0.68);
+}
+.rf-text {
+  max-width: 46ch;
+  font-size: clamp(16px, 1.25vw, 18px);
+  line-height: 1.6;
+  color: rgb(var(--fg) / 0.7);
+}
+.rf-fine {
+  max-width: 720px;
+  margin: 24px auto 0;
+  font-size: 12.5px;
+  line-height: 1.6;
+  text-align: center;
+  color: rgb(var(--fg) / 0.56);
+}
+.rf-fine a {
+  color: rgb(var(--fg) / 0.82);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+/* ── cards: a quiet dark panel with a hairline (white with a soft shadow in the light theme) */
+.rf-card {
+  position: relative;
+  border-radius: 20px;
+  background: linear-gradient(180deg, rgb(var(--fg) / 0.06), rgb(var(--fg) / 0.022));
+  border: 1px solid rgb(var(--fg) / 0.09);
+}
+:root[data-theme='light'] .rf-card {
+  background: #fff;
+  border-color: rgb(26 20 16 / 0.08);
+  box-shadow:
+    0 1px 2px rgb(26 20 16 / 0.04),
+    0 16px 40px -24px rgb(26 20 16 / 0.22);
+}
+
+/* ── a figure as an outlined 3D numeral: a light edge, a glassy fill fading down, stacked depth and an orange glow */
+.rf-3d {
+  display: inline-block;
+  padding: 0.04em 0.06em 0.1em;
+  font: 800 clamp(72px, 8vw, 112px) / 0.95 var(--f-disp);
+  letter-spacing: -0.045em;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+  color: transparent;
+  background: linear-gradient(180deg, rgb(var(--fg) / 0.22) 0%, rgb(var(--fg) / 0.04) 72%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-stroke: 1.5px rgb(var(--fg) / 0.88);
+  filter: drop-shadow(0 3px 0 rgb(var(--fg) / 0.14)) drop-shadow(0 3px 0 rgb(var(--fg) / 0.08)) drop-shadow(0 18px 26px rgb(242 96 12 / 0.4));
+  transform: perspective(520px) rotateX(16deg);
+}
+
+/* ── costs: two large cards */
+.rf-fees {
+  display: grid;
+  gap: 16px;
+  max-width: 760px;
+  margin-inline: auto;
+}
+@media (min-width: 640px) {
+  .rf-fees {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 20px;
+  }
+}
+.rf-fee {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-height: 288px;
+  padding: 40px 24px 32px;
+  text-align: center;
+}
+.rf-fee .rf-3d {
+  margin: auto 0 24px;
+}
+.rf-fee h3 {
+  font: 600 18px/1.3 var(--f-disp);
+  letter-spacing: -0.02em;
+}
+.rf-fee p {
+  max-width: 30ch;
+  margin-top: 8px;
+  font-size: 14px;
+  line-height: 1.55;
+  color: rgb(var(--fg) / 0.66);
+}
+
+/* ── markets: pill tabs, the phone and four tiles */
+.rf-tabs {
+  display: flex;
+  justify-content: safe center;
+  gap: 8px;
+  margin: 0 calc(-1 * var(--gutter)) 40px;
+  padding: 4px var(--gutter);
+  overflow-x: auto;
+  scroll-snap-type: x proximity;
+  scrollbar-width: none;
+}
+.rf-tabs::-webkit-scrollbar {
+  display: none;
+}
+.rf-tab {
+  flex: none;
+  min-height: 44px;
+  padding: 0 22px;
+  border-radius: 999px;
+  background: rgb(var(--fg) / 0.07);
+  font: 600 14.5px/1 var(--f-disp);
+  letter-spacing: -0.01em;
+  color: rgb(var(--fg) / 0.82);
+  white-space: nowrap;
+  scroll-snap-align: center;
+  transition:
+    background-color 0.25s ease,
+    color 0.25s ease;
+}
+.rf-tab:hover {
+  background: rgb(var(--fg) / 0.12);
+  color: rgb(var(--fg));
+}
+/* the chosen tab: the orange with dark type (AA on the orange) */
+.rf-tab[aria-selected='true'] {
+  background: var(--s-orange);
+  color: #1f0e04;
+}
+.rf-tab:focus-visible {
+  outline: 2px solid var(--s-orange2);
+  outline-offset: 3px;
+}
+.rf-mk-grid {
+  display: grid;
+  gap: 24px;
+  align-items: center;
+  max-width: 1040px;
+  margin-inline: auto;
+}
+@media (min-width: 1024px) {
+  .rf-mk-grid {
+    grid-template-columns: 380px minmax(0, 1fr);
+    gap: 40px;
+  }
+}
+/* the watchlist phone a little wider than the site's iPhone (founder 2026-11-02), at about the same height */
+.rf-mk-phone .s-iph {
+  width: min(360px, 84vw);
+}
+.rf-mk-phone .rf-iph-screen {
+  aspect-ratio: 9 / 18;
+}
+.rf-mk-tiles {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+}
+.rf-tile {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  min-height: 216px;
+  padding: 32px 16px 24px;
+  text-align: center;
+}
+@media (min-width: 761px) {
+  .rf-tile {
+    min-height: 248px;
+  }
+}
+.rf-tile .rf-3d {
+  margin-top: auto;
+  font-size: clamp(40px, 5vw, 72px);
+}
+.rf-tile p {
+  max-width: 26ch;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1.45;
+  color: rgb(var(--fg) / 0.78);
+}
+
+/* ── the markets block over a photo (IMAGES.marketsBackdrop, founder 2026-11-02 after his reference): the photo edge to
+   edge, dimmed and softened under the heading, the tabs, the phone and the tiles; the tabs and tiles turn to glass. A
+   dark island in both themes. */
+.rf-mk-sec {
+  isolation: isolate;
+  overflow: hidden;
+  background: #0a0706;
+  color: #fff;
+}
+.rf-mk-bg {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+}
+.rf-mk-bg img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: 50% 45%;
+  filter: blur(3px) saturate(1.05);
+  transform: scale(1.04);
+}
+.rf-mk-bg::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(75% 65% at 50% 55%, transparent 0%, rgb(10 7 6 / 0.45) 100%),
+    linear-gradient(180deg, rgb(10 7 6 / 0.8) 0%, rgb(10 7 6 / 0.5) 32%, rgb(10 7 6 / 0.55) 70%, rgb(10 7 6 / 0.85) 100%);
+}
+.rf-mk-sec .rf-card,
+:root[data-theme='light'] .rf-mk-sec .rf-card {
+  background: rgb(22 15 12 / 0.4);
+  border-color: rgb(255 255 255 / 0.14);
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.06);
+  -webkit-backdrop-filter: blur(16px) saturate(1.2);
+  backdrop-filter: blur(16px) saturate(1.2);
+}
+.rf-mk-sec .rf-tab:not([aria-selected='true']) {
+  background: rgb(255 255 255 / 0.1);
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
+}
+.rf-mk-sec .rf-fine {
+  color: rgb(255 255 255 / 0.66);
+}
+
+/* ── the site's iPhone (site.css .s-iph) around a screen drawn in HTML (HomeBlocks PhoneFrame) */
+.rf-iph {
+  margin-inline: auto;
+}
+.rf-iph-screen {
+  aspect-ratio: 9 / 19.5;
+  background: #0b0908;
+  color: #fff;
+}
+.rf-iph-screen.light {
+  background: #f7f4f1;
+  color: #16110e;
+}
+.rf-iph-screen.light .s-iph-home {
+  background: rgb(22 17 14 / 0.82);
+}
+.rf-iph-screen {
+  font-size: calc(100cqw / 26.3);
+}
+/* a screen captured from the platform (HomeBlocks PhoneShot): the status bar, then the capture at full width */
+.rf-shot {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+}
+.rf-shot img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+/* Kalks Trader's watchlist as the platform draws it at phone width (MarketTabs.tsx PlatformWatchlist), in em of the
+   phone (1em = a 390 px screen's 16 px), the platform's accent swapped for the site's orange */
+.kw {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  font-size: calc(100cqw / 26.3);
+  font-family: var(--f-text);
+  line-height: 1.2;
+  text-align: start;
+  color: #16110e;
+  background: #f7f4f1;
+  user-select: none;
+}
+/* the phone's status bar (HomeBlocks PhoneStatus), in em of the phone as the drawn app */
+.rf-status {
+  flex: none;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 3.3em;
+  padding: 0.3em 1.9em 0 2.2em;
+  font-family: var(--f-text);
+  background: #fff;
+  color: #16110e;
+}
+.rf-status.dark {
+  background: transparent;
+  color: #fff;
+}
+.rf-status b {
+  font-size: 1.05em;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+.rf-status span {
+  display: flex;
+  align-items: center;
+  gap: 0.4em;
+}
+.rf-status svg {
+  width: 1.15em;
+  height: auto;
+  fill: currentColor;
+}
+.rf-status svg + svg {
+  width: 1.65em;
+}
+.kw-bar {
+  flex: none;
+  display: flex;
+  align-items: center;
+  gap: 0.55em;
+  padding: 0.3em 0.85em 0.6em;
+  background: #fff;
+  border-bottom: 1px solid #ece6e1;
+}
+.kw-seg {
+  display: flex;
+  flex: none;
+  padding: 0.18em;
+  border-radius: 0.65em;
+  border: 1px solid #e7e1dc;
+  background: #faf8f6;
+  font-size: 0.76em;
+  color: #5d5550;
+}
+.kw-seg b,
+.kw-seg span {
+  display: flex;
+  align-items: center;
+  gap: 0.3em;
+  padding: 0.4em 0.6em;
+  border-radius: 0.5em;
+}
+.kw-seg b {
+  background: #ece7e2;
+  font-weight: 600;
+  color: #16110e;
+}
+.kw-seg i {
+  width: 0.45em;
+  height: 0.45em;
+  border-radius: 999px;
+  background: var(--s-orange);
+}
+.kw-brand {
+  display: grid;
+  flex: 1;
+  min-width: 0;
+  line-height: 1.15;
+}
+.kw-brand b {
+  font-size: 0.9em;
+  font-weight: 700;
+  letter-spacing: -0.015em;
+  white-space: nowrap;
+}
+.kw-brand small {
+  display: flex;
+  align-items: center;
+  gap: 0.35em;
+  overflow: hidden;
+  font-size: 0.6em;
+  color: #8b837d;
+  white-space: nowrap;
+}
+.kw-live {
+  flex: none;
+  width: 0.55em;
+  height: 0.55em;
+  border-radius: 999px;
+  background: #c9c2bc;
+}
+.kw-live.on {
+  background: #22a06b;
+}
+.kw-bell {
+  flex: none;
+  width: 1.15em;
+  height: 1.15em;
+  color: #5d5550;
+}
+.kw-open {
+  flex: none;
+  padding: 0.55em 0.75em;
+  border-radius: 0.6em;
+  background: var(--s-orange);
+  font-size: 0.74em;
+  font-weight: 600;
+  color: #fff;
+  white-space: nowrap;
+}
+.kw-chips {
+  flex: none;
+  display: flex;
+  gap: 0.45em;
+  padding: 0.75em 0.85em 0.1em;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.kw-chips::-webkit-scrollbar {
+  display: none;
+}
+.kw-chips span {
+  flex: none;
+  display: flex;
+  align-items: center;
+  gap: 0.35em;
+  height: 2.2em;
+  padding: 0 0.9em;
+  border-radius: 999px;
+  border: 1px solid #e3dcd6;
+  background: #fff;
+  font-size: 0.84em;
+  color: #3b332e;
+  transition:
+    background-color 0.3s ease,
+    border-color 0.3s ease,
+    color 0.3s ease;
+}
+.kw-chips small {
+  font-size: 0.92em;
+  color: #9a918a;
+}
+.kw-chips span[data-on] {
+  border-color: var(--s-orange);
+  background: #fdebe0;
+  color: #c2470a;
+}
+.kw-chips span[data-on] small {
+  color: #c2470a;
+}
+.kw-search {
+  flex: none;
+  display: flex;
+  align-items: center;
+  gap: 0.6em;
+  height: 2.6em;
+  margin: 0.65em 0.85em 0.4em;
+  padding: 0 0.9em;
+  border-radius: 0.75em;
+  border: 1px solid #efe9e4;
+  background: #fff;
+  font-size: 0.9em;
+  color: #9a918a;
+}
+.kw-search svg {
+  width: 1.15em;
+  height: 1.15em;
+}
+.kw-list {
+  flex: 1;
+  overflow: hidden;
+}
+.kw-list li {
+  display: flex;
+  align-items: center;
+  gap: 0.6em;
+  height: 3.4em;
+  padding: 0 0.85em;
+  border-bottom: 1px solid #ebe5e0;
+}
+/* the badges (BadgesEm) are 1em discs, a pair 1.55em wide */
+.kw-mark {
+  display: flex;
+  flex: none;
+  justify-content: center;
+  width: 1.6em;
+  font-size: 1.45em;
+}
+.kw-name {
+  display: grid;
+  flex: 1;
+  gap: 0.2em;
+  min-width: 0;
+}
+.kw-name b {
+  font-size: 0.95em;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+.kw-name > span {
+  overflow: hidden;
+  font-size: 0.7em;
+  color: #8b837d;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+.kw-name em {
+  font-family: var(--f-mono);
+  font-style: normal;
+}
+.kw-name em.up {
+  color: #1d64d8;
+}
+.kw-name em.dn {
+  color: #d4342a;
+}
+/* the Sell and Buy prices: pink and blue boxes, the last two whole pips large, the fractional pip raised */
+.kw-px {
+  flex: none;
+  width: 6.9em;
+  height: 2.55em;
+  padding: 0 0.55em;
+  border-radius: 0.5em;
+  font: 400 0.78em/2.55em var(--f-mono);
+  letter-spacing: -0.03em;
+  text-align: end;
+  white-space: nowrap;
+  color: #2a2320;
+  transition: color 0.6s ease;
+}
+.kw-px b {
+  font-size: 1.2em;
+  font-weight: 700;
+}
+.kw-px sup {
+  font-size: 0.62em;
+  line-height: 0;
+  vertical-align: 0.55em;
+}
+.kw-px.sell {
+  background: #fde3e1;
+}
+.kw-px.buy {
+  background: #e3eafb;
+}
+.kw-px.fl-up {
+  color: #1d64d8;
+}
+.kw-px.fl-dn {
+  color: #d4342a;
+}
+.kw-tabs {
+  flex: none;
+  display: flex;
+  justify-content: space-around;
+  padding: 0.55em 0.4em 2.1em;
+  border-top: 1px solid #ebe5e0;
+  background: #fff;
+}
+.kw-tabs span {
+  position: relative;
+  display: grid;
+  justify-items: center;
+  gap: 0.3em;
+  width: 20%;
+  font-size: 0.66em;
+  color: #8b837d;
+}
+.kw-tabs svg {
+  width: 1.8em;
+  height: 1.8em;
+}
+.kw-tabs [data-on] {
+  color: var(--s-orange);
+}
+.kw-tabs [data-on]::before {
+  content: '';
+  position: absolute;
+  top: -0.85em;
+  width: 3.4em;
+  height: 0.25em;
+  border-radius: 999px;
+  background: var(--s-orange);
+}
+
+/* ── a photo with a floating card of facts, the copy beside it */
+.rf-photo {
+  display: grid;
+  gap: 48px;
+  align-items: center;
+  max-width: 1080px;
+  margin-inline: auto;
+}
+@media (min-width: 1024px) {
+  .rf-photo {
+    grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr);
+    gap: 80px;
+  }
+}
+.rf-photo-media {
+  position: relative;
+  padding-top: 32px;
+}
+.rf-photo-card {
+  overflow: hidden;
+  aspect-ratio: 5 / 4;
+  border-radius: 24px;
+  background: var(--s-ember);
+}
+.rf-photo-card img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: 50% 28%;
+}
+.rf-float {
+  position: absolute;
+  top: 0;
+  inset-inline-end: 12px;
+  width: min(272px, 72%);
+  padding: 16px 18px 8px;
+  border-radius: 18px;
+  background: rgb(18 13 11 / 0.86);
+  -webkit-backdrop-filter: blur(14px);
+  backdrop-filter: blur(14px);
+  border: 1px solid rgb(255 255 255 / 0.1);
+  box-shadow: 0 24px 50px -24px rgb(0 0 0 / 0.75);
+  color: #fff;
+}
+@media (min-width: 1024px) {
+  .rf-float {
+    inset-inline-end: -32px;
+  }
+}
+.rf-float-t {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font: 600 14px/1.2 var(--f-disp);
+}
+.rf-float-t i {
+  width: 8px;
+  height: 8px;
+  border-radius: 999px;
+  background: var(--s-orange);
+}
+.rf-float dl div {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 0;
+  border-bottom: 1px solid rgb(255 255 255 / 0.08);
+}
+.rf-float dl div:last-child {
+  border-bottom: 0;
+}
+.rf-float dt {
+  font-size: 12.5px;
+  color: rgb(255 255 255 / 0.62);
+}
+.rf-float dd {
+  font-size: 13px;
+  font-weight: 600;
+  text-align: end;
+}
+.rf-photo-note {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  margin-top: 16px;
+  font-size: 12.5px;
+  line-height: 1.5;
+  color: rgb(var(--fg) / 0.58);
+}
+.rf-photo-note svg {
+  flex: none;
+  margin-top: 2px;
+  color: var(--s-orange2);
+}
+.rf-photo-copy {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 20px;
+}
+
+/* ── a full-width flat panel (founder 2026-11-02, a reference, "exactly", in the theme's colours): one solid colour from
+   edge to edge, no gradient, no rounding, the same in both themes. A small orange label, the heading in one cream
+   colour, a plain orange pill with dark text, three points with small dots; on the right the phone, cut by the panel's
+   foot (founder 2026-11-02: no note under it), and the 3D ring (scripts/render-3d) cut by the panel's upper edge. */
+.rf-band {
+  --fg: 245 237 225;
+  --rf-band-hot: #ff7a2e;
+  position: relative;
+  overflow: hidden;
+  background: #3d2419;
+  color: rgb(var(--fg));
+}
+.rf-band-in {
+  display: grid;
+}
+@media (min-width: 1024px) {
+  .rf-band-in {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: 64px;
+  }
+}
+.rf-band-copy {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding-top: 64px;
+}
+@media (min-width: 1024px) {
+  .rf-band-copy {
+    padding: 88px 0 72px;
+  }
+}
+.rf-band-label {
+  font: 500 13px/1 var(--f-text);
+  letter-spacing: 0.14em;
+  color: var(--rf-band-hot);
+}
+.rf-band .rf-h2 {
+  max-width: 13em;
+  margin-top: 16px;
+  font-size: clamp(36px, 3.7vw, 54px);
+  font-weight: 800;
+  line-height: 1.04;
+  letter-spacing: -0.03em;
+}
+.rf-band .rf-hl {
+  color: inherit;
+}
+.rf-band-act {
+  margin-top: 36px;
+}
+.rf-band-act .s-btn {
+  height: 50px;
+  background: var(--rf-band-hot);
+  color: #1a1410;
+  font-size: 17px;
+}
+.rf-band-act .s-btn:hover {
+  background: #ff9152;
+  color: #1a1410;
+}
+.rf-band-points {
+  display: grid;
+  gap: 8px;
+  margin-top: 40px;
+}
+.rf-band-points li {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  font-size: 17px;
+  line-height: 1.5;
+  color: rgb(var(--fg) / 0.74);
+}
+.rf-band-points i {
+  flex: none;
+  width: 5px;
+  height: 5px;
+  margin-top: calc(0.75em - 2.5px);
+  border-radius: 999px;
+  background: var(--rf-band-hot);
+}
+/* the phone column: the ring over the phone's top, the phone standing on the panel's foot, cut by it (a note, when
+   there is one, under it) */
+.rf-band-side {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  padding-top: 112px;
+}
+@media (min-width: 1024px) {
+  .rf-band-side {
+    padding-top: 120px;
+  }
+}
+.rf-band-ring {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  width: 150px;
+  height: auto;
+  transform: translateX(-50%);
+  pointer-events: none;
+}
+@media (min-width: 1024px) {
+  .rf-band-ring {
+    top: -40px;
+  }
+}
+/* tall enough for the three outcomes, the loss among them; the phone's shadow off, the cut would square it */
+.rf-band-phone {
+  width: min(400px, 84vw);
+  height: 452px;
+  overflow: hidden;
+}
+.rf-band-phone .s-iph {
+  width: 100%;
+  filter: none;
+}
+.rf-band-note {
+  padding: 14px 0;
+  font-size: 12.5px;
+  color: rgb(var(--fg) / 0.7);
+}
+
+/* ── three outlined cards (founder 2026-11-02, a reference): the page's own black inside a light hairline, a line
+   drawing on top (LineArt.tsx), a cream title, a light line and pill tags at the foot. The drawing's colours are set
+   here: its fill is the card's own colour, so the solids hide what stands behind them. */
+.rf-trust {
+  display: grid;
+  gap: 16px;
+  max-width: 1200px;
+  margin-inline: auto;
+}
+@media (min-width: 761px) {
+  .rf-trust {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 24px;
+  }
+}
+.rf-trust-card {
+  --art-fill: var(--k-page-bg);
+  --art-face: color-mix(in oklab, var(--k-page-bg) 94%, #fff);
+  --art-line: #efe8d6;
+  --art-glow: #fff;
+  --art-halo: rgb(255 138 61 / 0.75);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 32px 28px 36px;
+  border-radius: 24px;
+  background: var(--k-page-bg);
+  border-color: rgb(255 255 255 / 0.26);
+  text-align: center;
+  color: #efe8d6;
+}
+:root[data-theme='light'] .rf-trust-card {
+  --art-face: #f7f2eb;
+  --art-line: #1a1410;
+  --art-glow: #f2600c;
+  --art-halo: rgb(242 96 12 / 0.45);
+  background: var(--k-page-bg);
+  border-color: rgb(26 20 16 / 0.22);
+  box-shadow: none;
+  color: #1a1410;
+}
+/* the drawing fills this box and keeps its proportions, centred (the svg's own preserveAspectRatio) */
+.rf-trust-art {
+  width: 100%;
+  height: 232px;
+  margin: 8px 0 32px;
+}
+.rf-art {
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  color: var(--art-line);
+}
+.rf-art .la-solid {
+  fill: var(--art-fill);
+  stroke: currentColor;
+  stroke-width: 1.5;
+  stroke-linejoin: round;
+}
+.rf-art .la-screen {
+  fill: var(--art-face);
+  stroke: currentColor;
+  stroke-opacity: 0.7;
+  stroke-width: 1.1;
+  stroke-linejoin: round;
+}
+.rf-art .la-line {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.4;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.rf-art .la-faint {
+  stroke-opacity: 0.45;
+}
+.rf-art .la-glow {
+  fill: var(--art-glow);
+}
+.rf-art .la-glow-line {
+  fill: none;
+  stroke: var(--art-glow);
+  stroke-width: 2.2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.rf-art .la-halo {
+  fill: var(--art-halo);
+  stroke: var(--art-halo);
+  stroke-width: 6;
+}
+.rf-art .la-speck {
+  fill: currentColor;
+}
+.rf-trust-card h3 {
+  font: 600 clamp(20px, 1.7vw, 24px) / 1.25 var(--f-disp);
+  letter-spacing: -0.02em;
+}
+.rf-trust-card p {
+  max-width: 36ch;
+  margin-top: 14px;
+  font-size: clamp(15px, 1.2vw, 17px);
+  font-weight: 400;
+  line-height: 1.55;
+  opacity: 0.84;
+}
+.rf-tags {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px 12px;
+  margin-top: auto;
+  padding-top: 40px;
+}
+.rf-tags li {
+  padding: 8px 18px;
+  border-radius: 999px;
+  border: 1px solid rgb(var(--fg) / 0.3);
+  font-size: 14px;
+  font-weight: 400;
+}
+
+/* ── a row of logos in one tone */
+.rf-logos {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 24px 64px;
+}
+.rf-logos li {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font: 700 clamp(20px, 2vw, 26px) / 1 var(--f-disp);
+  letter-spacing: -0.03em;
+  color: rgb(var(--fg) / 0.86);
+}
+.rf-logos img {
+  width: 40px;
+  height: 40px;
+  filter: grayscale(1) contrast(1.1);
+  opacity: 0.9;
+  transition:
+    filter 0.3s ease,
+    opacity 0.3s ease;
+}
+.rf-logos li:hover img {
+  filter: none;
+  opacity: 1;
+}
+
+/* ── the closing band: fields of orange squares at the top and the bottom, one card in the middle */
+.rf-cta {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  padding-block: 120px;
+  background: #090605;
+  color: #fff;
+}
+@media (min-width: 1024px) {
+  .rf-cta {
+    padding-block: 160px;
+  }
+}
+/* two strips of squares (scripts/cta-squares.mjs, a seeded dither): dense at the band's edge, thinning towards the card */
+.rf-cta-dots {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background:
+    url('/site/home/cta-squares-top.svg') center top / 960px 272px repeat-x,
+    url('/site/home/cta-squares-bottom.svg') center bottom / 960px 272px repeat-x;
+  opacity: 0.85;
+}
+.rf-cta-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  max-width: 560px;
+  margin-inline: auto;
+  padding: 48px 24px 40px;
+  border-radius: 24px;
+  background: #130e0c;
+  border: 1px solid rgb(255 255 255 / 0.1);
+  box-shadow:
+    0 40px 100px -30px rgb(0 0 0 / 0.9),
+    0 0 120px -30px rgb(242 96 12 / 0.45);
+  text-align: center;
+}
+@media (min-width: 761px) {
+  .rf-cta-card {
+    padding: 56px 48px 48px;
+  }
+}
+.rf-cta-sub {
+  max-width: 42ch;
+  margin-top: 16px;
+  font-size: 16px;
+  line-height: 1.6;
+  color: rgb(255 255 255 / 0.72);
+}
+.rf-cta-btn {
+  justify-content: center;
+  width: min(100%, 360px);
+  margin-top: 32px;
+}
+
+/* ── the languages, sliding slowly across */
+.rf-langs {
+  overflow: hidden;
+  -webkit-mask: linear-gradient(90deg, transparent, #000 10%, #000 90%, transparent);
+  mask: linear-gradient(90deg, transparent, #000 10%, #000 90%, transparent);
+}
+.rf-langs-track {
+  display: flex;
+  width: max-content;
+}
+.rf-langs-row {
+  display: flex;
+  align-items: center;
+}
+.rf-langs-row li {
+  display: flex;
+  align-items: center;
+  gap: 40px;
+  padding-inline-end: 40px;
+  font: 600 clamp(20px, 2.2vw, 30px) / 1.3 var(--f-disp);
+  letter-spacing: -0.02em;
+  color: rgb(var(--fg) / 0.78);
+  white-space: nowrap;
+}
+.rf-langs-row li::after {
+  content: '';
+  width: 8px;
+  height: 8px;
+  border-radius: 999px;
+  background: var(--s-orange);
+}
+@media (prefers-reduced-motion: no-preference) {
+  .rf-langs-track {
+    animation: rf-slide 70s linear infinite;
+  }
+  [dir='rtl'] .rf-langs-track {
+    animation-name: rf-slide-rtl;
+  }
+  .rf-langs:hover .rf-langs-track {
+    animation-play-state: paused;
+  }
+}
+@keyframes rf-slide {
+  to {
+    transform: translateX(-50%);
+  }
+}
+@keyframes rf-slide-rtl {
+  to {
+    transform: translateX(50%);
+  }
+}
+/* still: the names wrap, centred, and the copy for the loop goes */
+@media (prefers-reduced-motion: reduce) {
+  .rf-langs {
+    -webkit-mask: none;
+    mask: none;
+  }
+  .rf-langs-track,
+  .rf-langs-row {
+    flex-wrap: wrap;
+    justify-content: center;
+    width: auto;
+  }
+  .rf-langs-row {
+    gap: 12px 32px;
+    padding-inline: var(--gutter);
+  }
+  .rf-langs-row li {
+    padding: 0;
+  }
+  .rf-langs-row li::after,
+  .rf-langs-row[aria-hidden] {
+    display: none;
+  }
+}

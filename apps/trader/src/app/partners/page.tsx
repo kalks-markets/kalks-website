@@ -67,18 +67,8 @@ export default async function PartnersPage() {
       <section className="s-sec" aria-labelledby="n-title">
         <div className="s-wrap">
           <Rise className="s-card pad grid gap-12 lg:grid-cols-[0.8fr_1.6fr] lg:gap-16">
-            <div className="flex flex-col gap-6">
-              <div className="flex items-center gap-4">
-                <span className="s-index">01</span>
-                <span className="s-eyebrow">Partner programme</span>
-              </div>
-              <div className="flex flex-wrap gap-2">
-                {['Per lot', 'CPA', 'Weekly'].map((c) => (
-                  <span key={c} className="s-chip">
-                    {c}
-                  </span>
-                ))}
-              </div>
+            <div>
+              <span className="s-eyebrow">Partner programme</span>
             </div>
             <h2 id="n-title" className="s-statement">
               Every client is a partner from sign-up. <span className="s-mute">Your link, code and dashboard are in the Client Area from day one, with no separate application, and every lot your clients trade pays you a fixed amount.</span>

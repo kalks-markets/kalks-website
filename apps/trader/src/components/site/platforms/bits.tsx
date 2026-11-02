@@ -1,21 +1,17 @@
 import type { ReactNode } from 'react';
-import Link from 'next/link';
-import { ArrowUpRight, Download } from 'lucide-react';
+import { Download } from 'lucide-react';
 import { Rise } from '@/components/site/Rise';
-import { Faq, TextLink } from '@/components/site/ui';
+import { Faq, LinkTiles, Steps, TextLink } from '@/components/site/ui';
 import { cn } from '@/lib/cn';
 
 /* Small building blocks for the platforms, copy trading, prop, partners and white-label pages. */
 
-/** Index + eyebrow + title (Home's inline section heads), for split layouts. */
-export function MiniHead({ index, eyebrow, title, id, lead, className }: { index: string; eyebrow: ReactNode; title: ReactNode; id?: string; lead?: ReactNode; className?: string }) {
+/** Eyebrow + title (Home's inline section heads), for split layouts; `index` is no longer shown. */
+export function MiniHead({ eyebrow, title, id, lead, className }: { index: string; eyebrow: ReactNode; title: ReactNode; id?: string; lead?: ReactNode; className?: string }) {
   return (
-    <div className={cn('flex flex-col gap-5', className)}>
-      <div className="flex items-center gap-4">
-        <span className="s-index">{index}</span>
-        <span className="s-eyebrow">{eyebrow}</span>
-      </div>
-      <h2 id={id} className="s-h2 !text-[clamp(32px,3.8vw,56px)]">
+    <div className={cn('flex flex-col items-start gap-5', className)}>
+      <span className="s-eyebrow">{eyebrow}</span>
+      <h2 id={id} className="s-h2">
         {title}
       </h2>
       {lead && <p className="s-lead">{lead}</p>}
@@ -70,26 +66,9 @@ export function FactRows({ title, rows, className, note }: { title?: ReactNode; 
   );
 }
 
-/** Numbered steps as cream / orange / glass cards. */
-export function StepCards({ steps, className, cols = 'sm:grid-cols-2 lg:grid-cols-4' }: { steps: { t: string; d: ReactNode }[]; className?: string; cols?: string }) {
-  const tones = ['s-cream', 's-orange', 's-card', 's-cream'];
-  return (
-    <ol className={cn('grid gap-4', cols, className)}>
-      {steps.map((s, i) => {
-        const tone = tones[i % tones.length];
-        const muted = tone === 's-cream' ? 'text-[var(--s-cream-tx2)]' : tone === 's-orange' ? 'text-white/85' : 'text-[var(--s-tx2)]';
-        return (
-          <Rise as="li" key={s.t} delay={i * 70} className="h-full">
-            <div className={cn('s-bento-card h-full !min-h-[230px]', tone)}>
-              <span className={cn('s-num text-[52px]', tone === 's-cream' ? 'text-[var(--s-orange)]' : tone === 's-orange' ? 'text-white' : 'text-[var(--s-orange2)]')}>{String(i + 1).padStart(2, '0')}</span>
-              <h3 className="mt-auto pt-8 text-[22px] font-[500] leading-[1.1] tracking-[-0.03em]">{s.t}</h3>
-              <p className={cn('mt-2 text-[14.5px] leading-relaxed', muted)}>{s.d}</p>
-            </div>
-          </Rise>
-        );
-      })}
-    </ol>
-  );
+/** Numbered steps (ui.tsx Steps: overlapping cards that open one at a time on a wide row). */
+export function StepCards({ steps, className }: { steps: { t: string; d: ReactNode }[]; className?: string }) {
+  return <Steps steps={steps} className={className} />;
 }
 
 /** Editorial numbered rows (Home's "Built for how you trade", without links). */
@@ -100,7 +79,7 @@ export function NumberedRows({ items, start = 1 }: { items: { t: ReactNode; d: R
         <Rise as="li" key={i} delay={(i % 4) * 50} className="border-b border-[var(--s-line)]">
           <div className="grid items-baseline gap-3 py-7 lg:grid-cols-[80px_minmax(0,0.9fr)_minmax(0,1.6fr)] lg:gap-8">
             <span className="s-index">{String(start + i).padStart(2, '0')}</span>
-            <span className="text-[clamp(24px,2.4vw,34px)] font-[400] leading-[1.05] tracking-[-0.035em]">{r.t}</span>
+            <span className="text-[clamp(20px,1.9vw,26px)] font-semibold leading-[1.2] tracking-[-0.025em]">{r.t}</span>
             <span className="text-[15.5px] leading-relaxed text-[var(--s-tx2)]">{r.d}</span>
           </div>
         </Rise>
@@ -126,7 +105,7 @@ export function FeatureGrid({ items, cols = 'sm:grid-cols-2 lg:grid-cols-4' }: {
   );
 }
 
-/** Links to the neighbouring pages, as dark glass cards with the round arrow. */
+/** Links to the neighbouring pages, as service cards with the round arrow (ui.tsx LinkTiles). */
 export function Related({ links, title = 'Keep exploring', top }: { links: { href: string; t: string; d: string }[]; title?: string; /** after a banded section: keep the top padding */ top?: boolean }) {
   return (
     <section className={cn('s-sec', top ? '!pt-16 lg:!pt-20' : '!pt-0')} aria-label={title}>
@@ -134,21 +113,7 @@ export function Related({ links, title = 'Keep exploring', top }: { links: { hre
         <Rise className="mb-6 flex items-center gap-4">
           <span className="s-eyebrow">{title}</span>
         </Rise>
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          {links.map((l, i) => (
-            <Rise key={l.href} delay={i * 60} className="h-full">
-              <Link href={l.href} className="group s-card flex h-full flex-col p-6 transition-colors hover:border-[var(--s-line2)]">
-                <span className="flex items-start justify-between gap-4">
-                  <span className="text-[20px] font-[500] tracking-[-0.025em] text-white">{l.t}</span>
-                  <span className="grid size-9 shrink-0 place-items-center rounded-full bg-white/10 text-white transition-[transform,background-color] group-hover:rotate-45 group-hover:bg-[var(--s-orange)]" aria-hidden>
-                    <ArrowUpRight size={16} />
-                  </span>
-                </span>
-                <span className="mt-6 text-[14px] leading-relaxed text-[var(--s-tx2)]">{l.d}</span>
-              </Link>
-            </Rise>
-          ))}
-        </div>
+        <LinkTiles links={links} />
       </div>
     </section>
   );
