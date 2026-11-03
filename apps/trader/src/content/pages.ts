@@ -80,7 +80,7 @@ const PROP_TOP_SPLIT = PROP[0].split.match(/(\d+%)$/)?.[1] ?? '';
 /** Hero copy per page. Home: title = the line top-left, subtitle = the small facts under it, cta = the round button. */
 export const HERO_COPY: Record<HeroPage, HeroCopy> = {
   home: {
-    title: 'Asia’s first options & CFD trading platform.',
+    title: 'Asia’s first forex option trading platform.',
     subtitle: `${LANGUAGES.length} languages · Android app · USDT on TRON and BNB Chain`,
     cta: { label: 'Open account', href: REGISTER_HREF },
     image: heroImage('home'),

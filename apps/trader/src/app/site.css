@@ -1031,7 +1031,8 @@ a.s-chip1:hover > svg {
   justify-content: center;
   align-items: baseline;
   gap: 0 0.26em;
-  font-size: clamp(24px, 3vw, 46px);
+  /* a size up (founder 2026-11-03): the line is shorter since "forex option" */
+  font-size: clamp(28px, 3.6vw, 56px);
   line-height: 1.1;
   letter-spacing: 0;
 }
