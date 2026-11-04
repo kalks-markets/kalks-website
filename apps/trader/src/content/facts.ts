@@ -336,13 +336,13 @@ export const OPTIONS_RISK =
 
 /** The Android app on the website (served by Caddy from /srv/kalks/downloads on the server). Update on each release. */
 export const ANDROID_APP = {
-  version: '1.1.2',
-  build: 18,
+  version: '1.1.3',
+  build: 19,
   // both are hard links to the latest release on the server (platform repo deploy/publish-app.sh switches them)
   href: '/download/kalks-android.apk',
   hrefUniversal: '/download/kalks-android-universal.apk',
-  sizeMb: 102, // 106,758,681 bytes (one universal APK)
-  sha256: '0ac2bc2047e196f1790a25e586bf2a11d6f6a465a22ff0d502377cab3be2c201',
+  sizeMb: 102, // 107,012,002 bytes (one universal APK)
+  sha256: '5e37250ff1a260186951f506ee1f520929fe2551571602a479f56328e4ef7aac',
   minAndroid: 'Android 7.0',
 };
 
