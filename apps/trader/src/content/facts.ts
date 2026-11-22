@@ -54,8 +54,8 @@ export type AccountType = {
 };
 
 /** services/trading/migrations/0001_trading.sql:57-64 (groups) and services/market-data/migrations/0001_market_data.sql:64-69
- *  (spread markup per group: Standard 10 points, Pro 3, ECN 0, Cent 10; a point is 10^-digits, so 10 points = 1.0 pip
- *  on a 5-digit FX pair). Pricing labels from apps/crm/components/trading/group-card.tsx:22-34. */
+ *  and 0004_pricing_guide_spreads.sql (KalksTrade Pricing Guide, 22 Nov 2026: EURUSD typically 0.9 / 0.8 / 0.5 pips on
+ *  Cent / Standard / Pro, raw on ECN and VIP; ECN $200 and $5 a lot). Pricing labels from apps/crm/components/trading/group-card.tsx:22-34. */
 export const ACCOUNTS: AccountType[] = [
   {
     id: 'standard',
@@ -67,7 +67,7 @@ export const ACCOUNTS: AccountType[] = [
     leverage: '1:1000',
     leverageOptions: '1:50 · 1:100 · 1:200 · 1:500 · 1:1000',
     pricing: 'All-in spread, no commission',
-    spread: 'Raw + 1.0 pip',
+    spread: 'Typical 0.8 pips on EURUSD',
     commission: 'None',
     marginCall: '100%',
     stopOut: '50%',
@@ -85,7 +85,7 @@ export const ACCOUNTS: AccountType[] = [
     leverage: '1:500',
     leverageOptions: '1:50 · 1:100 · 1:200 · 1:500',
     pricing: 'All-in spread, no commission',
-    spread: 'Raw + 0.3 pip',
+    spread: 'Typical 0.5 pips on EURUSD',
     commission: 'None',
     marginCall: '100%',
     stopOut: '50%',
@@ -98,12 +98,12 @@ export const ACCOUNTS: AccountType[] = [
     name: 'ECN',
     tagline: 'Raw spread with a fixed commission.',
     currency: 'USD',
-    minDeposit: '$500',
+    minDeposit: '$200',
     leverage: '1:500',
     leverageOptions: '1:50 · 1:100 · 1:200 · 1:500',
     pricing: 'Raw spread + commission',
     spread: 'Raw, no markup',
-    commission: '$7 per lot round turn',
+    commission: '$5 per lot round turn',
     marginCall: '100%',
     stopOut: '50%',
     mode: 'Hedging',
@@ -119,7 +119,7 @@ export const ACCOUNTS: AccountType[] = [
     leverage: '1:1000',
     leverageOptions: '1:100 · 1:200 · 1:500 · 1:1000',
     pricing: 'All-in spread, no commission',
-    spread: 'Raw + 1.0 pip',
+    spread: 'Typical 0.9 pips on EURUSD',
     commission: 'None',
     marginCall: '60%',
     stopOut: '20%',
@@ -248,23 +248,26 @@ export const PROP = [
   },
 ] as const;
 
-/** services/ib/src/model.rs:106-127, 254-262 — USD per lot: FX major / FX minor / metals / indices / energies / crypto / stocks */
+/**
+ * KalksTrade Pricing Guide (22 Nov 2026), services/ib/src/model.rs `default_levels()`: USD per lot round turn, the same
+ * on every account type (FX minors pay the FX major rate); options a share of the premium; levels from the lots and
+ * active clients of the last 3 months, checked daily. No CPA.
+ */
 export const IB_LEVELS = [
-  { name: 'Bronze', fxMajor: 5, metals: 8, crypto: 6, cpa: 200, needs: 'From sign-up' },
-  { name: 'Silver', fxMajor: 7, metals: 10, crypto: 8, cpa: 200, needs: '10 active clients · 200 lots a month' },
-  { name: 'Gold', fxMajor: 9, metals: 12, crypto: 10, cpa: 300, needs: '50 active clients · 1,000 lots a month' },
-  { name: 'Platinum', fxMajor: 11, metals: 13.5, crypto: 12, cpa: 300, needs: '150 active clients · 3,000 lots a month' },
-  { name: 'Diamond', fxMajor: 13, metals: 15, crypto: 14, cpa: 300, needs: '400 active clients · 8,000 lots a month' },
+  { name: 'Bronze', fxMajor: 8, metals: 12, crypto: 5, options: '10%', needs: 'From sign-up' },
+  { name: 'Silver', fxMajor: 12.5, metals: 15.5, crypto: 6, options: '10%', needs: '150 lots · 3 active clients in 3 months' },
+  { name: 'Gold', fxMajor: 17, metals: 19, crypto: 7, options: '15%', needs: '750 lots · 5 active clients in 3 months' },
+  { name: 'Platinum', fxMajor: 21.5, metals: 25.5, crypto: 8, options: '15%', needs: '2,250 lots · 8 active clients in 3 months' },
+  { name: 'Diamond', fxMajor: 26, metals: 35, crypto: 9, options: '20%', needs: '4,500 lots · 10 active clients in 3 months' },
 ] as const;
 
 export const IB = {
-  tiers: 3, // default network depth paying 100% / 20% / 10% of the per-lot rate
-  tierShares: '100% · 20% · 10%',
-  payout: 'Weekly, every Monday, to your USDT wallet',
+  tiers: 3, // your rate on direct clients, then 10% and 5% of what the partners below you earn
+  tierShares: '100% · 10% · 5%',
+  payout: 'Daily, to your USDT wallet',
   minPayout: '$10',
 } as const;
 
-/** services/trading/migrations/0002_social.sql:16-29, services/trading/README.md:431-470, 595-604 */
 export const SOCIAL = {
   perfFee: 'up to 50%',
   trackRecordDays: 30,

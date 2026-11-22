@@ -153,7 +153,7 @@ export default async function ClientAreaPage() {
             {[
               { shot: 'caCopy' as const, t: 'Copy trading', d: `Masters as cards with return, drawdown, followers and risk. Start from ${SOCIAL.minAllocation}.`, href: '/copy-trading' },
               { shot: 'caPamm' as const, t: 'PAMM funds', d: 'Invest by units at the next rollover NAV; fees only above the high-water mark.', href: '/copy-trading#pamm' },
-              { shot: 'caPartner' as const, t: 'Partner dashboard', d: `Your level, your link and your network, ${IB.tiers} tiers deep, paid every Monday.`, href: '/partners' },
+              { shot: 'caPartner' as const, t: 'Partner dashboard', d: `Your level, your link and your network, ${IB.tiers} tiers deep, paid daily.`, href: '/partners' },
             ].map((c, i) => (
               <Rise key={c.t} delay={i * 70} className="h-full">
                 <Link href={c.href} className="group s-card flex h-full flex-col overflow-hidden p-3 transition-colors hover:border-[var(--s-line2)]">

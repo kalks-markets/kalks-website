@@ -17,7 +17,7 @@ export const CLIENT_FEATURES: [string, string][] = [
   ['Wallet', 'Deposit and withdraw USDT; move money between wallet and accounts, instantly and free.'],
   ['Copy trading, PAMM, MAM', 'Follow masters, invest in funds, or apply to become a master.'],
   ['Prop challenges', 'Buy a challenge, track every rule live, request payouts, download certificates.'],
-  ['Partner dashboard', 'Referral links, clients, your network, commission and weekly payouts.'],
+  ['Partner dashboard', 'Referral links, clients, your network, commission and daily payouts.'],
   ['Academy', `${ACADEMY.lessons} lessons in ${ACADEMY.phases} phases, quizzes, exams and certificates.`],
   ['Developer', 'API keys, webhooks, a visual strategy builder, backtests and 24/7 deployments.'],
   ['Support', 'Chat from any page: an instant help assistant, with our team behind it.'],

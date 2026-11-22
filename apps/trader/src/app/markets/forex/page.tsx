@@ -36,7 +36,7 @@ export default function ForexPage() {
       page="markets-forex"
       heroFacts={[`${INSTRUMENTS.byClass.forex.live} pairs live`, `Leverage up to 1:${LEVERAGE.coreCaps.forex}`, 'Sunday to Friday']}
       glass={[
-        { v: '0.3 pip', l: 'Over raw on Pro, no commission' },
+        { v: '0.5 pip', l: 'Typical EURUSD on Pro, no commission' },
         { v: OPTIONS.fxPairsLive, l: 'Majors with calls and puts' },
       ]}
       statement={
@@ -68,7 +68,8 @@ export default function ForexPage() {
       liveIntro="Prices stream from the Kalks market-data feed. The full list of pairs is on the markets page."
       terms={[
         ['Leverage', `Up to 1:${LEVERAGE.coreCaps.forex} (Standard, Cent), 1:500 (Pro, ECN, VIP)`],
-        ['Standard and Cent', `${acc('standard').spread}, no commission`],
+        ['Standard', `${acc('standard').spread}, no commission`],
+        ['Cent', `${acc('cent').spread}, no commission`],
         ['Pro', `${acc('pro').spread}, no commission`],
         ['ECN · VIP', `Raw spread, ${perLot('ecn')} · ${perLot('vip')} a lot round turn`],
         ['Options', `Calls and puts on ${OPTIONS.fxPairsLive} majors, in an Options account`],

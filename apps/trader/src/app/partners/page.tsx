@@ -15,7 +15,7 @@ import { getPage } from '@/content/pages';
 export const metadata: Metadata = {
   title: 'Partners: get paid for the lots your clients trade',
   description:
-    'Every Kalks client is a partner from sign-up. Per-lot commission on three tiers of referrals, CPA rewards, five levels from Bronze to Diamond, weekly payouts in USDT.',
+    'Every Kalks client is a partner from sign-up. Per-lot commission on three tiers of referrals, a share of options premiums, five levels from Bronze to Diamond, daily payouts in USDT.',
   alternates: { canonical: '/partners' },
 };
 
@@ -27,7 +27,7 @@ const DASH_PINS: Pin[] = [
   { x: 62.3, y: 39.1, title: 'Copy your link', text: 'One tap copies your referral link, ready to share anywhere.' },
   { x: 18.1, y: 53.7, title: 'Your level', text: `${IB_LEVELS.length} levels from ${IB_LEVELS[0].name} to ${TOP.name}, with your partner code beside it.` },
   { x: 59.3, y: 48.8, title: 'Rate card', text: 'Your per-lot rates by asset class at your current level.' },
-  { x: 14.8, y: 61.6, title: 'Progress to the next level', text: 'Active clients and monthly network lots against the next level, reset each month.' },
+  { x: 14.8, y: 61.6, title: 'Progress to the next level', text: 'Active clients and network lots over the last 3 months against the next level.' },
   { x: 90.5, y: 59.5, title: 'Link and code on a card', text: 'Your referral link and code. Clients who sign up with them stay linked to you.' },
 ];
 
@@ -36,13 +36,13 @@ const pick = (q: string) => ALL.find((i) => i.q === q)!;
 const FAQ = [
   pick('How do I become a partner?'),
   pick('How am I paid?'),
-  { q: 'What counts towards commission?', a: 'Closed trades on your clients’ live accounts that were held for at least two minutes. Prop accounts do not count.' },
+  { q: 'What counts towards commission?', a: 'Closed trades on your clients’ live accounts that were held for at least three minutes. Demo and prop accounts do not count, nor do your own accounts or those of your household.' },
   {
-    q: 'What is CPA?',
-    a: `A one-off reward for each new client who deposits at least $500 and places a first trade, paid after a 30-day hold: $${IB_LEVELS[0].cpa} at ${IB_LEVELS[0].name} and ${IB_LEVELS[1].name}, $${IB_LEVELS[2].cpa} from ${IB_LEVELS[2].name}.`,
+    q: 'Do options earn commission?',
+    a: `Yes: a share of the premium your clients pay to open an option, ${IB_LEVELS[0].options} at ${IB_LEVELS[0].name} and ${IB_LEVELS[1].name}, ${IB_LEVELS[2].options} at ${IB_LEVELS[2].name} and ${IB_LEVELS[3].name}, ${IB_LEVELS[4].options} at ${IB_LEVELS[4].name}.`,
   },
-  { q: 'Can I give part of my commission back?', a: 'Yes. Pass up to 50% to clients as a rebate and up to 50% to your sub-partners.' },
-  { q: 'How do levels work?', a: `You start at ${IB_LEVELS[0].name}. Levels rise with your active clients and the lots they trade each month, and every level raises your per-lot rates.` },
+  { q: 'Can I share my commission?', a: 'You can pass up to 70% of your own rate to sub-partners you bring in. Client rebates are not offered.' },
+  { q: 'How do levels work?', a: `You start at ${IB_LEVELS[0].name}. Levels rise with your active clients and the lots they trade over the last 3 months, checked daily, and every level raises your rates.` },
 ];
 
 export default async function PartnersPage() {
@@ -52,7 +52,7 @@ export default async function PartnersPage() {
     <>
       <PageHero
         hero={hero}
-        facts={[`${IB.tiers} tiers deep`, 'Paid every Monday', `From ${IB.minPayout}`]}
+        facts={[`${IB.tiers} tiers deep`, 'Paid daily', `From ${IB.minPayout}`]}
         aside={
           <HeroGlass>
             <div className="s-num text-[56px] text-white">${TOP.fxMajor}</div>
@@ -77,9 +77,9 @@ export default async function PartnersPage() {
               <StatStrip
                 items={[
                   { v: `$${TOP.fxMajor}`, l: 'Per FX major lot', sub: `At ${TOP.name}` },
-                  { v: IB.tiers, l: 'Tiers deep', sub: `${IB.tierShares} of the rate` },
+                  { v: IB.tiers, l: 'Tiers deep', sub: 'Your rate, then 10% and 5% below' },
                   { v: IB_LEVELS.length, l: 'Levels', sub: `${IB_LEVELS[0].name} to ${TOP.name}` },
-                  { v: IB.minPayout, l: 'Minimum payout', sub: 'Every Monday, to your USDT wallet' },
+                  { v: IB.minPayout, l: 'Minimum payout', sub: 'Daily, to your USDT wallet' },
                 ]}
               />
             </div>
@@ -103,9 +103,9 @@ export default async function PartnersPage() {
           <StepCards
             steps={[
               { t: 'Share your link', d: 'Your link and code are ready when you sign up, with campaign links and a QR code for each channel.' },
-              { t: 'Clients trade', d: 'Earn a fixed amount per lot your clients trade, set by asset class and your level.' },
-              { t: 'Your network grows', d: `Earn on ${IB.tiers} tiers: ${IB.tierShares} of the per-lot rate. Share part with sub-partners or as a rebate.` },
-              { t: 'Get paid weekly', d: `${IB.payout}, from ${IB.minPayout}.` },
+              { t: 'Clients trade', d: 'Earn a fixed amount per lot your clients trade, set by asset class and your level, the same on every account type.' },
+              { t: 'Your network grows', d: `Earn on ${IB.tiers} tiers: your rate on direct clients, then 10% and 5% of what the partners below you earn. Pass up to 70% of your rate to sub-partners.` },
+              { t: 'Get paid daily', d: `${IB.payout}, from ${IB.minPayout}. Smaller amounts carry over to the next day.` },
             ]}
           />
         </div>
@@ -123,7 +123,7 @@ export default async function PartnersPage() {
                 {IB_LEVELS.length} levels. <span className="s-mute">Higher rates at each.</span>
               </>
             }
-            lead="Commission in US dollars per standard lot traded by your direct clients. Your level updates as your network grows."
+            lead="Commission in US dollars per standard lot traded by your direct clients, the same on every account type. Your level updates as your network grows."
           />
           <Rise className="s-card overflow-hidden">
             <div className="overflow-x-auto">
@@ -134,7 +134,7 @@ export default async function PartnersPage() {
                     <Th right>FX majors</Th>
                     <Th right>Metals</Th>
                     <Th right>Crypto</Th>
-                    <Th right>CPA</Th>
+                    <Th right>Options</Th>
                     <Th className="ps-10">To reach it</Th>
                   </tr>
                 </thead>
@@ -152,7 +152,7 @@ export default async function PartnersPage() {
                         <td className={cn('px-5 py-4 text-end font-mono text-[15px] [font-variant-numeric:tabular-nums]', top ? 'text-[var(--s-orange2)]' : 'text-white')}>${l.fxMajor}</td>
                         <td className="px-5 py-4 text-end font-mono text-[15px] text-white [font-variant-numeric:tabular-nums]">${l.metals}</td>
                         <td className="px-5 py-4 text-end font-mono text-[15px] text-white [font-variant-numeric:tabular-nums]">${l.crypto}</td>
-                        <td className="px-5 py-4 text-end font-mono text-[15px] text-white [font-variant-numeric:tabular-nums]">${l.cpa}</td>
+                        <td className="px-5 py-4 text-end font-mono text-[15px] text-white [font-variant-numeric:tabular-nums]">{l.options}</td>
                         <td className="py-4 pe-5 ps-10 text-[14px] text-[var(--s-tx2)]">{l.needs}</td>
                       </tr>
                     );
@@ -162,7 +162,7 @@ export default async function PartnersPage() {
             </div>
           </Rise>
           <p className="mt-5 max-w-[90ch] text-[12.5px] leading-relaxed text-[var(--s-tx3)]">
-            FX minors, indices, energies and stocks have their own rates at each level, shown in your partner dashboard. These are the current default rates and can change.
+            FX minors pay the FX major rate. Oil, indices and stocks have their own rates at each level, shown in your partner dashboard. Options pay a share of the premium your clients pay to open. Levels count lots and active clients over the last 3 months. Rates can change with 30 days’ notice.
           </p>
         </div>
       </section>
@@ -197,7 +197,7 @@ export default async function PartnersPage() {
                 {IB.tiers} tiers deep, <span className="s-mute">tracked for you.</span>
               </>
             }
-            lead={`Clients you refer, the clients they refer, and one level further: ${IB.tierShares} of the per-lot rate. Clients stay in your tree for good.`}
+            lead="Clients you refer, the clients they refer, and one level further: your rate on direct clients, then 10% and 5% of what the partners below you earn. Clients stay in your tree for good."
           />
           <Rise>
             <div className="no-sb max-lg:-mx-[var(--gutter)] max-lg:overflow-x-auto max-lg:px-[var(--gutter)] max-lg:pb-3">
@@ -207,7 +207,7 @@ export default async function PartnersPage() {
             </div>
           </Rise>
           <div className="mt-10 grid gap-4 lg:grid-cols-3">
-            <BentoCard tone="cream" kicker="Network" title={`${IB.tiers} tiers deep`} text={`Earn on clients referred by your clients: ${IB.tierShares} of the per-lot rate.`} className="!min-h-[220px]" />
+            <BentoCard tone="cream" kicker="Network" title={`${IB.tiers} tiers deep`} text="Earn on clients referred by your clients: 10% and 5% of what the partners below you earn." className="!min-h-[220px]" />
             <BentoCard tone="glass" kicker="Tracking" title="Campaign links" text="One link per channel, with clicks, sign-ups and first deposits tracked for each." delay={60} className="!min-h-[220px]" />
             <BentoCard tone="orange" kicker="For business" title="White-label ready" href="/white-label" text="Bringing a whole business? Run your own brand on the Kalks platform." delay={120} className="!min-h-[220px]" />
           </div>
@@ -231,10 +231,10 @@ export default async function PartnersPage() {
             Share your link <span className="text-white/70">this week.</span>
           </>
         }
-        sub={`Sign up and your partner link is ready at once. Earn on ${IB.tiers} tiers, paid every Monday from ${IB.minPayout}.`}
+        sub={`Sign up and your partner link is ready at once. Earn on ${IB.tiers} tiers, paid daily from ${IB.minPayout}.`}
         primary={{ href: REGISTER_HREF, label: 'Become a partner' }}
         secondary={{ href: '#levels', label: 'See the rates' }}
-        facts={[`Up to $${TOP.fxMajor} per FX major lot`, `${IB.tiers} tiers deep`, 'Weekly in USDT']}
+        facts={[`Up to $${TOP.fxMajor} per FX major lot`, `${IB.tiers} tiers deep`, 'Daily in USDT']}
         image={page.ctaImage}
       />
     </>

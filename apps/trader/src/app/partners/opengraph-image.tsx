@@ -5,5 +5,5 @@ export const size = OG_SIZE;
 export const contentType = OG_TYPE;
 
 export default function Image() {
-  return og({ tone: 'red', kicker: 'PARTNERS', title: 'Get paid for the lots your clients trade.', sub: 'Three tiers. Paid every Monday in USDT.' });
+  return og({ tone: 'red', kicker: 'PARTNERS', title: 'Get paid for the lots your clients trade.', sub: 'Three tiers. Paid daily in USDT.' });
 }

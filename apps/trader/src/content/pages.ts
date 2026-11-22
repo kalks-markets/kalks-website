@@ -233,7 +233,7 @@ export const HERO_COPY: Record<HeroPage, HeroCopy> = {
     eyebrow: 'Partners',
     title: 'Get paid for the lots',
     accent: 'your clients trade.',
-    subtitle: `Every Kalks client is a partner from day one. Share your link, earn per lot on ${IB.tiers} tiers of referrals, and get paid every Monday in USDT.`,
+    subtitle: `Every Kalks client is a partner from day one. Share your link, earn per lot on ${IB.tiers} tiers of referrals, and get paid daily in USDT.`,
     cta: { label: 'Become a partner', href: REGISTER_HREF },
     cta2: { label: 'See the rates', href: '#levels' },
     image: heroImage('partners'),
