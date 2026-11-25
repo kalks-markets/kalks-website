@@ -5,7 +5,7 @@ import { useEffect } from 'react';
 /**
  * Website translation (kept from the previous site): Google Translate Element driven by the `googtrans` cookie that
  * the language picker sets. The script is only loaded for visitors who picked a language other than English, so
- * English visitors never download it. The list matches the platform's 22 languages (packages/i18n/src/locales.ts).
+ * English visitors never download it. The list matches the platform's 30 languages (packages/i18n/src/locales.ts).
  */
 export const GT_LANGUAGES = [
   { code: 'en', label: 'English' },
@@ -29,6 +29,14 @@ export const GT_LANGUAGES = [
   { code: 'ko', label: '한국어' },
   { code: 'bn', label: 'বাংলা' },
   { code: 'ta', label: 'தமிழ்' },
+  { code: 'ml', label: 'മലയാളം' },
+  { code: 'te', label: 'తెలుగు' },
+  { code: 'kn', label: 'ಕನ್ನಡ' },
+  { code: 'mr', label: 'मराठी' },
+  { code: 'gu', label: 'ગુજરાતી' },
+  { code: 'pa', label: 'ਪੰਜਾਬੀ' },
+  { code: 'or', label: 'ଓଡ଼ିଆ' },
+  { code: 'as', label: 'অসমীয়া' },
   { code: 'sw', label: 'Kiswahili' },
 ] as const;
 
