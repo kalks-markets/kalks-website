@@ -3,24 +3,23 @@ import { HeroGlass, PageHero } from '@/components/site/Heroes';
 import { BentoCard, Btn, Cta, Head, StatStrip } from '@/components/site/ui';
 import { Shot, type Pin } from '@/components/site/Shot';
 import { Rise } from '@/components/site/Rise';
-import { FaqSection, StepCards, Th } from '@/components/site/platforms/bits';
+import { FaqSection, StepCards } from '@/components/site/platforms/bits';
+import { RateCard } from '@/components/site/partners/RateCard';
 import { PinTour } from '@/components/site/platforms/ShotTours';
 import { PSHOTS } from '@/components/site/platforms/shots';
-import { IB, IB_LEVELS } from '@/content/facts';
+import { IB, IB_AS_OF, IB_LEVELS, usd, usd2 } from '@/content/facts';
 import { FAQ_GROUPS } from '@/content/faq';
 import { REGISTER_HREF } from '@/lib/crm';
-import { cn } from '@/lib/cn';
 import { getPage } from '@/content/pages';
 
 export const metadata: Metadata = {
   title: 'Partners: get paid for the lots your clients trade',
   description:
-    'Every Kalks client is a partner from sign-up. Per-lot commission on three tiers of referrals, a fixed amount per options contract, five levels from Bronze to Diamond, daily payouts in USDT.',
+    'Every Kalks client is a partner from sign-up. Per-lot commission on forex, metals, oil, indices, crypto and stocks, a fixed amount per options contract, three tiers of referrals, five levels from Bronze to Diamond, daily payouts in USDT. The full rate card is on the page.',
   alternates: { canonical: '/partners' },
 };
 
 const TOP = IB_LEVELS[IB_LEVELS.length - 1];
-const usd = (n: number) => `$${n.toFixed(2)}`;
 const EX = IB_LEVELS[2];
 
 /** pins in % of the partner dashboard screenshot */
@@ -28,7 +27,7 @@ const DASH_PINS: Pin[] = [
   { x: 37.4, y: 39.1, title: 'Payouts', text: `Your payout history. ${IB.payout}.` },
   { x: 62.3, y: 39.1, title: 'Copy your link', text: 'One tap copies your referral link, ready to share anywhere.' },
   { x: 18.1, y: 53.7, title: 'Your level', text: `${IB_LEVELS.length} levels from ${IB_LEVELS[0].name} to ${TOP.name}, with your partner code beside it.` },
-  { x: 59.3, y: 48.8, title: 'Rate card', text: 'Your per-lot rates by asset class at your current level.' },
+  { x: 59.3, y: 48.8, title: 'Rate card', text: 'Your rates by market at your current level: per lot on CFDs, per contract on options.' },
   { x: 14.8, y: 61.6, title: 'Progress to the next level', text: 'Active clients and network lots over the last 3 months against the next level.' },
   { x: 90.5, y: 59.5, title: 'Link and code on a card', text: 'Your referral link and code. Clients who sign up with them stay linked to you.' },
 ];
@@ -38,13 +37,13 @@ const pick = (q: string) => ALL.find((i) => i.q === q)!;
 const FAQ = [
   pick('How do I become a partner?'),
   pick('How am I paid?'),
-  { q: 'What counts towards commission?', a: 'Closed trades on your clients’ live accounts that were held for at least three minutes. Demo and prop accounts do not count, nor do your own accounts or those of your household.' },
+  { q: 'What counts towards commission?', a: 'Closed trades on your clients’ live accounts that were held for at least three minutes. Demo and prop accounts do not count, nor do your own accounts or clients who share your IP address, device or identity. The full rules are in the partner plan.' },
   {
     q: 'Do options earn commission?',
-    a: `Yes: a fixed amount per contract your clients trade, round turn, on the same tiers as CFD lots: ${IB_LEVELS.map((l) => `${usd(l.optionsUsd)} at ${l.name}`).join(', ')}. For example, 10 option contracts at ${EX.name} = 10 × ${usd(EX.optionsUsd)} = ${usd(10 * EX.optionsUsd)}.`,
+    a: `Yes: a fixed amount per contract your clients trade, round turn, on the same tiers as CFD lots: ${IB_LEVELS.map((l) => `${usd(l.optionsUsd)} at ${l.name}`).join(', ')}. For example, 10 option contracts at ${EX.name} = 10 × ${usd(EX.optionsUsd)} = ${usd2(10 * EX.optionsUsd)}.`,
   },
-  { q: 'Can I share my commission?', a: 'You can pass up to 70% of your own rate to sub-partners you bring in. Client rebates are not offered.' },
-  { q: 'How do levels work?', a: `You start at ${IB_LEVELS[0].name}. Levels rise with your active clients and the lots they trade over the last 3 months, checked daily, and every level raises your rates.` },
+  { q: 'Can I share my commission?', a: `You can pass up to ${IB.maxSplitPct}% of what you earn on a sub-partner’s clients to that sub-partner. Client rebates are not offered.` },
+  { q: 'How do levels work?', a: `You start at ${IB_LEVELS[0].name}. Levels rise with your active clients and the lots they trade over the last ${IB.windowDays} days, checked daily, and every level raises your rates. Both targets of a level must be met.` },
 ];
 
 export default async function PartnersPage() {
@@ -57,7 +56,7 @@ export default async function PartnersPage() {
         facts={[`${IB.tiers} tiers deep`, 'Paid daily', `From ${IB.minPayout}`]}
         aside={
           <HeroGlass>
-            <div className="s-num text-[56px] text-white">${TOP.fxMajor}</div>
+            <div className="s-num text-[56px] text-white">{usd(TOP.rates['fx-major'])}</div>
             <p className="mt-2 text-[14px] text-white/85">
               Per FX major lot at {TOP.name}, the top level
             </p>
@@ -78,7 +77,7 @@ export default async function PartnersPage() {
             <div className="lg:col-span-2">
               <StatStrip
                 items={[
-                  { v: `$${TOP.fxMajor}`, l: 'Per FX major lot', sub: `At ${TOP.name}` },
+                  { v: usd(TOP.rates['fx-major']), l: 'Per FX major lot', sub: `At ${TOP.name}` },
                   { v: IB.tiers, l: 'Tiers deep', sub: 'Your rate, then 10% and 5% below' },
                   { v: IB_LEVELS.length, l: 'Levels', sub: `${IB_LEVELS[0].name} to ${TOP.name}` },
                   { v: IB.minPayout, l: 'Minimum payout', sub: 'Daily, to your USDT wallet' },
@@ -125,47 +124,19 @@ export default async function PartnersPage() {
                 {IB_LEVELS.length} levels. <span className="s-mute">Higher rates at each.</span>
               </>
             }
-            lead="Commission in US dollars per standard lot traded by your direct clients (options: per contract), the same on every account type. Your level updates as your network grows."
+            lead="Commission in US dollars per standard lot, round turn, on every market your direct clients trade (options: per contract), the same on every account type. Your level updates as your network grows."
           />
-          <Rise className="s-card overflow-hidden">
-            <div className="overflow-x-auto">
-              <table className="w-full min-w-[760px] border-collapse">
-                <thead>
-                  <tr className="border-b border-[var(--s-line)]">
-                    <Th>Level</Th>
-                    <Th right>FX majors</Th>
-                    <Th right>Metals</Th>
-                    <Th right>Crypto</Th>
-                    <Th right>Options / contract</Th>
-                    <Th className="ps-10">To reach it</Th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {IB_LEVELS.map((l, i) => {
-                    const top = i === IB_LEVELS.length - 1;
-                    return (
-                      <tr key={l.name} className={cn('border-b border-[var(--s-line)] last:border-0', top && 'bg-[rgba(242,96,12,0.08)]')}>
-                        <th scope="row" className="px-5 py-4 text-start">
-                          <span className="flex items-center gap-3 text-[20px] font-[400] tracking-[-0.025em] text-white">
-                            <span className="size-2.5 rounded-full bg-[var(--s-orange)]" style={{ opacity: 0.3 + i * 0.175 }} aria-hidden />
-                            {l.name}
-                          </span>
-                        </th>
-                        <td className={cn('px-5 py-4 text-end font-mono text-[15px] [font-variant-numeric:tabular-nums]', top ? 'text-[var(--s-orange2)]' : 'text-white')}>${l.fxMajor}</td>
-                        <td className="px-5 py-4 text-end font-mono text-[15px] text-white [font-variant-numeric:tabular-nums]">${l.metals}</td>
-                        <td className="px-5 py-4 text-end font-mono text-[15px] text-white [font-variant-numeric:tabular-nums]">${l.crypto}</td>
-                        <td className="px-5 py-4 text-end font-mono text-[15px] text-white [font-variant-numeric:tabular-nums]">{usd(l.optionsUsd)}</td>
-                        <td className="py-4 pe-5 ps-10 text-[14px] text-[var(--s-tx2)]">{l.needs}</td>
-                      </tr>
-                    );
-                  })}
-                </tbody>
-              </table>
-            </div>
+          <Rise>
+            <RateCard />
           </Rise>
-          <p className="mt-5 max-w-[90ch] text-[12.5px] leading-relaxed text-[var(--s-tx3)]">
-            FX minors pay the FX major rate. Oil, indices and stocks have their own rates at each level, shown in your partner dashboard. Options pay a fixed amount per contract your clients trade: {usd(IB_LEVELS[0].optionsUsd)} at {IB_LEVELS[0].name} up to {usd(TOP.optionsUsd)} at {TOP.name}, on the same tiers as CFD lots. Levels count lots and active clients over the last 3 months. Rates can change with 30 days’ notice.
-          </p>
+          <div className="mt-6 flex flex-col items-start gap-5 lg:flex-row lg:items-center lg:justify-between">
+            <p className="max-w-[80ch] text-[12.5px] leading-relaxed text-[var(--s-tx3)]">
+              Rates as of {IB_AS_OF}. Options pay a fixed amount per contract your clients trade: {usd(IB_LEVELS[0].optionsUsd)} at {IB_LEVELS[0].name} up to {usd(TOP.optionsUsd)} at {TOP.name}, on the same tiers as CFD lots. Levels need both targets over the last {IB.windowDays} days. Rates can change with {IB.noticeDays} days’ notice.
+            </p>
+            <Btn href="/partners/plan" variant="ghost">
+              Read the full plan
+            </Btn>
+          </div>
         </div>
       </section>
 
@@ -235,8 +206,8 @@ export default async function PartnersPage() {
         }
         sub={`Sign up and your partner link is ready at once. Earn on ${IB.tiers} tiers, paid daily from ${IB.minPayout}.`}
         primary={{ href: REGISTER_HREF, label: 'Become a partner' }}
-        secondary={{ href: '#levels', label: 'See the rates' }}
-        facts={[`Up to $${TOP.fxMajor} per FX major lot`, `${IB.tiers} tiers deep`, 'Daily in USDT']}
+        secondary={{ href: '/partners/plan', label: 'Read the full plan' }}
+        facts={[`Up to ${usd(TOP.rates['fx-major'])} per FX major lot`, `${IB.tiers} tiers deep`, 'Daily in USDT']}
         image={page.ctaImage}
       />
     </>

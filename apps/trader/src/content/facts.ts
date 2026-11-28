@@ -249,23 +249,123 @@ export const PROP = [
 ] as const;
 
 /**
- * KalksTrade Pricing Guide (22 Nov 2026), services/ib/src/model.rs `default_levels()`: USD per lot round turn, the same
- * on every account type (FX minors pay the FX major rate); options USD per contract round turn (since 28 Nov 2026, was a
- * share of the premium); levels from the lots and active clients of the last 3 months, checked daily. No CPA.
+ * The partner (IB) programme as it runs in production, a snapshot of the IB service (services/ib) for tenant `kalks`
+ * on 28 Nov 2026: table `levels` (settings version 5, "migration 0011: options per contract") and table `settings`.
+ * The service has no public read of the plan (every route needs the internal token), so the site carries this copy;
+ * re-take it when the Back Office changes a rate (`psql -d kalks_ib`, read-only) and move `IB_AS_OF`.
+ *
+ * - Rate card: USD per standard lot, round turn (paid once, on the closing deal), per symbol group. No account-type
+ *   rules (`accountRates` empty), so every CFD account type pays the full card; cent lots count at `centLotFactor`.
+ * - Options: `optionsBasis` `contracts`, USD per contract round turn (was a share of the premium until 28 Nov 2026).
+ *   Contracts are not lots: they never add to the level target.
+ * - Levels: both targets over the last `levelWindowDays` (90) up to the end of yesterday, checked daily (`upgrade`
+ *   daily); on the 1st, one level down when the targets are missed (`allowDemotion`). No CPA (`cpa.enabled` false).
+ * - Tiers 100 / 10 / 5 with `tierBasis` `tier1`: tiers 2 and 3 earn a share of what tier 1 earns on the deal.
  */
-export const IB_LEVELS = [
-  { name: 'Bronze', fxMajor: 8, metals: 12, crypto: 5, options: '$0.10 per contract', optionsUsd: 0.1, needs: 'From sign-up' },
-  { name: 'Silver', fxMajor: 12.5, metals: 15.5, crypto: 6, options: '$0.15 per contract', optionsUsd: 0.15, needs: '150 lots · 3 active clients in 3 months' },
-  { name: 'Gold', fxMajor: 17, metals: 19, crypto: 7, options: '$0.20 per contract', optionsUsd: 0.2, needs: '750 lots · 5 active clients in 3 months' },
-  { name: 'Platinum', fxMajor: 21.5, metals: 25.5, crypto: 8, options: '$0.25 per contract', optionsUsd: 0.25, needs: '2,250 lots · 8 active clients in 3 months' },
-  { name: 'Diamond', fxMajor: 26, metals: 35, crypto: 9, options: '$0.30 per contract', optionsUsd: 0.3, needs: '4,500 lots · 10 active clients in 3 months' },
+export const IB_AS_OF = '28 Nov 2026';
+
+/** Symbol groups in the order of the live settings, with what falls into each (config/instruments.json asset classes). */
+export const IB_GROUPS = [
+  { key: 'fx-major', name: 'Forex majors', covers: 'EURUSD, GBPUSD, USDJPY, AUDUSD, USDCAD, USDCHF, NZDUSD' },
+  { key: 'fx-minor', name: 'Forex minors & crosses', covers: 'Every other forex pair' },
+  { key: 'metals', name: 'Metals', covers: 'Gold, silver, platinum, palladium, copper and the other metals' },
+  { key: 'indices', name: 'Indices', covers: 'Every index' },
+  { key: 'energies', name: 'Oil & energies', covers: 'WTI crude, Brent and natural gas' },
+  { key: 'crypto', name: 'Crypto', covers: 'Every crypto pair' },
+  { key: 'stocks', name: 'Stocks', covers: 'US and Hong Kong stocks' },
 ] as const;
 
+export type IbGroupKey = (typeof IB_GROUPS)[number]['key'];
+
+type IbLevel = {
+  key: string;
+  name: string;
+  /** USD per standard lot round turn, by symbol group */
+  rates: Record<IbGroupKey, number>;
+  /** USD per option contract round turn */
+  optionsUsd: number;
+  /** level targets over the last 90 days: lots traded by the whole network and direct clients with a qualifying trade */
+  minLots: number;
+  minClients: number;
+  /** the level's perks as the partner dashboard lists them */
+  perks: readonly string[];
+};
+
+export const IB_LEVELS: readonly IbLevel[] = [
+  {
+    key: 'bronze',
+    name: 'Bronze',
+    rates: { 'fx-major': 8, 'fx-minor': 8, metals: 12, indices: 2, energies: 4, crypto: 5, stocks: 1 },
+    optionsUsd: 0.1,
+    minLots: 0,
+    minClients: 0,
+    perks: ['Start here: no target', '$8 per lot on forex', '$0.10 per options contract'],
+  },
+  {
+    key: 'silver',
+    name: 'Silver',
+    rates: { 'fx-major': 12.5, 'fx-minor': 12.5, metals: 15.5, indices: 3, energies: 5, crypto: 6, stocks: 1.5 },
+    optionsUsd: 0.15,
+    minLots: 150,
+    minClients: 3,
+    perks: ['150 lots and 3 active clients in 3 months', '$12.50 per lot on forex', '$0.15 per options contract'],
+  },
+  {
+    key: 'gold',
+    name: 'Gold',
+    rates: { 'fx-major': 17, 'fx-minor': 17, metals: 19, indices: 4, energies: 6, crypto: 7, stocks: 2 },
+    optionsUsd: 0.2,
+    minLots: 750,
+    minClients: 5,
+    perks: ['750 lots and 5 active clients in 3 months', '$17 per lot on forex', '$0.20 per options contract'],
+  },
+  {
+    key: 'platinum',
+    name: 'Platinum',
+    rates: { 'fx-major': 21.5, 'fx-minor': 21.5, metals: 25.5, indices: 5, energies: 7, crypto: 8, stocks: 2.5 },
+    optionsUsd: 0.25,
+    minLots: 2250,
+    minClients: 8,
+    perks: ['2,250 lots and 8 active clients in 3 months', '$21.50 per lot on forex', '$0.25 per options contract'],
+  },
+  {
+    key: 'diamond',
+    name: 'Diamond',
+    rates: { 'fx-major': 26, 'fx-minor': 26, metals: 35, indices: 6, energies: 8, crypto: 9, stocks: 3 },
+    optionsUsd: 0.3,
+    minLots: 4500,
+    minClients: 10,
+    perks: ['4,500 lots and 10 active clients in 3 months', '$26 per lot on forex', '$0.30 per options contract'],
+  },
+];
+
+/** "150 lots · 3 active clients in 3 months", or "From sign-up" for the entry level */
+export const ibNeeds = (l: IbLevel) =>
+  l.minLots === 0 && l.minClients === 0 ? 'From sign-up' : `${l.minLots.toLocaleString('en-US')} lots · ${l.minClients} active clients in 3 months`;
+
+/** "$8", "$12.50", "$0.10": whole dollars without cents, anything else to the cent */
+export const usd = (n: number) => `$${Number.isInteger(n) ? n.toLocaleString('en-US') : n.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+/** always to the cent: "$2.00" */
+export const usd2 = (n: number) => `$${n.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+
 export const IB = {
-  tiers: 3, // your rate on direct clients, then 10% and 5% of what the partners below you earn
+  tiers: 3, // your rate on direct clients, then 10% and 5% of what your direct client's partner earns
+  tierPcts: [100, 10, 5],
   tierShares: '100% · 10% · 5%',
   payout: 'Daily, to your USDT wallet',
   minPayout: '$10',
+  minPayoutUsd: 10,
+  /** a trade earns once it was open this long (settings minTradeSeconds 180) */
+  minHoldMinutes: 3,
+  /** 1 cent lot = 0.01 standard lot (settings centLotFactor) */
+  centLotFactor: 0.01,
+  /** a partner may pass up to this share of its own tier amount to the sub-partner directly below (maxSplitPct) */
+  maxSplitPct: 70,
+  /** level window (levelWindowDays) */
+  windowDays: 90,
+  rebates: false,
+  cpa: false,
+  noticeDays: 30,
 } as const;
 
 export const SOCIAL = {

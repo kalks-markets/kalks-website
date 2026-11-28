@@ -60,6 +60,7 @@ export const FOOTER_COLUMNS: { title: string; links: NavLink[] }[] = [
     links: [
       { label: 'About', href: '/about' },
       { label: 'Partners', href: '/partners' },
+      { label: 'Partner plan', href: '/partners/plan' },
       { label: 'White-label', href: '/white-label' },
       { label: 'Academy', href: '/academy' },
       { label: 'Help & contact', href: '/contact' },
