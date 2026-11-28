@@ -172,7 +172,7 @@ export const FAQ_GROUPS: FaqGroup[] = [
       {
         id: 'partner-payouts',
         q: 'How am I paid?',
-        a: `A fixed amount per lot your clients trade, set by asset class and your level and the same on every account type, plus a share of the premium on options, on ${IB.tiers} tiers of referrals. Payouts: daily, to your USDT wallet, from ${IB.minPayout}.`,
+        a: `A fixed amount per lot your clients trade, set by asset class and your level and the same on every account type, plus a fixed amount per contract on options, on ${IB.tiers} tiers of referrals. Payouts: daily, to your USDT wallet, from ${IB.minPayout}.`,
       },
     ],
   },

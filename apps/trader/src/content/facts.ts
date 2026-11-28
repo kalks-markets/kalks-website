@@ -250,15 +250,15 @@ export const PROP = [
 
 /**
  * KalksTrade Pricing Guide (22 Nov 2026), services/ib/src/model.rs `default_levels()`: USD per lot round turn, the same
- * on every account type (FX minors pay the FX major rate); options a share of the premium; levels from the lots and
- * active clients of the last 3 months, checked daily. No CPA.
+ * on every account type (FX minors pay the FX major rate); options USD per contract round turn (since 28 Nov 2026, was a
+ * share of the premium); levels from the lots and active clients of the last 3 months, checked daily. No CPA.
  */
 export const IB_LEVELS = [
-  { name: 'Bronze', fxMajor: 8, metals: 12, crypto: 5, options: '10%', needs: 'From sign-up' },
-  { name: 'Silver', fxMajor: 12.5, metals: 15.5, crypto: 6, options: '10%', needs: '150 lots · 3 active clients in 3 months' },
-  { name: 'Gold', fxMajor: 17, metals: 19, crypto: 7, options: '15%', needs: '750 lots · 5 active clients in 3 months' },
-  { name: 'Platinum', fxMajor: 21.5, metals: 25.5, crypto: 8, options: '15%', needs: '2,250 lots · 8 active clients in 3 months' },
-  { name: 'Diamond', fxMajor: 26, metals: 35, crypto: 9, options: '20%', needs: '4,500 lots · 10 active clients in 3 months' },
+  { name: 'Bronze', fxMajor: 8, metals: 12, crypto: 5, options: '$0.10 per contract', optionsUsd: 0.1, needs: 'From sign-up' },
+  { name: 'Silver', fxMajor: 12.5, metals: 15.5, crypto: 6, options: '$0.15 per contract', optionsUsd: 0.15, needs: '150 lots · 3 active clients in 3 months' },
+  { name: 'Gold', fxMajor: 17, metals: 19, crypto: 7, options: '$0.20 per contract', optionsUsd: 0.2, needs: '750 lots · 5 active clients in 3 months' },
+  { name: 'Platinum', fxMajor: 21.5, metals: 25.5, crypto: 8, options: '$0.25 per contract', optionsUsd: 0.25, needs: '2,250 lots · 8 active clients in 3 months' },
+  { name: 'Diamond', fxMajor: 26, metals: 35, crypto: 9, options: '$0.30 per contract', optionsUsd: 0.3, needs: '4,500 lots · 10 active clients in 3 months' },
 ] as const;
 
 export const IB = {

@@ -15,11 +15,13 @@ import { getPage } from '@/content/pages';
 export const metadata: Metadata = {
   title: 'Partners: get paid for the lots your clients trade',
   description:
-    'Every Kalks client is a partner from sign-up. Per-lot commission on three tiers of referrals, a share of options premiums, five levels from Bronze to Diamond, daily payouts in USDT.',
+    'Every Kalks client is a partner from sign-up. Per-lot commission on three tiers of referrals, a fixed amount per options contract, five levels from Bronze to Diamond, daily payouts in USDT.',
   alternates: { canonical: '/partners' },
 };
 
 const TOP = IB_LEVELS[IB_LEVELS.length - 1];
+const usd = (n: number) => `$${n.toFixed(2)}`;
+const EX = IB_LEVELS[2];
 
 /** pins in % of the partner dashboard screenshot */
 const DASH_PINS: Pin[] = [
@@ -39,7 +41,7 @@ const FAQ = [
   { q: 'What counts towards commission?', a: 'Closed trades on your clients’ live accounts that were held for at least three minutes. Demo and prop accounts do not count, nor do your own accounts or those of your household.' },
   {
     q: 'Do options earn commission?',
-    a: `Yes: a share of the premium your clients pay to open an option, ${IB_LEVELS[0].options} at ${IB_LEVELS[0].name} and ${IB_LEVELS[1].name}, ${IB_LEVELS[2].options} at ${IB_LEVELS[2].name} and ${IB_LEVELS[3].name}, ${IB_LEVELS[4].options} at ${IB_LEVELS[4].name}.`,
+    a: `Yes: a fixed amount per contract your clients trade, round turn, on the same tiers as CFD lots: ${IB_LEVELS.map((l) => `${usd(l.optionsUsd)} at ${l.name}`).join(', ')}. For example, 10 option contracts at ${EX.name} = 10 × ${usd(EX.optionsUsd)} = ${usd(10 * EX.optionsUsd)}.`,
   },
   { q: 'Can I share my commission?', a: 'You can pass up to 70% of your own rate to sub-partners you bring in. Client rebates are not offered.' },
   { q: 'How do levels work?', a: `You start at ${IB_LEVELS[0].name}. Levels rise with your active clients and the lots they trade over the last 3 months, checked daily, and every level raises your rates.` },
@@ -123,7 +125,7 @@ export default async function PartnersPage() {
                 {IB_LEVELS.length} levels. <span className="s-mute">Higher rates at each.</span>
               </>
             }
-            lead="Commission in US dollars per standard lot traded by your direct clients, the same on every account type. Your level updates as your network grows."
+            lead="Commission in US dollars per standard lot traded by your direct clients (options: per contract), the same on every account type. Your level updates as your network grows."
           />
           <Rise className="s-card overflow-hidden">
             <div className="overflow-x-auto">
@@ -134,7 +136,7 @@ export default async function PartnersPage() {
                     <Th right>FX majors</Th>
                     <Th right>Metals</Th>
                     <Th right>Crypto</Th>
-                    <Th right>Options</Th>
+                    <Th right>Options / contract</Th>
                     <Th className="ps-10">To reach it</Th>
                   </tr>
                 </thead>
@@ -152,7 +154,7 @@ export default async function PartnersPage() {
                         <td className={cn('px-5 py-4 text-end font-mono text-[15px] [font-variant-numeric:tabular-nums]', top ? 'text-[var(--s-orange2)]' : 'text-white')}>${l.fxMajor}</td>
                         <td className="px-5 py-4 text-end font-mono text-[15px] text-white [font-variant-numeric:tabular-nums]">${l.metals}</td>
                         <td className="px-5 py-4 text-end font-mono text-[15px] text-white [font-variant-numeric:tabular-nums]">${l.crypto}</td>
-                        <td className="px-5 py-4 text-end font-mono text-[15px] text-white [font-variant-numeric:tabular-nums]">{l.options}</td>
+                        <td className="px-5 py-4 text-end font-mono text-[15px] text-white [font-variant-numeric:tabular-nums]">{usd(l.optionsUsd)}</td>
                         <td className="py-4 pe-5 ps-10 text-[14px] text-[var(--s-tx2)]">{l.needs}</td>
                       </tr>
                     );
@@ -162,7 +164,7 @@ export default async function PartnersPage() {
             </div>
           </Rise>
           <p className="mt-5 max-w-[90ch] text-[12.5px] leading-relaxed text-[var(--s-tx3)]">
-            FX minors pay the FX major rate. Oil, indices and stocks have their own rates at each level, shown in your partner dashboard. Options pay a share of the premium your clients pay to open. Levels count lots and active clients over the last 3 months. Rates can change with 30 days’ notice.
+            FX minors pay the FX major rate. Oil, indices and stocks have their own rates at each level, shown in your partner dashboard. Options pay a fixed amount per contract your clients trade: {usd(IB_LEVELS[0].optionsUsd)} at {IB_LEVELS[0].name} up to {usd(TOP.optionsUsd)} at {TOP.name}, on the same tiers as CFD lots. Levels count lots and active clients over the last 3 months. Rates can change with 30 days’ notice.
           </p>
         </div>
       </section>
